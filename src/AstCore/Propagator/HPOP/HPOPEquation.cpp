@@ -95,8 +95,8 @@ errc_t HPOPEquation::initBlocks(const HPOPForceModel &forceModel)
     this->addBlock(derivativeBlock);
 
     if(body){
-        // 添加重力函数块
-        if(auto gravityPtr = bodyAttraction.toGravityForce()){
+        // 添加重力场函数块
+        if(auto gravityPtr = bodyAttraction.asGravityForce()){
             auto& gravity = *gravityPtr;
             if(0 == gravity.maxDegree_){
                 GravityFieldHead gfHead;
@@ -121,7 +121,29 @@ errc_t HPOPEquation::initBlocks(const HPOPForceModel &forceModel)
                 derivativeBlock = new BlockGravity(gravityField, gravity.maxDegree_, gravity.maxOrder_, gravityAxes, propAxes);
                 this->addBlock(derivativeBlock);
             }
-        }else{
+        }
+        // 添加二体引力函数块
+        else if(auto pointMassPtr = bodyAttraction.asPointMassForce())
+        {
+            auto& pointMass = *pointMassPtr;
+            double gm;
+            if(pointMass.gmSource_ == EGMSource::eSpecifiedValue)
+            {
+                gm = pointMass.specifiedGM_;
+            }
+            else if(pointMass.gmSource_ == EGMSource::eBodyGravity)
+            {
+                gm = body->getGM();
+            }
+            else if(pointMass.gmSource_ == EGMSource::eJplDE)
+            {
+                aWarning("unsupported feature: JPL DE gravity gm source, use body gm instead.");
+                gm = body->getGM();
+            }
+            this->addBlock(new BlockTwoBody(gm));
+        }
+        else
+        {
             // todo: 处理其他引力模型
             aWarning("the body attraction model is not a gravity force model, no central body gravity force will be added.");
         }
@@ -130,9 +152,9 @@ errc_t HPOPEquation::initBlocks(const HPOPForceModel &forceModel)
     }
 
     // 添加月球引力函数块
-    if(forceModel.useMoonGravity_)
+    if(forceModel.useMoonGravity())
     {
-        derivativeBlock = new BlockThirdBody(forceModel.moonGravity_);
+        derivativeBlock = new BlockThirdBody(forceModel.moonGravity());
         this->addBlock(derivativeBlock);
     }
     return eNoError;

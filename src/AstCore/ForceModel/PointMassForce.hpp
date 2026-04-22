@@ -30,12 +30,15 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 二体引力模型
-class TwoBodyForce: public BodyAttraction
+/// @brief 点质量引力模型/
+class PointMassForce: public BodyAttraction
 {
 public:
-    EBodyAttractionType getBodyAttractionType() const override{return EBodyAttractionType::eTwoBody;}
-    BodyAttraction* clone() const override{return new TwoBodyForce(*this);}
+    EBodyAttractionType getBodyAttractionType() const override{return EBodyAttractionType::ePointMass;}
+    BodyAttraction* clone() const override{return new PointMassForce(*this);}
+public:
+    EGMSource gmSource_{EGMSource::eBodyGravity};       ///< 引力常数来源
+    double specifiedGM_{0.0};                           ///< 指定的引力常数
 };
 
 

@@ -55,7 +55,7 @@ TEST_F(HPOPMarsTest, TwoBody)
     EXPECT_TRUE(marsInertial!=nullptr);
 
     HPOPForceModel forcemodel;
-    forcemodel.useMoonGravity_ = false;
+    forcemodel.useMoonGravity(false);
     forcemodel.gravity().model_ = "MRO110C";
     forcemodel.gravity().maxDegree_ = 0;
     forcemodel.gravity().maxOrder_ = 0;
@@ -100,7 +100,7 @@ TEST_F(HPOPMarsTest, OnlyGravity_2_0)
     EXPECT_TRUE(marsInertial!=nullptr);
 
     HPOPForceModel forcemodel;
-    forcemodel.useMoonGravity_ = false;
+    forcemodel.useMoonGravity(false);
     forcemodel.gravity().model_ = "MRO110C";
     forcemodel.gravity().maxDegree_ = 2;
     forcemodel.gravity().maxOrder_ = 0;
@@ -147,7 +147,7 @@ TEST_F(HPOPMarsTest, OnlyGravity_70_10)
     EXPECT_TRUE(marsInertial!=nullptr);
 
     HPOPForceModel forcemodel;
-    forcemodel.useMoonGravity_ = false;
+    forcemodel.useMoonGravity(false);
     forcemodel.gravity().model_ = "MRO110C";
     forcemodel.gravity().maxDegree_ = 70;
     forcemodel.gravity().maxOrder_ = 10;

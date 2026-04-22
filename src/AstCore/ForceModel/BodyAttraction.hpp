@@ -31,15 +31,14 @@ AST_NAMESPACE_BEGIN
 */
 
 class GravityForce;
-class TwoBodyForce;
+class PointMassForce;
 class ThirdBodyForce;
 
 /// @brief 天体引力模型类型
 enum class EBodyAttractionType
 {
     eGravity,       ///< 中心天体重力场模型
-    eTwoBody,       ///< 中心天体二体引力模型
-    eThirdBody,     ///< 三体引力模型
+    ePointMass,     ///< 中心天体点质量引力模型
     eUnknown,       ///< 未知引力模型类型
 };
 
@@ -63,17 +62,13 @@ public:
         return getBodyAttractionType() == type;
     }
     
-    /// @brief 将引力模型转换为重力场模型
+    /// @brief 尝试将引力模型转换为重力场模型
     /// @return 重力场模型指针
-    GravityForce* toGravityForce() const;
+    GravityForce* asGravityForce() const;
 
-    /// @brief 将引力模型转换为二体引力模型
-    /// @return 二体引力模型指针
-    TwoBodyForce* toTwoBodyForce() const;
-
-    /// @brief 将引力模型转换为三体引力模型
-    /// @return 三体引力模型指针
-    ThirdBodyForce* toThirdBodyForce() const;
+    /// @brief 尝试将引力模型转换为点质量引力模型
+    /// @return 点质量引力模型指针
+    PointMassForce* asPointMassForce() const;
 };
 
 

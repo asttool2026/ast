@@ -23,6 +23,9 @@
 #include "AstGlobal.h"
 #include "BodyAttraction.hpp"
 #include "AstCore/CelestialBody.hpp"
+#include "AstCore/PointMassForce.hpp"
+#include "AstCore/GravityForce.hpp"
+#include "AstUtil/ClonePtr.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -31,25 +34,54 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 引力常数来源
-enum class EGMSource
-{
-    eCbValue,
-    eJplDE,
-    eSpecifiedValue,
-};
 
 
 /// @brief 三体引力模型
-class ThirdBodyForce: public BodyAttraction
+class AST_CORE_API ThirdBodyForce: public ForceModel
 {
 public:
-    EBodyAttractionType getBodyAttractionType() const override{return EBodyAttractionType::eThirdBody;}
-    BodyAttraction* clone() const override{return new ThirdBodyForce(*this);}
-public:
-    HCelestialBody body_;                               ///< 天体
-    EGMSource gmSource_{EGMSource::eCbValue};           ///< 引力常数来源
-    double specifiedGM_{0.0};                           ///< 指定的引力常数
+    ThirdBodyForce() = default;
+
+    ThirdBodyForce(CelestialBody* body)
+        : body_(body)
+    {}
+
+    /// @brief 获取引力场模型
+    /// @warning 调用该接口后，三体引力模型将被设置为引力场模型
+    /// @return 引力场模型
+    GravityForce& gravity();
+
+    /// @brief 获取点质量引力模型
+    /// @warning 调用该接口后，三体引力模型将被设置为点质量引力模型
+    /// @return 点质量引力模型
+    PointMassForce& pointMass();
+    
+    /// @brief 获取三体引力模型
+    /// @return 三体引力模型
+    BodyAttraction& bodyAttraction();
+
+    /// @brief 获取三体引力模型
+    /// @return 三体引力模型
+    const BodyAttraction& bodyAttraction() const;
+
+    /// @brief 获取三体引力类型
+    /// @return 三体引力类型
+    EBodyAttractionType bodyAttractionType() const;
+    
+    /// @brief 设置三体引力类型
+    /// @param type 三体引力类型
+    void setAttractionType(EBodyAttractionType type);
+
+    /// @brief 获取三体
+    CelestialBody* body() const;
+
+    /// @brief 设置三体
+    void setBody(CelestialBody* body);
+private:
+    HCelestialBody body_;                                                       ///< 天体
+    EBodyAttractionType attractionType_{EBodyAttractionType::ePointMass};       ///< 引力类型
+    PointMassForce pointMass_{};                                                ///< 点质量引力模型
+    GravityForce gravity_{};                                                    ///< 引力场模型
 };
 
 

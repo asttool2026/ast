@@ -19,6 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "HPOPForceModel.hpp"
+#include "AstCore/CelestialBody.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -37,13 +38,48 @@ GravityForce& HPOPForceModel::gravity()
     return static_cast<GravityForce&>(*bodyAttraction_);
 }
 
-TwoBodyForce& HPOPForceModel::twoBody()
+PointMassForce& HPOPForceModel::pointMass()
 {
-    if(!bodyAttraction_ || !bodyAttraction_->isAttractionType(EBodyAttractionType::eTwoBody))
+    if(!bodyAttraction_ || !bodyAttraction_->isAttractionType(EBodyAttractionType::ePointMass))
     {
-        bodyAttraction_ = new TwoBodyForce();
+        bodyAttraction_ = new PointMassForce();
     }
-    return static_cast<TwoBodyForce&>(*bodyAttraction_);
+    return static_cast<PointMassForce&>(*bodyAttraction_);
+}
+
+ThirdBodyForce *HPOPForceModel::addThirdBody(Body *body)
+{
+    ThirdBodyForce thirdBody(body);
+    return addThirdBody(thirdBody);
+}
+
+ThirdBodyForce *HPOPForceModel::addThirdBody(ThirdBodyForce& force)
+{
+    thirdBodies_.push_back(force);
+    return &thirdBodies_.back();
+}
+
+ThirdBodyForce *HPOPForceModel::getThirdBody(Body *body)
+{
+    for(auto& thirdBody : thirdBodies_)
+    {
+        if(thirdBody.body() == body)
+        {
+            return &thirdBody;
+        }
+    }
+    return nullptr;
+}
+ThirdBodyForce *HPOPForceModel::getThirdBody(StringView bodyName)
+{
+    for(auto& thirdBody : thirdBodies_)
+    {
+        if(thirdBody.body() && bodyName == thirdBody.body()->getName())
+        {
+            return &thirdBody;
+        }
+    }
+    return nullptr;
 }
 
 BodyAttraction& HPOPForceModel::bodyAttraction()
@@ -56,6 +92,11 @@ BodyAttraction& HPOPForceModel::bodyAttraction()
 const BodyAttraction& HPOPForceModel::bodyAttraction() const
 {
     return const_cast<HPOPForceModel*>(this)->bodyAttraction();
+}
+
+EBodyAttractionType HPOPForceModel::bodyAttractionType() const
+{
+    return bodyAttraction().getBodyAttractionType();
 }
 
 AST_NAMESPACE_END

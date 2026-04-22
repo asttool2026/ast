@@ -20,11 +20,56 @@
 
 
 #include "AstGlobal.h"
+#include "ThirdBodyForce.hpp"
 
 AST_NAMESPACE_BEGIN
 
 
+GravityForce& ThirdBodyForce::gravity()
+{
+    return gravity_;
+}
 
+PointMassForce& ThirdBodyForce::pointMass()
+{
+    return pointMass_;
+}
+
+BodyAttraction& ThirdBodyForce::bodyAttraction()
+{
+    if(attractionType_ == EBodyAttractionType::eGravity)
+        return gravity_;
+    else if(attractionType_ == EBodyAttractionType::ePointMass)
+        return pointMass_;
+    else
+        return pointMass_; // 默认返回点质量引力模型
+}
+
+const BodyAttraction &ThirdBodyForce::bodyAttraction() const
+{
+    return const_cast<ThirdBodyForce&>(*this).bodyAttraction();
+}
+
+EBodyAttractionType ThirdBodyForce::bodyAttractionType() const
+{
+    return attractionType_;
+}
+
+void ThirdBodyForce::setAttractionType(EBodyAttractionType type)
+{
+    attractionType_ = type;
+}
+
+CelestialBody* ThirdBodyForce::body() const
+{
+    return body_.get();
+}
+
+void ThirdBodyForce::setBody(CelestialBody* body)
+{
+    if(body)
+        body_ = body;
+}
 
 
 AST_NAMESPACE_END

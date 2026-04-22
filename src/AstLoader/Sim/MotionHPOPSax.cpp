@@ -158,104 +158,104 @@ errc_t MotionHPOPSax::keyValue(StringView key, const ValueView &value)
         massAtEpoch_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "UseDrag")){
-        forceModel_.useDrag_ = value.toBool();
+        forceModel_.useDrag(value.toBool());
     }
     else if(aEqualsIgnoreCase(key, "AtmDensityModel")){
-        forceModel_.drag_.atmDensityModel_ = _aStringToAtmDensityModel(value.toString());
-        if(forceModel_.drag_.atmDensityModel_ == EAtmDensityModel::eNone){
+        forceModel_.drag().atmDensityModel_ = _aStringToAtmDensityModel(value.toString());
+        if(forceModel_.drag().atmDensityModel_ == EAtmDensityModel::eNone){
             aWarning("use default atm density model 'NRLMSISE2000'");
-            forceModel_.drag_.atmDensityModel_ = EAtmDensityModel::eNRLMSISE2000;
+            forceModel_.drag().atmDensityModel_ = EAtmDensityModel::eNRLMSISE2000;
         }
     }
     else if(aEqualsIgnoreCase(key, "AtmBlendingRange")){
-        forceModel_.drag_.atmBlendingRange_ = value.toDouble();
+        forceModel_.drag().atmBlendingRange_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "LowAltAtmDensityModel")){
-        forceModel_.drag_.lowAltAtmDensityModel_ = _aStringToAtmDensityModel(value.toString());
+        forceModel_.drag().lowAltAtmDensityModel_ = _aStringToAtmDensityModel(value.toString());
     }
     else if(aEqualsIgnoreCase(key, "UseFluxApFile")){
-        forceModel_.drag_.useFluxApFile_ = value.toBool();
+        forceModel_.drag().useFluxApFile_ = value.toBool();
     }
     else if(aEqualsIgnoreCase(key, "FluxApFile")){
-        forceModel_.drag_.fluxApFile_ = value.toString();
+        forceModel_.drag().fluxApFile_ = value.toString();
     }
     else if(aEqualsIgnoreCase(key, "GeoMagneticFluxSource")){
         if(aEqualsIgnoreCase(value, "Kp")){
-            forceModel_.drag_.geoMagFluxSource_ = EGeoMagFluxSource::eKp;
+            forceModel_.drag().geoMagFluxSource_ = EGeoMagFluxSource::eKp;
         } else if(aEqualsIgnoreCase(value, "Ap")){
-            forceModel_.drag_.geoMagFluxSource_ = EGeoMagFluxSource::eAp;
+            forceModel_.drag().geoMagFluxSource_ = EGeoMagFluxSource::eAp;
         }else{
             // @todo 处理其他磁通量源
         }
     }
     else if(aEqualsIgnoreCase(key, "GeoMagneticFluxUpdateMethod")){
         if(aEqualsIgnoreCase(value, "Daily")){
-            forceModel_.drag_.geoMagFluxUpdateRate_ = EGeoMagFluxUpdateRate::eDaily;
+            forceModel_.drag().geoMagFluxUpdateRate_ = EGeoMagFluxUpdateRate::eDaily;
         }else{
             // @todo 处理其他更新方法
         }
         // @todo 处理其他更新方法
     }
     else if(aEqualsIgnoreCase(key, "GeoMagneticFluxInterpSubSamplingRatio")){
-        forceModel_.drag_.geoMagFluxInterpSubSamplingRatio_ = value.toDouble();
+        forceModel_.drag().geoMagFluxInterpSubSamplingRatio_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "DragCoefficient")){
-        // forceModel_.drag_.dragCoefficient_ = value.toDouble();
+        // forceModel_.drag().dragCoefficient_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "AreaMassRatio")){
-        // forceModel_.drag_.areaMassRatio_ = value.toDouble();
+        // forceModel_.drag().areaMassRatio_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "DragCorrectionType")){
         // @todo 处理DragCorrectionType
     }
     else if(aEqualsIgnoreCase(key, "AverageF10.7")){
-        forceModel_.drag_.f10p7Average_ = value.toDouble();
+        forceModel_.drag().f10p7Average_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "DailyF10.7")){
-        forceModel_.drag_.f10p7Daily_ = value.toDouble();
+        forceModel_.drag().f10p7Daily_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "Kp")){
-        forceModel_.drag_.kp_ = value.toDouble();
+        forceModel_.drag().kp_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "UseApproxAltForDrag")){
-        forceModel_.drag_.useApproxAltForDrag_ = value.toBool();
+        forceModel_.drag().useApproxAltForDrag_ = value.toBool();
     }
     else if(aEqualsIgnoreCase(key, "UseApparentSunForDrag")){
         if(value.toBool())
-            forceModel_.drag_.sunPosition_ = ESunPosition::eApparent;
+            forceModel_.drag().sunPosition_ = ESunPosition::eApparent;
         else
-            forceModel_.drag_.sunPosition_ = ESunPosition::eTrue;
+            forceModel_.drag().sunPosition_ = ESunPosition::eTrue;
     }
     else if(aEqualsIgnoreCase(key, "DensityType")){
         // @todo 处理DensityType
     }
     else if(aEqualsIgnoreCase(key, "UseSRP")){
-        forceModel_.useSRP_ = value.toBool();
+        forceModel_.useSRP(value.toBool());
     }
     else if(aEqualsIgnoreCase(key, "SolarPressureModel")){
         if(massAtEpoch_ <= 0.0) massAtEpoch_ = 1;
-        errc_t rc = _aLoadSolarPressureModel(parser_, massAtEpoch_, forceModel_.srp_);
+        errc_t rc = _aLoadSolarPressureModel(parser_, massAtEpoch_, forceModel_.srp());
         A_UNUSED(rc);
     }
     else if(aEqualsIgnoreCase(key, "SunPosition")){
         if(aEqualsIgnoreCase(value, "ApparentSunToTrueCB")){
-            forceModel_.srp_.sunPosition_ = ESunPosition::eApparentSunToTrueCB;
+            forceModel_.srp().sunPosition_ = ESunPosition::eApparentSunToTrueCB;
         } else if(aEqualsIgnoreCase(value, "Apparent")){
-            forceModel_.srp_.sunPosition_ = ESunPosition::eApparent;
+            forceModel_.srp().sunPosition_ = ESunPosition::eApparent;
         } else if(aEqualsIgnoreCase(value, "True")){
-            forceModel_.srp_.sunPosition_ = ESunPosition::eTrue;
+            forceModel_.srp().sunPosition_ = ESunPosition::eTrue;
         }
     }
     else if(aEqualsIgnoreCase(key, "DetectShadowBoundaries")){
-        forceModel_.srp_.detectShadowBoundaries_ = value.toBool();
+        forceModel_.srp().detectShadowBoundaries_ = value.toBool();
     }
     else if(aEqualsIgnoreCase(key, "ShadowModel")){
         if(aEqualsIgnoreCase(value, "DualCone")){
-            forceModel_.srp_.shadowModel_ = EShadowModel::eDualCone;
+            forceModel_.srp().shadowModel_ = EShadowModel::eDualCone;
         } else if(aEqualsIgnoreCase(value, "Cylindrical")){
-            forceModel_.srp_.shadowModel_ = EShadowModel::eCylindrical;
+            forceModel_.srp().shadowModel_ = EShadowModel::eCylindrical;
         } else if(aEqualsIgnoreCase(value, "None")){
-            forceModel_.srp_.shadowModel_ = EShadowModel::eNone;
+            forceModel_.srp().shadowModel_ = EShadowModel::eNone;
         }else{
             // @todo 处理其他阴影模型
         }
@@ -264,7 +264,7 @@ errc_t MotionHPOPSax::keyValue(StringView key, const ValueView &value)
         // @todo 处理EclipsingBodies
     }
     else if(aEqualsIgnoreCase(key, "AtmAltForEclipse")){
-        forceModel_.srp_.atmAltForEclipse_ = value.toDouble();
+        forceModel_.srp().atmAltForEclipse_ = value.toDouble();
     }
     else if(aEqualsIgnoreCase(key, "SRPModel")){
         // @todo 处理SRPModel
@@ -295,25 +295,29 @@ errc_t MotionHPOPSax::keyValue(StringView key, const ValueView &value)
         if(values.size() == 0) return 0;
         // 处理三体引力
         auto body = aGetBody(values[0]);
+        ThirdBodyForce* thirdBodyForce{nullptr};
         if(body){
-            ThirdBodyForce thirdBody;
-            thirdBody.body_ = body;
-            forceModel_.thirdBodies_.push_back(thirdBody);
+            thirdBodyForce = forceModel_.addThirdBody(body);
         }else{
             return 0;
         }
-        if(values.size() == 1) return 0;
-        StringView gmSource = values[1];
-        if(aEqualsIgnoreCase(gmSource, "CbValue")){
-            forceModel_.thirdBodies_.back().gmSource_ = EGMSource::eCbValue;
-        } else if(aEqualsIgnoreCase(gmSource, "JplDE")){
-            forceModel_.thirdBodies_.back().gmSource_ = EGMSource::eJplDE;
-        } else if(aEqualsIgnoreCase(gmSource, "SpecifiedValue")){
-            forceModel_.thirdBodies_.back().gmSource_ = EGMSource::eSpecifiedValue;
-        }
-        if(values.size() == 2) return 0;
-        if(forceModel_.thirdBodies_.back().gmSource_ == EGMSource::eSpecifiedValue){
-            forceModel_.thirdBodies_.back().specifiedGM_ = aParseDouble(values[2]);
+        if(thirdBodyForce)
+        {
+            thirdBodyForce->setAttractionType(EBodyAttractionType::ePointMass);
+            if(values.size() == 1) return 0;
+            StringView gmSource = values[1];
+            auto& pointMass = thirdBodyForce->pointMass();
+            if(aEqualsIgnoreCase(gmSource, "CbValue")){
+                pointMass.gmSource_ = EGMSource::eBodyGravity;
+            } else if(aEqualsIgnoreCase(gmSource, "JplDE")){
+                pointMass.gmSource_ = EGMSource::eJplDE;
+            } else if(aEqualsIgnoreCase(gmSource, "SpecifiedValue")){
+                pointMass.gmSource_ = EGMSource::eSpecifiedValue;
+            }
+            if(values.size() == 2) return 0;
+            if(pointMass.gmSource_ == EGMSource::eSpecifiedValue){
+                pointMass.specifiedGM_ = aParseDouble(values[2]);
+            }
         }
     }
     else if(aEqualsIgnoreCase(key, "EphRefFrame")){

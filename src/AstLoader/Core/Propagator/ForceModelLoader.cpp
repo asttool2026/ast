@@ -62,6 +62,41 @@ errc_t aLoadGravityForce(const Value& value, GravityForce& gravityForce)
     return eNoError;
 }
 
+
+errc_t aLoadPointMassForce(const Value& value, PointMassForce& pointMassForce)
+{
+    std::string type = value["Type"];
+    if(type != "TwoBodyFunc"){
+        aError("unsupported force type '%s'", type.c_str());
+        return eErrorInvalidParam;
+    }
+    pointMassForce.specifiedGM_ = value["Mu"];
+    const std::string gravSource = value["GravSource"];
+    if(gravSource == "Cb File")
+        pointMassForce.gmSource_ = EGMSource::eBodyGravity;
+    else if(gravSource == "DE File")
+        pointMassForce.gmSource_ = EGMSource::eJplDE;
+    else if(gravSource == "User Specified")
+        pointMassForce.gmSource_ = EGMSource::eSpecifiedValue;
+    else{
+        aWarning("unsupported grav source '%s', default to body gravity", gravSource.c_str());
+        pointMassForce.gmSource_ = EGMSource::eBodyGravity;
+    }
+    return eNoError;
+}
+
+errc_t aLoadThirdBodyForce(const Value& value, ThirdBodyForce& thirdBodyForce)
+{
+    std::string type = value["Type"];
+    if(type != "ThirdBodyFunc"){
+        aError("unsupported force type '%s'", type.c_str());
+        return eErrorInvalidParam;
+    }
+    return eNoError;
+}
+
+
+
 static EAtmDensityModel _aStringToAtmDensityModel(const std::string& type)
 {
     if(type == "US_Standard_Atmosphere")
@@ -194,11 +229,15 @@ errc_t aLoadForceModel(const Value& value, HPOPForceModel& forceModel)
     // 加载中心体
     {
         std::string centerBody = value["CentralBody"].toString();
-        forceModel.centerBody_ = aGetBody(centerBody);
-        if(!forceModel.centerBody_)
+        auto body = aGetBody(centerBody);
+        if(body)
+        {
+            forceModel.setCentralBody(body);
+        }
+        else
         {
             aError("central body '%s' not found, use default body 'Earth' instead", centerBody.c_str());
-            forceModel.centerBody_ = aGetEarth();
+            forceModel.setCentralBody(aGetEarth());
         }
     }
     
@@ -218,16 +257,30 @@ errc_t aLoadForceModel(const Value& value, HPOPForceModel& forceModel)
                 aWarning("failed to load gravity force");
             }
         }
+        else if(type == "TwoBodyFunc")
+        {
+            errc_t rc = aLoadPointMassForce(force, forceModel.pointMass());
+            if(rc)
+            {
+                aWarning("failed to load point mass force");
+            }
+        }
         else if(type == "ThirdBodyFunc")
         {
-            // todo 
+            ThirdBodyForce thirdBody;
+            errc_t rc = aLoadThirdBodyForce(force, thirdBody);
+            if(rc)
+            {
+                aWarning("failed to load third body force");
+            }
+            forceModel.addThirdBody(thirdBody);
         }
         else
         {
             std::string category = force["Category"];
             if(category == "Atmospheric Models")
             {
-                errc_t rc = aLoadDragForce(force, forceModel.drag_);
+                errc_t rc = aLoadDragForce(force, forceModel.drag());
                 if(rc)
                 {
                     aWarning("failed to load drag force");
@@ -235,7 +288,7 @@ errc_t aLoadForceModel(const Value& value, HPOPForceModel& forceModel)
             }
             else if(category == "SRP Models")
             {
-                errc_t rc = aLoadSolarRadiationPressure(force, forceModel.srp_, forceModel.centerBody_);
+                errc_t rc = aLoadSolarRadiationPressure(force, forceModel.srp(), forceModel.centralBody());
                 if(rc)
                 {
                     aWarning("failed to load solar radiation pressure");

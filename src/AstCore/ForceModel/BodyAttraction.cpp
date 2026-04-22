@@ -20,30 +20,25 @@
 
 #include "BodyAttraction.hpp"
 #include "GravityForce.hpp"
-#include "TwoBodyForce.hpp"
+#include "PointMassForce.hpp"
 #include "ThirdBodyForce.hpp"
 
 AST_NAMESPACE_BEGIN
 
-GravityForce* BodyAttraction::toGravityForce() const{
+GravityForce* BodyAttraction::asGravityForce() const{
     if(isAttractionType(EBodyAttractionType::eGravity)){
         return static_cast<GravityForce*>(const_cast<BodyAttraction*>(this));
     }
     return nullptr;
 }
 
-TwoBodyForce* BodyAttraction::toTwoBodyForce() const{
-    if(isAttractionType(EBodyAttractionType::eTwoBody)){
-        return static_cast<TwoBodyForce*>(const_cast<BodyAttraction*>(this));
+PointMassForce* BodyAttraction::asPointMassForce() const{
+    if(isAttractionType(EBodyAttractionType::ePointMass)){
+        return static_cast<PointMassForce*>(const_cast<BodyAttraction*>(this));
     }
     return nullptr;
 }
 
-ThirdBodyForce* BodyAttraction::toThirdBodyForce() const{
-    if(isAttractionType(EBodyAttractionType::eThirdBody)){
-        return static_cast<ThirdBodyForce*>(const_cast<BodyAttraction*>(this));
-    }
-    return nullptr;
-}
+
 
 AST_NAMESPACE_END

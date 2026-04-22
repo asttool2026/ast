@@ -87,8 +87,8 @@ int FreeRreturnTargetFunction::operator()(const double* variable, double* constr
     double& cnstrAltOfEarthPeri    = constraint[2];     ///< 近地点高度约束  (单位：m)
     // 全程力模型
     HPOPForceModel forceModel;
-    forceModel.useMoonGravity_ = true;
-    forceModel.moonGravity_ = 4.90280030555540e12;
+    forceModel.useMoonGravity(true);
+    forceModel.setMoonGravity(4.90280030555540e12);
     forceModel.gravity().maxDegree_ = 0;
     forceModel.gravity().maxOrder_ = 0;
     forceModel.gravity().model_ = "JGM3";
