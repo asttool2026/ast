@@ -52,6 +52,8 @@ public:
     {
         if(other.get())
             this->reset(other.get()->clone());
+        else
+            this->reset(nullptr);
         return *this;
     }
     ClonePtr& operator=(ClonePtr&& other)

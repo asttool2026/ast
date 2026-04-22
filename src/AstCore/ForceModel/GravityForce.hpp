@@ -53,7 +53,7 @@ public:
     bool useSecularVariations_{false};                     ///< 是否考虑引力场的长期变化
     // 固体潮汐配置参数
     ESolidTideType solidTideType_{ESolidTideType::eNone};  ///< 潮汐类型
-    bool includeTimeDependentSolidTides{false};            ///< 是否考虑时间依赖的潮汐
+    bool includeTimeDependentSolidTides_{false};            ///< 是否考虑时间依赖的潮汐
     double minAmplitudeSolidTides_{0.0};                   ///< 最小潮汐振幅
     bool truncateSolidTides_{false};                       ///< 是否截断潮汐
     // 海洋潮汐配置参数

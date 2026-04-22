@@ -39,7 +39,7 @@ errc_t aLoadGravityForce(const Value& value, GravityForce& gravityForce)
 
     // 固体潮汐配置参数
     gravityForce.truncateSolidTides_ = value["TruncateSolidTides"];
-    gravityForce.includeTimeDependentSolidTides = value["IncludeTimeDependentSolidTides"];
+    gravityForce.includeTimeDependentSolidTides_ = value["IncludeTimeDependentSolidTides"];
     gravityForce.minAmplitudeSolidTides_ = value["SolidTideMinAmp"];
     std::string solidTideType = value["SolidTideType"];
     if(solidTideType == "Permanent tide only")

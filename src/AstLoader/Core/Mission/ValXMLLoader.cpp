@@ -181,7 +181,7 @@ public:
                 errc_t rc = aQuantityParse(context.text_, quantity);
                 // 很奇怪，有些数量值会以""结尾，导致解析数量值时失败，例如： 2.2 ""
                 if(rc){
-                    double d;
+                    double d = 0.0;
                     StringView text = aStripAsciiWhitespace(context.text_);
                     rc = aParseDouble(text, d);
                     if(!text.ends_with("\"\"") || rc != eNoError)

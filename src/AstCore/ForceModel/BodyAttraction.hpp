@@ -64,11 +64,13 @@ public:
     
     /// @brief 尝试将引力模型转换为重力场模型
     /// @return 重力场模型指针
-    GravityForce* asGravityForce() const;
+    const GravityForce* asGravityForce() const;
+    GravityForce* asGravityForce();
 
     /// @brief 尝试将引力模型转换为点质量引力模型
     /// @return 点质量引力模型指针
-    PointMassForce* asPointMassForce() const;
+    const PointMassForce* asPointMassForce() const;
+    PointMassForce* asPointMassForce();
 };
 
 

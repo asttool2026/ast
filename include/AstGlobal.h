@@ -347,6 +347,7 @@ class SpacecraftState;
 
 class Object;                ///< 对象
 class Class;                 ///< 类
+class Property;              ///< 属性
 using Type = Class;          ///< 类型
 
 class TimePoint;            ///< 时间点

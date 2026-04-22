@@ -42,6 +42,7 @@ if has_config("check_warnings") then
 end
 
 -- 设置编译策略
+set_policy("run.autobuild", true)                           -- 自动编译，当运行目标时自动编译
 set_policy("build.progress_style", "multirow")              -- 编译进度条显示为多行
 -- set_policy("package.precompiled", false)                 -- 禁止从远程下载预编译的第三方库，而是在本地从源代码编译
 

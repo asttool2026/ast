@@ -31,7 +31,7 @@ AST_NAMESPACE_BEGIN
 */
 
 /// @brief 相对论修正模型
-class RelativityCorrection: public BodyAttraction
+class RelativityCorrection: public ForceModel
 {
 public:
     

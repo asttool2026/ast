@@ -25,16 +25,24 @@
 
 AST_NAMESPACE_BEGIN
 
-GravityForce* BodyAttraction::asGravityForce() const{
+const GravityForce* BodyAttraction::asGravityForce() const{
+    return const_cast<BodyAttraction*>(this)->asGravityForce();
+}
+
+GravityForce* BodyAttraction::asGravityForce(){
     if(isAttractionType(EBodyAttractionType::eGravity)){
-        return static_cast<GravityForce*>(const_cast<BodyAttraction*>(this));
+        return static_cast<GravityForce*>(this);
     }
     return nullptr;
 }
 
-PointMassForce* BodyAttraction::asPointMassForce() const{
+const PointMassForce* BodyAttraction::asPointMassForce() const{
+    return const_cast<BodyAttraction*>(this)->asPointMassForce();
+}
+
+PointMassForce* BodyAttraction::asPointMassForce(){
     if(isAttractionType(EBodyAttractionType::ePointMass)){
-        return static_cast<PointMassForce*>(const_cast<BodyAttraction*>(this));
+        return static_cast<PointMassForce*>(this);
     }
     return nullptr;
 }

@@ -134,7 +134,7 @@ errc_t MotionHPOPSax::keyValue(StringView key, const ValueView &value)
         }
     }
     else if(aEqualsIgnoreCase(key, "IncludeTimeDependSolidTides")){
-        forceModel_.gravity().includeTimeDependentSolidTides = value.toBool();
+        forceModel_.gravity().includeTimeDependentSolidTides_ = value.toBool();
     }
     else if(aEqualsIgnoreCase(key, "MinAmplitudeSolidTides")){
         forceModel_.gravity().minAmplitudeSolidTides_ = value.toDouble();
