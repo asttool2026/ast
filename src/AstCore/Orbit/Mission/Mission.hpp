@@ -1,9 +1,9 @@
 ///
-/// @file      InitialState.hpp
+/// @file      Mission.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-15
+/// @date      2026-04-22
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,28 +21,16 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "MissionCommand.hpp"
-#include "AstCore/SpacecraftState.hpp"
-#include "Segment.hpp"
+#include "Break.hpp"
+#include "Continue.hpp"
+#include "End.hpp"
+#include "Exit.hpp"
+#include "InitialState.hpp"
+#include "Maneuver.hpp"
+#include "Propagate.hpp"
+#include "Return.hpp"
+#include "Sequence.hpp"
+#include "Stop.hpp"
 
-AST_NAMESPACE_BEGIN
-
-/*!
-    @addtogroup 
-    @{
-*/
-
-/// @brief 初始状态任务
-/// @details 初始状态任务负责设置初始状态参数，确保任务序列的执行从正确的状态开始
-class AST_CORE_API InitialState: public Segment
-{
-public:
-    InitialState();
-    ~InitialState() = default;
-public:
-    errc_t execute() override;
-};
-
-/*! @} */
-
-AST_NAMESPACE_END
+#include "MissionModerator.hpp"
+#include "MissionCommandVisitor.hpp"

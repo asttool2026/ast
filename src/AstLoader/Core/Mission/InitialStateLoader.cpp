@@ -82,9 +82,11 @@ errc_t aLoadInitialState(const Value& dictRoot, InitialState& initialState)
     }
     // 似乎不用判断"CoordinateType"字段，因为默认存的都是Cartesian坐标
     // auto& dictCoordinateType = dictRoot["CoordinateType"];
-    auto& spacecraftState = initialState.getInitialState();
     // if(!dictCoordinateType.isNull())
+    auto spacecraftStatePtr = initialState.getInitialState();
+    if(spacecraftStatePtr)
     {
+        auto& spacecraftState = *spacecraftStatePtr;
         HState state;
         auto& dictOrbitState = dictRoot["InitialState"]["Orbit_State"];
         // std::string coordType = dictCoordinateType.toString();

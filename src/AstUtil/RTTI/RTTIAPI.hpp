@@ -73,6 +73,19 @@ AST_UTIL_API Object* aGetClassDefaultObject(Class* cls);
 /// @return 对象指针
 AST_UTIL_CAPI Object* aNewObject(StringView name, Object* parentScope=nullptr);
 
+
+/// @brief 创建对象，返回裸指针
+/// @details 根据类名创建对象
+/// @param parentScope 父作用域指针
+/// @return 对象指针
+template<typename T>
+T* aNewObject(Object* parentScope=nullptr)
+{
+    T* obj = new T();
+    aSetParentScope(obj, parentScope);
+    return obj;
+}
+
 /// @brief 删除对象
 /// @details 用于释放对象裸指针对应的内存
 /// @warning 不要用于智能指针管理的对象，否则会导致未定义行为
