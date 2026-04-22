@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstMath/ODEEventDetector.hpp"
+#include "AstUtil/Object.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -32,7 +33,7 @@ class SpacecraftState;
 /// @brief 事件检测基类
 /// 事件检测基类，用于检测事件是否发生。
 /// 参考orekit的EventDetector类
-class AST_CORE_API EventDetector
+class AST_CORE_API EventDetector: public Object
 {
 public:
     using EDirection = ODEEventDetector::EDirection;

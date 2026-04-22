@@ -1,9 +1,9 @@
 ///
-/// @file      ForceModel.hpp
+/// @file      UiHPOPForceModel.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-21
+/// @date      2026-04-22
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,41 +21,26 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstUtil/Object.hpp"
+#include "AstGUI/UiObject.hpp"
 
 AST_NAMESPACE_BEGIN
 
 /*!
-    @addtogroup ForceModel
+    @addtogroup 
     @{
 */
 
-/// @brief 太阳位置
-enum class ESunPosition
-{
-    eTrue,
-    eApparentSunToTrueCB,
-    eApparent,
-};
+class HPOPForceModel;
 
-/// @brief 引力常数来源
-enum class EGMSource
-{
-    eBodyGravity,           ///< 来自天体重力场
-    eJplDE,                 ///< 来自JPL DE文件
-    eSpecifiedValue,        ///< 用户指定的引力常数
-};
-
-
-/// @brief 力模型
-/// @details 力模型用于表示动力学系统中的摄动力，例如重力、大气阻力、太阳光压、三体摄动等
-class AST_CORE_API ForceModel: public Object
+class AST_GUI_API UiHPOPForceModel: public UiObject
 {
 public:
-    ForceModel() = default;
-    virtual ~ForceModel() = default;
-
+    UiHPOPForceModel() = default;
+    ~UiHPOPForceModel() = default;
+public:
+    HPOPForceModel* getHPOPForceModel() const;
 };
+
 
 /*! @} */
 
