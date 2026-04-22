@@ -46,7 +46,7 @@ class AST_CORE_API HPOPEquation : public OrdinaryDifferentialEquation
 {
 public:
     HPOPEquation();
-    HPOPEquation(const HPOPForceModel& forceModel);
+    HPOPEquation(HPOPForceModel&& forceModel);
     ~HPOPEquation();
 
     int getDimension() const final;
@@ -57,6 +57,7 @@ public:
     void setEpoch(const TimePoint& epoch){ epoch_ = epoch; }
 
     /// @brief 设置HPOP力模型
+    errc_t setForceModel(HPOPForceModel&& forceModel);
     errc_t setForceModel(const HPOPForceModel& forceModel);
 
     /// @brief 设置预报坐标系

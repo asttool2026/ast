@@ -1,5 +1,5 @@
 ///
-/// @file      RelativityCorrection.hpp
+/// @file      NumericalIntegratorLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,7 +21,8 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "ForceModel.hpp"
+#include "AstMath/ODEIntegrator.hpp"
+#include "AstUtil/ScopedPtr.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,12 +31,11 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 相对论修正模型
-class RelativityCorrection: public ForceModel
-{
-public:
-    
-};
+/// @brief 加载数值积分器
+/// @param value 值
+/// @param integrator 积分器指针
+/// @return 错误码
+errc_t aLoadNumericalIntegrator(const Value& value, ScopedPtr<ODEIntegrator> &integrator);
 
 
 /*! @} */

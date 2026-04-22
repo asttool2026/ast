@@ -37,16 +37,10 @@ AST_NAMESPACE_BEGIN
 class AST_CORE_API InitialState: public Segment
 {
 public:
-    InitialState() = default;
+    InitialState();
     ~InitialState() = default;
 public:
     errc_t execute() override;
-    
-    /// @brief 获取初始状态参数
-    const SpacecraftState& getInitialState() const{return initialState_;}
-    SpacecraftState& getInitialState(){return initialState_;}
-private:
-    SpacecraftState initialState_;      ///< 初始状态参数
 };
 
 /*! @} */

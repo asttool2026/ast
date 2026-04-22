@@ -1,5 +1,5 @@
 ///
-/// @file      RelativityCorrection.hpp
+/// @file      TwoBody.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,7 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "ForceModel.hpp"
+#include "BodyAttraction.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,11 +30,15 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 相对论修正模型
-class RelativityCorrection: public ForceModel
+/// @brief 点质量引力模型/
+class PointMassForce: public BodyAttraction
 {
 public:
-    
+    EBodyAttractionType getBodyAttractionType() const override{return EBodyAttractionType::ePointMass;}
+    BodyAttraction* clone() const override{return new PointMassForce(*this);}
+public:
+    EGMSource gmSource_{EGMSource::eBodyGravity};       ///< 引力常数来源
+    double specifiedGM_{0.0};                           ///< 指定的引力常数
 };
 
 

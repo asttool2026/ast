@@ -1,5 +1,5 @@
 ///
-/// @file      RelativityCorrection.hpp
+/// @file      PropagatorLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,7 +21,6 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "ForceModel.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,12 +29,19 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 相对论修正模型
-class RelativityCorrection: public ForceModel
-{
-public:
-    
-};
+class HPOP;
+
+/// @brief 加载轨道预报器
+/// @param filename 轨道预报器文件配置文件
+/// @param propagator 轨道预报器
+/// @return 错误码
+AST_LOADER_API errc_t aLoadPropagator(StringView filename, HPOP& propagator);
+
+/// @brief 载入轨道预报器
+/// @param value 配置值
+/// @param propagator 轨道预报器
+/// @return 错误码
+AST_LOADER_API errc_t aLoadPropagator(const Value& value, HPOP& propagator);
 
 
 /*! @} */

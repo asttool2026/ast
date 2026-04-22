@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "MissionCommand.hpp"
+#include "AstCore/SpacecraftState.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -38,14 +39,27 @@ AST_NAMESPACE_BEGIN
 class AST_CORE_API Segment: public MissionCommand
 {
 public:
-    using MissionCommand::MissionCommand;
+    Segment();
     ~Segment() override = default;
 public:
     /// @brief 执行任务
     /// @return 错误码
-    virtual errc_t execute() = 0;
+    virtual errc_t execute() override = 0;
+public:
+    /// @brief 设置初始状态
+    /// @param initialState 初始状态
+    void setInitialState(SpacecraftState* initialState){initialState_ = initialState;}
+
+    /// @brief 获取初始状态
+    /// @return 初始状态
+    SpacecraftState* getInitialState() const{return initialState_.get();}
+
+    /// @brief 获取最终状态
+    /// @return 最终状态
+    SpacecraftState* getFinalState() const{return finalState_.get();}
 private:
-    
+    WeakPtr<SpacecraftState> initialState_;     ///< 初始状态
+    SharedPtr<SpacecraftState> finalState_;     ///< 最终状态
 };
 
 

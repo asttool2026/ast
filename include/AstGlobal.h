@@ -340,9 +340,14 @@ class Quaternion;            ///< 四元数
 class Euler;                 ///< 欧拉角
 
 class CartState;             ///< 直角坐标
+class State;
+class StateCartesian;
+class StateKeplerian;
+class SpacecraftState;
 
 class Object;                ///< 对象
 class Class;                 ///< 类
+class Property;              ///< 属性
 using Type = Class;          ///< 类型
 
 class TimePoint;            ///< 时间点

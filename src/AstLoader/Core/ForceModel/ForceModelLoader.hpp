@@ -1,5 +1,5 @@
 ///
-/// @file      RadiationForce.cpp
+/// @file      ForceModelLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,10 +18,25 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "RadiationForce.hpp"
+#pragma once
+
+#include "AstGlobal.h"
 
 AST_NAMESPACE_BEGIN
 
+/*!
+    @addtogroup 
+    @{
+*/
 
+class HPOPForceModel;
+
+/// @brief 加载力模型
+/// @param value 值
+/// @param forceModel 输出的力模型
+/// @return 错误码
+errc_t aLoadForceModel(const Value& value, HPOPForceModel& forceModel);
+
+/*! @} */
 
 AST_NAMESPACE_END
