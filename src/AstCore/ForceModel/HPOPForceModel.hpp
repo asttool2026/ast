@@ -57,6 +57,9 @@ public:
     bool useSRP() const{return useSRP_;}
     void useSRP(bool useSRP){useSRP_ = useSRP;}
 
+    bool useRelativityCorrection() const{return useRelativityCorrection_;}
+    void useRelativityCorrection(bool useRelativityCorrection){useRelativityCorrection_ = useRelativityCorrection;}
+
     /// @brief 获取中心天体
     Body* centralBody() const{return centralBody_.get();}
     /// @brief 设置中心天体
@@ -106,6 +109,7 @@ public:
 private:
     bool                        useDrag_{false};                    ///< 是否使用阻力模型
     bool                        useSRP_{false};                     ///< 是否使用太阳辐射压模型
+    bool                        useRelativityCorrection_{false};    ///< 是否使用相对论修正
     SharedPtr<Body>             centralBody_;                       ///< 中心天体
     DragForce                   drag_;                              ///< 大气阻力
     SolarRadiationPressure      srp_;                               ///< 太阳辐射压模型

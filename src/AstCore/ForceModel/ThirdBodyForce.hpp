@@ -34,6 +34,13 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+/// @brief 星历来源
+enum class EEphemerisSource
+{
+    eBodyEphemeris,      ///< 天体星历
+    eJplDE,              ///< JPL DE 星历
+    eJplSpice,           ///< JPL SPICE 星历
+};
 
 
 /// @brief 三体引力模型
@@ -77,8 +84,15 @@ public:
 
     /// @brief 设置三体
     void setBody(CelestialBody* body);
+
+    /// @brief 获取星历来源
+    EEphemerisSource ephemerisSource() const{return ephemerisSource_;}
+
+    /// @brief 设置星历来源
+    void setEphemerisSource(EEphemerisSource source){ephemerisSource_ = source;}
 private:
     HCelestialBody body_;                                                       ///< 天体
+    EEphemerisSource ephemerisSource_{EEphemerisSource::eBodyEphemeris};        ///< 星历来源
     EBodyAttractionType attractionType_{EBodyAttractionType::ePointMass};       ///< 引力类型
     PointMassForce pointMass_{};                                                ///< 点质量引力模型
     GravityForce gravity_{};                                                    ///< 引力场模型

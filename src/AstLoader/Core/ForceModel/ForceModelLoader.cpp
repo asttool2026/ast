@@ -66,7 +66,7 @@ errc_t aLoadGravityForce(const Value& value, GravityForce& gravityForce)
 errc_t aLoadPointMassForce(const Value& value, PointMassForce& pointMassForce)
 {
     std::string type = value["Type"];
-    if(type != "TwoBodyFunc"){
+    if(type != "TwoBodyFunc" && type != "ThirdBodyFunc"){
         aError("unsupported force type '%s'", type.c_str());
         return eErrorInvalidParam;
     }
@@ -91,6 +91,61 @@ errc_t aLoadThirdBodyForce(const Value& value, ThirdBodyForce& thirdBodyForce)
     if(type != "ThirdBodyFunc"){
         aError("unsupported force type '%s'", type.c_str());
         return eErrorInvalidParam;
+    }
+
+    // 天体
+    const std::string bodyName = value["ThirdBody"];
+    auto body = aGetBody(bodyName);
+    if(body)
+        thirdBodyForce.setBody(body);
+    else
+    {
+        aError("third body '%s' not found", bodyName.c_str());
+    }
+
+    // 三体星历来源
+    const std::string ephemerisSource = value["EphemerisSource"];
+    if(ephemerisSource == "Cb File")
+        thirdBodyForce.setEphemerisSource(EEphemerisSource::eBodyEphemeris);
+    else if(ephemerisSource == "DE File")
+        thirdBodyForce.setEphemerisSource(EEphemerisSource::eJplDE);
+    else if(ephemerisSource == "SPICE Body Centered")
+        thirdBodyForce.setEphemerisSource(EEphemerisSource::eJplSpice);
+    else{
+        aWarning("unsupported ephemeris source '%s', default to Body Ephemeris", ephemerisSource.c_str());
+        thirdBodyForce.setEphemerisSource(EEphemerisSource::eBodyEphemeris);
+    }
+
+    // 三体引力模式
+    std::string mode = value["Mode"];
+    EBodyAttractionType attractionType = EBodyAttractionType::eUnknown;
+    if(mode == "Point Mass")
+    {
+        attractionType = EBodyAttractionType::ePointMass;
+    }
+    else if(mode == "Gravity Field")
+    {
+        attractionType = EBodyAttractionType::eGravity;
+    }
+    else
+    {
+        aWarning("unsupported attraction type '%s', default to point mass", mode.c_str());
+        attractionType = EBodyAttractionType::ePointMass;
+    }
+    thirdBodyForce.setAttractionType(attractionType);
+
+    // 引力场模式的配置参数
+    errc_t rc = aLoadGravityForce(value["GravityField"], thirdBodyForce.gravity());
+    if(rc != eNoError)
+    {
+        aWarning("failed to load gravity force model");
+    }
+    
+    // 点质量模式的配置参数
+    rc = aLoadPointMassForce(value, thirdBodyForce.pointMass());
+    if(rc != eNoError)
+    {
+        aWarning("failed to load point mass force model");
     }
     return eNoError;
 }
@@ -274,6 +329,26 @@ errc_t aLoadForceModel(const Value& value, HPOPForceModel& forceModel)
                 aWarning("failed to load third body force");
             }
             forceModel.addThirdBody(thirdBody);
+        }
+        else if(type == "GenRelativityFunc")
+        {
+            forceModel.useRelativityCorrection(true);
+        }
+        else if(type == "RadPressureFunc")
+        {
+            aWarning("RadPressure force is not supported");
+        }
+        else if(type == "YarkovskyFunc")
+        {
+            aWarning("Yarkovsky force is not supported");
+        }
+        else if(type == "StateTransFunc")
+        {
+            aWarning("State Transition Matrix is not supported");
+        }
+        else if(type == "HPOPPluginFunc")
+        {
+            aWarning("HPOPPlugin force is not supported");
         }
         else
         {
