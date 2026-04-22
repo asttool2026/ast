@@ -91,6 +91,14 @@ ValArray<T, NDIM>::~ValArray()
 template<typename T, size_t NDIM>
 void ValArray<T, NDIM>::resize(size_t size)
 {
+    /*
+    @fixme @see pr60
+    The resize method is not exception-safe. 
+    It modifies the internal state (dims_[0]) before the memory allocation new T[size]. 
+    If the allocation throws an exception (e.g., std::bad_alloc), 
+    the object will be left in an inconsistent state where the reported size does not match the actual allocated buffer, 
+    leading to potential out-of-bounds access.
+    */
     size_t old_size = this->size();
     T* old_data = data_;
     dims_[0] = size;
