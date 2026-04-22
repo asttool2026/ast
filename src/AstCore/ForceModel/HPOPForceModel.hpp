@@ -28,6 +28,7 @@
 #include "AstCore/ThirdBodyForce.hpp"
 #include "AstCore/SolarRadiationPressure.hpp"
 #include "AstCore/RelativityCorrection.hpp"
+#include "AstUtil/Object.hpp"
 #include "AstUtil/Constants.h"
 #include "AstUtil/ScopedPtr.hpp"
 #include "AstUtil/ClonePtr.hpp"
@@ -43,7 +44,7 @@ AST_NAMESPACE_BEGIN
 
 
 /// @brief 高精度轨道预报力模型
-class AST_CORE_API HPOPForceModel
+class AST_CORE_API HPOPForceModel: public Object
 {
 public:
     HPOPForceModel();

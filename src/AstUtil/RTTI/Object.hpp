@@ -298,12 +298,10 @@ protected:
     friend class ObjectManager;
     virtual ~Object();
     Object(const Object& obj)
-        : refcnt_(0)
-        , weakrefcnt_(1)
+        : Object()
     {}
-    Object& operator=(const Object& obj)
+    Object& operator=(const Object&)
     {
-        A_UNUSED(obj);
         return *this;
     }
 public: // 实参依赖查找（ADL）

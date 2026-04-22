@@ -39,7 +39,7 @@ enum class ESolidTideType{
 };
 
 
-class GravityForce : public BodyAttraction
+class AST_CORE_API GravityForce : public BodyAttraction
 {
 public:
     GravityForce() = default;
@@ -47,6 +47,7 @@ public:
     EBodyAttractionType getBodyAttractionType() const override{return EBodyAttractionType::eGravity;}
     BodyAttraction* clone() const override{return new GravityForce(*this);}
 public:
+    // 模型与阶次
     std::string model_{};                                  ///< 中心天体重力场模型(模型名称或者引力场文件路径)
     int maxDegree_{2};                                     ///< 中心天体重力场计算阶数
     int maxOrder_{0};                                      ///< 中心天体重力场计算次数

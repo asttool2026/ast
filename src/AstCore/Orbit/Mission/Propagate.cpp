@@ -19,11 +19,16 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "Propagate.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t Propagate::execute()
 {
+    auto initialState = this->getInitialState(); AST_CHECK_NULLPTR(initialState);
+    auto finalState = this->getFinalState();     AST_CHECK_NULLPTR(finalState);
+    auto propagator = this->getPropagator();     AST_CHECK_NULLPTR(propagator);
+    
     return 0;
 }
 
