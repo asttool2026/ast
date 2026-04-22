@@ -45,7 +45,7 @@ public:
     }
     ClonePtr(ClonePtr&& other)
     {
-        m_pointer = other.m_pointer;
+        this->m_pointer = other.m_pointer;
         other.m_pointer = nullptr;
     }
     ClonePtr& operator=(const ClonePtr& other)
@@ -56,7 +56,7 @@ public:
     }
     ClonePtr& operator=(ClonePtr&& other)
     {
-        std::swap(m_pointer, other.m_pointer);
+        std::swap(this->m_pointer, other.m_pointer);
         return *this;
     }
     ClonePtr& operator=(T* ptr)

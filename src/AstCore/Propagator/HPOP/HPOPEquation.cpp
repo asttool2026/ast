@@ -126,7 +126,7 @@ errc_t HPOPEquation::initBlocks(const HPOPForceModel &forceModel)
         else if(auto pointMassPtr = bodyAttraction.asPointMassForce())
         {
             auto& pointMass = *pointMassPtr;
-            double gm;
+            double gm{};
             if(pointMass.gmSource_ == EGMSource::eSpecifiedValue)
             {
                 gm = pointMass.specifiedGM_;
@@ -138,6 +138,9 @@ errc_t HPOPEquation::initBlocks(const HPOPForceModel &forceModel)
             else if(pointMass.gmSource_ == EGMSource::eJplDE)
             {
                 aWarning("unsupported feature: JPL DE gravity gm source, use body gm instead.");
+                gm = body->getGM();
+            }else{
+                aError("unsupported gm source type: %d, use body gm instead.", pointMass.gmSource_);
                 gm = body->getGM();
             }
             this->addBlock(new BlockTwoBody(gm));

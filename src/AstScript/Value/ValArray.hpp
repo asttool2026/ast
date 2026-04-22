@@ -91,7 +91,7 @@ ValArray<T, NDIM>::~ValArray()
 template<typename T, size_t NDIM>
 void ValArray<T, NDIM>::resize(size_t size)
 {
-    size_t old_size = size();
+    size_t old_size = this->size();
     T* old_data = data_;
     dims_[0] = size;
     for(size_t i = 1; i < NDIM; ++i)
