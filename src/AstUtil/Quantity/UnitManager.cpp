@@ -74,6 +74,9 @@ UnitManager::UnitManager()
     addUnit(units::Pa);
 
     addUnit(units::K);
+
+    addUnit("unitValue", Unit::None());
+    addUnit(Unit::Percent());
 }
 
 UnitManager::~UnitManager()

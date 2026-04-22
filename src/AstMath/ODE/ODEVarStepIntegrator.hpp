@@ -44,8 +44,42 @@ public:
 
     /// @brief 设置最大绝对误差
     void setMaxAbsErr(double maxAbsErr){maxAbsErr_ = maxAbsErr;};
+
     /// @brief 设置最大相对误差
     void setMaxRelErr(double maxRelErr){maxRelErr_ = maxRelErr;};
+
+    /// @brief 设置最大迭代次数
+    void setMaxIterations(int maxIterations){maxStepAttempts_ = maxIterations;};
+    int getMaxIterations() const{return maxStepAttempts_;};
+
+    /// @brief 设置最大步长
+    void setMaxStepSize(double maxStepSize){maxStepSize_ = maxStepSize;};
+    double getMaxStepSize() const{return maxStepSize_;};
+
+    /// @brief 设置最小步长
+    void setMinStepSize(double minStepSize){minStepSize_ = minStepSize;};
+    double getMinStepSize() const{return minStepSize_;};
+
+    /// @brief 设置低安全系数
+    void setSafetyCoeffLow(double safetyCoeffLow){safetyCoeffLow_ = safetyCoeffLow;};
+    double getSafetyCoeffLow() const{return safetyCoeffLow_;};
+
+    /// @brief 设置高安全系数
+    void setSafetyCoeffHigh(double safetyCoeffHigh){safetyCoeffHigh_ = safetyCoeffHigh;};
+    double getSafetyCoeffHigh() const{return safetyCoeffHigh_;};
+
+
+    /// @brief 设置是否使用最小步长
+    void setUseMinStep(bool useMinStep){useMinStep_ = useMinStep;};
+    bool getUseMinStep() const{return useMinStep_;};
+
+    /// @brief 设置是否使用最大步长
+    void setUseMaxStep(bool useMaxStep){useMaxStep_ = useMaxStep;};
+    bool getUseMaxStep() const{return useMaxStep_;};
+
+    /// @brief 设置是否使用固定步长
+    // void setUseFixedStep(bool useFixedStep){useFixedStep_ = useFixedStep;};
+    // bool getUseFixedStep() const{return useFixedStep_;};
 
     /// @brief 设置初始步长
     void setInitialStepSize(double initialStepSize){setStepSize(initialStepSize);};

@@ -21,6 +21,9 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "ForceModel.hpp"
+#include "AstCore/CelestialBody.hpp"
+#include <vector>
 
 AST_NAMESPACE_BEGIN
 
@@ -29,6 +32,26 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+
+enum class EShadowModel
+{
+    eNone,
+    eCylindrical,
+    eDualCone,
+};
+
+
+/// @brief 太阳辐射压力
+/// @details 太阳辐射压力模型
+class SolarRadiationPressure: public ForceModel
+{
+public:
+    ESunPosition sunPosition_{ESunPosition::eTrue};      ///< 太阳位置
+    bool detectShadowBoundaries_{false};                 ///< 是否检测阴影边界
+    EShadowModel shadowModel_{EShadowModel::eNone};      ///< 阴影模型类型
+    std::vector<HCelestialBody> eclipsingBodies_;        ///< 遮挡天体列表
+    double atmAltForEclipse_{0.0};                       ///< 用于计算阴影边界的大气高度
+};
 
 
 /*! @} */

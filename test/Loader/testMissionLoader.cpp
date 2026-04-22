@@ -22,7 +22,9 @@
 #include "AstCore/MissionCommand.hpp"
 #include "AstCore/InitialState.hpp"
 #include "AstCore/SpacecraftState.hpp"
+#include "AstCore/HPOP.hpp"
 #include "AstLoader/ValXMLLoader.hpp"
+#include "AstLoader/PropagatorLoader.hpp"
 #include "AstScript/ValDict.hpp"
 #include "AstTest/Test.h"
 
@@ -30,7 +32,7 @@
 AST_USING_NAMESPACE;
 
 
-TEST(MissionCommandLoaderTest, LoadValue)
+TEST(MissionLoaderTest, LoadValue)
 {
     SharedPtr<Value> value;
     std::vector<std::string> files = aTestGetConfigStringVector("STK_VALUE_FILES");
@@ -52,7 +54,7 @@ TEST(MissionCommandLoaderTest, LoadValue)
     }
 }
 
-TEST(MissionCommandLoaderTest, LoadInitialState)
+TEST(MissionLoaderTest, LoadInitialState)
 {
     InitialState initialState;
     std::vector<std::string> files = aTestGetConfigStringVector("STK_INITIALSTATE_FILES");
@@ -65,7 +67,7 @@ TEST(MissionCommandLoaderTest, LoadInitialState)
 }
 
 
-TEST(MissionCommandLoaderTest, LoadMissionCommand)
+TEST(MissionLoaderTest, LoadMissionCommand)
 {
     SharedPtr<MissionCommand> missionCommand;
     std::vector<std::string> files = aTestGetConfigStringVector("STK_SEQUENCE_FILES");
@@ -78,7 +80,7 @@ TEST(MissionCommandLoaderTest, LoadMissionCommand)
     }
 }
 
-TEST(MissionCommandLoaderTest, LoadPropagate)
+TEST(MissionLoaderTest, LoadPropagate)
 {
     SharedPtr<MissionCommand> missionCommand;
     std::vector<std::string> files = aTestGetConfigStringVector("STK_PROPAGATE_FILES");
@@ -86,6 +88,19 @@ TEST(MissionCommandLoaderTest, LoadPropagate)
         printf("loading file: %s\n", file.c_str());
         errc_t rc = aLoadMissionCommand(file, missionCommand);
         EXPECT_TRUE(missionCommand != nullptr);
+        EXPECT_EQ(rc, eNoError);
+        printf("loaded file: %s\n", file.c_str());
+    }
+}
+
+
+TEST(MissionLoaderTest, LoadPropagator)
+{
+    std::vector<std::string> files = aTestGetConfigStringVector("STK_PROPAGATOR_FILES");
+    for(auto& file: files){
+        printf("loading file: %s\n", file.c_str());
+        HPOP propagator;
+        errc_t rc = aLoadPropagator(file, propagator);
         EXPECT_EQ(rc, eNoError);
         printf("loaded file: %s\n", file.c_str());
     }

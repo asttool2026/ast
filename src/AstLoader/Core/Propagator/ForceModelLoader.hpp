@@ -1,5 +1,5 @@
 ///
-/// @file      ThirdBodyForce.hpp
+/// @file      ForceModelLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,8 +21,6 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "BodyAttraction.hpp"
-#include "AstCore/CelestialBody.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -31,27 +29,13 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 引力常数来源
-enum class EGMSource
-{
-    eCbValue,
-    eJplDE,
-    eSpecifiedValue,
-};
+class HPOPForceModel;
 
-
-/// @brief 三体引力模型
-class ThirdBodyForce: public BodyAttraction
-{
-public:
-    EBodyAttractionType getBodyAttractionType() const override{return EBodyAttractionType::eThirdBody;}
-    BodyAttraction* clone() const override{return new ThirdBodyForce(*this);}
-public:
-    HCelestialBody body_;                               ///< 天体
-    EGMSource gmSource_{EGMSource::eCbValue};           ///< 引力常数来源
-    double specifiedGM_{0.0};                           ///< 指定的引力常数
-};
-
+/// @brief 加载力模型
+/// @param value 值
+/// @param forceModel 输出的力模型
+/// @return 错误码
+errc_t aLoadForceModel(const Value& value, HPOPForceModel& forceModel);
 
 /*! @} */
 

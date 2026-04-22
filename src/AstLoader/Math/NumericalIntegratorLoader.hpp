@@ -1,5 +1,5 @@
 ///
-/// @file      ThirdBodyForce.hpp
+/// @file      NumericalIntegratorLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,8 +21,8 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "BodyAttraction.hpp"
-#include "AstCore/CelestialBody.hpp"
+#include "AstMath/ODEIntegrator.hpp"
+#include "AstUtil/ScopedPtr.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -31,26 +31,11 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 引力常数来源
-enum class EGMSource
-{
-    eCbValue,
-    eJplDE,
-    eSpecifiedValue,
-};
-
-
-/// @brief 三体引力模型
-class ThirdBodyForce: public BodyAttraction
-{
-public:
-    EBodyAttractionType getBodyAttractionType() const override{return EBodyAttractionType::eThirdBody;}
-    BodyAttraction* clone() const override{return new ThirdBodyForce(*this);}
-public:
-    HCelestialBody body_;                               ///< 天体
-    EGMSource gmSource_{EGMSource::eCbValue};           ///< 引力常数来源
-    double specifiedGM_{0.0};                           ///< 指定的引力常数
-};
+/// @brief 加载数值积分器
+/// @param value 值
+/// @param integrator 积分器指针
+/// @return 错误码
+errc_t aLoadNumericalIntegrator(const Value& value, ScopedPtr<ODEIntegrator> &integrator);
 
 
 /*! @} */

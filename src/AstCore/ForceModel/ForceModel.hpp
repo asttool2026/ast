@@ -25,9 +25,17 @@
 AST_NAMESPACE_BEGIN
 
 /*!
-    @addtogroup 
+    @addtogroup ForceModel
     @{
 */
+
+/// @brief 太阳位置
+enum class ESunPosition
+{
+    eTrue,
+    eApparentSunToTrueCB,
+    eApparent,
+};
 
 /// @brief 力模型
 /// @details 力模型用于表示动力学系统中的摄动力，例如重力、大气阻力、太阳光压、三体摄动等

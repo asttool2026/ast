@@ -32,10 +32,10 @@ HPOPEquation::HPOPEquation()
 
 }
 
-HPOPEquation::HPOPEquation(const HPOPForceModel& forceModel)
+HPOPEquation::HPOPEquation(HPOPForceModel&& forceModel)
     : HPOPEquation{}
 {
-    this->setForceModel(forceModel);
+    this->setForceModel(std::move(forceModel));
 }
 
 
@@ -83,7 +83,7 @@ errc_t HPOPEquation::initBlocks(const HPOPForceModel &forceModel)
     }
     // 将力模型配置转换为动力学系统的一个个函数块
     BlockDerivative* derivativeBlock;
-    auto& gravity = forceModel.gravity_;
+    auto& bodyAttraction = forceModel.bodyAttraction();
     auto propFrame = this->propFrame_; 
     auto body = propFrame->getBody();   // 尝试获取预报坐标系原点对应的天体
 
@@ -96,28 +96,34 @@ errc_t HPOPEquation::initBlocks(const HPOPForceModel &forceModel)
 
     if(body){
         // 添加重力函数块
-        if(0 == gravity.maxDegree_){
-            GravityFieldHead gfHead;
-            errc_t err = gfHead.load(gravity.model_, body->getDirpath());
-            if(err != eNoError){
-                aError("Failed to load gravity field head from file: '%s'", gravity.model_.c_str());
-                return err;
+        if(auto gravityPtr = bodyAttraction.toGravityForce()){
+            auto& gravity = *gravityPtr;
+            if(0 == gravity.maxDegree_){
+                GravityFieldHead gfHead;
+                errc_t err = gfHead.load(gravity.model_, body->getDirpath());
+                if(err != eNoError){
+                    aError("Failed to load gravity field head from file: '%s'", gravity.model_.c_str());
+                    return err;
+                }
+                derivativeBlock = new BlockTwoBody(gfHead.getGM());
+                this->addBlock(derivativeBlock);
+            }else{
+                GravityField gravityField;
+                errc_t err = gravityField.load(gravity.model_, gravity.maxDegree_, gravity.maxOrder_, body->getDirpath());
+                if(err != eNoError){
+                    aError("Failed to load gravity field from file: '%s'", gravity.model_.c_str());
+                    return err;
+                }
+                auto propAxes = propFrame->getAxes();
+                /// @todo 这里要根据重力场的配置来获取重力场坐标系
+                auto gravityAxes = body->getAxesFixed(); 
+                /// @todo 这里产生了一次重力场系数复制，有一定的优化空间
+                derivativeBlock = new BlockGravity(gravityField, gravity.maxDegree_, gravity.maxOrder_, gravityAxes, propAxes);
+                this->addBlock(derivativeBlock);
             }
-            derivativeBlock = new BlockTwoBody(gfHead.getGM());
-            this->addBlock(derivativeBlock);
         }else{
-            GravityField gravityField;
-            errc_t err = gravityField.load(gravity.model_, gravity.maxDegree_, gravity.maxOrder_, body->getDirpath());
-            if(err != eNoError){
-                aError("Failed to load gravity field from file: '%s'", gravity.model_.c_str());
-                return err;
-            }
-            auto propAxes = propFrame->getAxes();
-            /// @todo 这里要根据重力场的配置来获取重力场坐标系
-            auto gravityAxes = body->getAxesFixed(); 
-            /// @todo 这里产生了一次重力场系数复制，有一定的优化空间
-            derivativeBlock = new BlockGravity(gravityField, gravity.maxDegree_, gravity.maxOrder_, gravityAxes, propAxes);
-            this->addBlock(derivativeBlock);
+            // todo: 处理其他引力模型
+            aWarning("the body attraction model is not a gravity force model, no central body gravity force will be added.");
         }
     }else{
         aWarning("the propagation frame's center is not a celestial body, no gravity force will be added.");
@@ -161,7 +167,13 @@ errc_t HPOPEquation::initializeFromForceModel(const HPOPForceModel &forceModel)
     return dynamicSystem_.initialize();
 }
 
-errc_t HPOPEquation::setForceModel(const HPOPForceModel& forceModel)
+errc_t HPOPEquation::setForceModel(HPOPForceModel&& forceModel)
+{
+    this->forceModel_ = std::move(forceModel);
+    return eNoError;
+}
+
+errc_t HPOPEquation::setForceModel(const HPOPForceModel &forceModel)
 {
     this->forceModel_ = forceModel;
     return eNoError;
