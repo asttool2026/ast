@@ -19,6 +19,8 @@
  
 
 #include "AstCore/Object.hpp"
+#include "AstCore/StateCartesian.hpp"
+#include "AstCore/HPOPForceModel.hpp"
 #include "AstCore/ScopedPtr.hpp"
 #include "AstCore/SharedPtr.hpp"
 #include "AstCore/WeakPtr.hpp"
@@ -28,6 +30,7 @@
 
 AST_USING_NAMESPACE
 
+// 测试SharedPtr
 TEST(SmartPointer, SharedPtr)
 {
     auto obj = new Object{  };
@@ -42,6 +45,7 @@ TEST(SmartPointer, SharedPtr)
     }
 }
 
+// 测试WeakPtr
 TEST(SmartPointer, WeakPtr)
 {
     {
@@ -79,7 +83,7 @@ TEST(SmartPointer, WeakPtr)
     }
 }
 
-
+// 测试ScopedPtr
 TEST(SmartPointer, ScopedPtr)
 {
     ScopedPtr<double> ptr{new double{1.0}};
@@ -91,6 +95,49 @@ TEST(SmartPointer, ScopedPtr)
 }
 
 
+// 测试栈上的对象
+TEST(SmartPointer, StackObject)
+{
+    {
+        WeakPtr<StateCartesian> ptrweak;
+        {
+            StateCartesian obj;
+            ptrweak = &obj;
+        }
+        auto ptr = ptrweak.get();
+        EXPECT_TRUE(ptr == nullptr);
+    }
+    // 测试成员变量
+    {
+        WeakPtr<Object> ptrweak;
+        {
+            HPOPForceModel obj;
+            ptrweak = &obj.drag();
+        }
+        auto ptr = ptrweak.get();
+        EXPECT_TRUE(ptr == nullptr);
+    }
+    // 测试成员变量
+    {
+        WeakPtr<Object> ptrweak;
+        HPOPForceModel obj;
+        ptrweak = &obj.gravity();
+        obj.pointMass();
+        auto ptr = ptrweak.get();
+        EXPECT_TRUE(ptr == nullptr);
+    }
+    // 测试成员变量
+    {
+        WeakPtr<Object> ptrweak;
+        HPOPForceModel obj;
+        ptrweak = &obj.pointMass();
+        auto ptr = ptrweak.get();
+        EXPECT_TRUE(ptr != nullptr);
+    }
+
+}
+
+// 测试文件
 TEST(SmartPointer, FILE)
 {
     // with scopedptr

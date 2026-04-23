@@ -31,13 +31,13 @@ public:
     void setSolarRadiationPressure(SolarRadiationPressure* srp);
     void refreshUi();
     void apply();
+    void applyTo(SolarRadiationPressure* srp);
 protected:
     void setupUi();
     void refreshShadowModel();
     void refreshSunPosition();
     void refreshCelestialBodies();
 private slots:
-    void applyTo(SolarRadiationPressure* srp);
     void addEclipsingBody();
     void removeEclipsingBody();
 private:
@@ -85,8 +85,7 @@ private:
     QLabel* assignedLabel_{nullptr};
     QListWidget* assignedList_{nullptr};
     
-    // 数据
-    SolarRadiationPressure* solarRadiationPressure_{nullptr};
+    
 };
 
 AST_NAMESPACE_END

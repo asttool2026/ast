@@ -195,6 +195,12 @@ Object *Object::getParentScope() const
 
 Object::~Object()
 {
+    /*
+    两个小技巧:
+    - 对于栈上的对象，不要在这里调用decWeakRef，避免对栈内存调用operator delete.
+    - 对于栈上的对象，同样将强引用计数设置为-1，标识对象是否已经被析构了. 
+    */
+    this->refcnt_ = static_cast<uint32_t>(-1); // 标识对象是否被析构. bit mask indicate whether object is destructed.
     if(index_ != static_cast<uint32_t>(INVALID_ID))
     {
         errc_t rc = ObjectManager::CurrentInstance().removeNode(index_);

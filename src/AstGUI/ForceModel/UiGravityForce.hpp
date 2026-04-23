@@ -48,12 +48,12 @@ private:
     QLabel* modelLabel_{nullptr};
     QComboBox* modelCombo_{nullptr};
     UiFilePath* modelFileEdit_{nullptr};
-    QHBoxLayout* maxDegreeLayout_{nullptr};
-    QLabel* maxDegreeLabel_{nullptr};
-    UiInteger* maxDegreeEdit_{nullptr};
-    QHBoxLayout* maxOrderLayout_{nullptr};
-    QLabel* maxOrderLabel_{nullptr};
-    UiInteger* maxOrderEdit_{nullptr};
+    QHBoxLayout* degreeLayout_{nullptr};
+    QLabel* degreeLabel_{nullptr};
+    UiInteger* degreeEdit_{nullptr};
+    QHBoxLayout* orderLayout_{nullptr};
+    QLabel* orderLabel_{nullptr};
+    UiInteger* orderEdit_{nullptr};
     QHBoxLayout* secularVariationsLayout_{nullptr};
     QCheckBox* secularVariationsCheck_{nullptr};
     
@@ -76,18 +76,17 @@ private:
     QGridLayout* oceanTidesLayout_{nullptr};
     QHBoxLayout* useOceanTidesLayout_{nullptr};
     QCheckBox* useOceanTidesCheck_{nullptr};
-    QHBoxLayout* maxDegreeOceanLayout_{nullptr};
-    QLabel* maxDegreeOceanLabel_{nullptr};
-    UiInteger* maxDegreeOceanEdit_{nullptr};
-    QHBoxLayout* maxOrderOceanLayout_{nullptr};
-    QLabel* maxOrderOceanLabel_{nullptr};
-    UiInteger* maxOrderOceanEdit_{nullptr};
+    QHBoxLayout* degreeOceanLayout_{nullptr};
+    QLabel* degreeOceanLabel_{nullptr};
+    UiInteger* degreeOceanEdit_{nullptr};
+    QHBoxLayout* orderOceanLayout_{nullptr};
+    QLabel* orderOceanLabel_{nullptr};
+    UiInteger* orderOceanEdit_{nullptr};
     QHBoxLayout* minAmplitudeOceanLayout_{nullptr};
     QLabel* minAmplitudeOceanLabel_{nullptr};
     UiQuantity* minAmplitudeOceanEdit_{nullptr};
     
-    // 数据
-    GravityForce* gravityForce_{nullptr};
+
 };
 
 AST_NAMESPACE_END

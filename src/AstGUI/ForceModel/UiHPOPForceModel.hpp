@@ -22,6 +22,24 @@
 
 #include "AstGlobal.h"
 #include "AstGUI/UiObject.hpp"
+#include <QVBoxLayout>
+#include <QGroupBox>
+#include <QComboBox>
+#include <QRadioButton>
+#include <QCheckBox>
+#include <QListWidget>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QTabWidget>
+#include <QFileDialog>
+
+#include "AstGUI/UiDragForce.hpp"
+#include "AstGUI/UiSolarRadiationPressure.hpp"
+#include "AstGUI/UiGravityForce.hpp"
+#include "AstGUI/UiThirdBodyForce.hpp"
+#include "AstGUI/UiThirdBodyForceList.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -34,11 +52,46 @@ class HPOPForceModel;
 
 class AST_GUI_API UiHPOPForceModel: public UiObject
 {
+    Q_OBJECT
 public:
-    UiHPOPForceModel() = default;
+    UiHPOPForceModel(Object* object, QWidget *parent = nullptr);
+    UiHPOPForceModel(QWidget *parent = nullptr);
     ~UiHPOPForceModel() = default;
-public:
+
     HPOPForceModel* getHPOPForceModel() const;
+    void setHPOPForceModel(HPOPForceModel* hpop);
+    void refreshUi();
+    void apply();
+protected:
+    void setupUi();
+private slots:
+    void applyTo(HPOPForceModel* hpop);
+private:
+    // 布局
+    QVBoxLayout* mainLayout_;
+    QTabWidget* tabWidget_;
+    
+    // 引力模型标签页
+    QWidget* gravityTab_;
+    QVBoxLayout* gravityTabLayout_;
+    UiGravityForce* gravityWidget_;
+    
+    // 三体引力配置
+    QWidget* thirdBodyTab_;
+    QVBoxLayout* thirdBodyTabLayout_;
+    UiThirdBodyForceList* thirdBodyWidget_;
+    
+    // 大气阻力标签页
+    QWidget* dragTab_;
+    QVBoxLayout* dragTabLayout_;
+    UiDragForce* dragWidget_;
+    
+    // 太阳光压标签页
+    QWidget* srpTab_;
+    QVBoxLayout* srpTabLayout_;
+    UiSolarRadiationPressure* srpWidget_;
+    
+
 };
 
 

@@ -134,32 +134,35 @@ void UiSolarRadiationPressure::setupUi()
 
 SolarRadiationPressure* UiSolarRadiationPressure::getSolarRadiationPressure() const
 {
-    return solarRadiationPressure_;
+    return dynamic_cast<SolarRadiationPressure*>(getObject());
 }
 
 void UiSolarRadiationPressure::setSolarRadiationPressure(SolarRadiationPressure* srp)
 {
-    solarRadiationPressure_ = srp;
-    refreshUi();
+    if (srp) {
+        setObject(srp);
+        refreshUi();
+    }
 }
 
 void UiSolarRadiationPressure::refreshUi()
 {
-    if (!solarRadiationPressure_) return;
+    auto srp = getSolarRadiationPressure();
+    if (!srp) return;
     
     // 模型配置
     crEdit_->setValue(1.0); // 默认值
     areaMassEdit_->setValue(0.02); // 默认值
     
     // 阴影模型
-    shadowModelCombo_->setCurrentIndex(static_cast<int>(solarRadiationPressure_->shadowModel_));
-    boundaryMitigationCheck_->setChecked(solarRadiationPressure_->detectShadowBoundaries_);
-    sunPositionCombo_->setCurrentIndex(static_cast<int>(solarRadiationPressure_->sunPosition_));
-    atmAltEdit_->setValue(solarRadiationPressure_->atmAltForEclipse_);
+    shadowModelCombo_->setCurrentIndex(static_cast<int>(srp->shadowModel_));
+    boundaryMitigationCheck_->setChecked(srp->detectShadowBoundaries_);
+    sunPositionCombo_->setCurrentIndex(static_cast<int>(srp->sunPosition_));
+    atmAltEdit_->setValue(srp->atmAltForEclipse_);
     
     // 遮挡天体
     assignedList_->clear();
-    for (const auto& body : solarRadiationPressure_->eclipsingBodies_) {
+    for (const auto& body : srp->eclipsingBodies_) {
         if (body) {
             assignedList_->addItem(body->name().c_str());
         }
@@ -168,8 +171,9 @@ void UiSolarRadiationPressure::refreshUi()
 
 void UiSolarRadiationPressure::apply()
 {
-    if (solarRadiationPressure_) {
-        applyTo(solarRadiationPressure_);
+    auto srp = getSolarRadiationPressure();
+    if (srp) {
+        applyTo(srp);
     }
 }
 

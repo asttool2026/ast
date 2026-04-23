@@ -47,13 +47,6 @@ void UiDragForce::setupUi()
     // 主布局
     mainLayout_ = new QVBoxLayout(this);
     
-    // 通用选项
-    useDragLayout_ = new QHBoxLayout();
-    useDragCheck_ = new QCheckBox("使用大气阻力", this);
-    useDragCheck_->setChecked(true);
-    useDragLayout_->addWidget(useDragCheck_);
-    mainLayout_->addLayout(useDragLayout_);
-    
     // 模型配置
     modelGroup_ = new QGroupBox("模型", this);
     modelLayout_ = new QGridLayout(modelGroup_);
@@ -228,42 +221,46 @@ void UiDragForce::setupUi()
 
 DragForce* UiDragForce::getDragForce() const
 {
-    return dragForce_;
+    return dynamic_cast<DragForce*>(getObject());
 }
 
 void UiDragForce::setDragForce(DragForce* drag)
 {
-    dragForce_ = drag;
-    refreshUi();
+    if (drag) {
+        setObject(drag);
+        refreshUi();
+    }
 }
 
 void UiDragForce::refreshUi()
 {
-    if (!dragForce_) return;
+    auto drag = getDragForce();
+    if (!drag) return;
     
     // 大气密度模型
-    mainAtmCombo_->setCurrentIndex(static_cast<int>(dragForce_->atmDensityModel_));
-    lowAltAtmCombo_->setCurrentIndex(static_cast<int>(dragForce_->lowAltAtmDensityModel_));
-    blendingRangeEdit_->setValue(dragForce_->atmBlendingRange_);
+    mainAtmCombo_->setCurrentIndex(static_cast<int>(drag->atmDensityModel_));
+    lowAltAtmCombo_->setCurrentIndex(static_cast<int>(drag->lowAltAtmDensityModel_));
+    blendingRangeEdit_->setValue(drag->atmBlendingRange_);
     
     // 太阳通量/地磁指数
-    fluxSourceCombo_->setCurrentIndex(dragForce_->useFluxApFile_ ? 1 : 0);
-    f10p7AverageEdit_->setValue(dragForce_->f10p7Average_);
-    f10p7DailyEdit_->setValue(dragForce_->f10p7Daily_);
-    kpEdit_->setValue(dragForce_->kp_);
-    fluxApFileEdit_->setPath(dragForce_->fluxApFile_);
-    geoMagFluxUpdateRateCombo_->setCurrentIndex(static_cast<int>(dragForce_->geoMagFluxUpdateRate_));
-    geoMagFluxSourceCombo_->setCurrentIndex(static_cast<int>(dragForce_->geoMagFluxSource_));
+    fluxSourceCombo_->setCurrentIndex(drag->useFluxApFile_ ? 1 : 0);
+    f10p7AverageEdit_->setValue(drag->f10p7Average_);
+    f10p7DailyEdit_->setValue(drag->f10p7Daily_);
+    kpEdit_->setValue(drag->kp_);
+    fluxApFileEdit_->setPath(drag->fluxApFile_);
+    geoMagFluxUpdateRateCombo_->setCurrentIndex(static_cast<int>(drag->geoMagFluxUpdateRate_));
+    geoMagFluxSourceCombo_->setCurrentIndex(static_cast<int>(drag->geoMagFluxSource_));
     
     // 计算选项
-    useApproxAltCheck_->setChecked(dragForce_->useApproxAltForDrag_);
-    sunPositionCombo_->setCurrentIndex(static_cast<int>(dragForce_->sunPosition_));
+    useApproxAltCheck_->setChecked(drag->useApproxAltForDrag_);
+    sunPositionCombo_->setCurrentIndex(static_cast<int>(drag->sunPosition_));
 }
 
 void UiDragForce::apply()
 {
-    if (dragForce_) {
-        applyTo(dragForce_);
+    auto drag = getDragForce();
+    if (drag) {
+        applyTo(drag);
     }
 }
 

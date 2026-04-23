@@ -49,6 +49,7 @@ public:
     void setDragForce(DragForce* drag);
     void refreshUi();
     void apply();
+    void applyTo(DragForce* drag);
 protected:
     void setupUi();
     void refreshAtmDensityModel();
@@ -56,15 +57,10 @@ protected:
     void refreshGeoMagFluxUpdateRate();
     void refreshSunPosition();
 private slots:
-    void applyTo(DragForce* drag);
     void onFluxApFileChanged(bool checked);
 private:
     // 布局
     QVBoxLayout* mainLayout_{nullptr};
-    
-    // 通用选项
-    QHBoxLayout* useDragLayout_{nullptr};
-    QCheckBox* useDragCheck_{nullptr};
     
     // 模型配置
     QGroupBox* modelGroup_{nullptr};
@@ -130,8 +126,7 @@ private:
     QLabel* sunPositionLabel_{nullptr};
     QComboBox* sunPositionCombo_{nullptr};
     
-    // 数据
-    DragForce* dragForce_{nullptr};
+    
 };
 
 AST_NAMESPACE_END

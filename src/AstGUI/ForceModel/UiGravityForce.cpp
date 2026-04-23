@@ -42,21 +42,21 @@ void UiGravityForce::setupUi()
     modelLayout_->addWidget(modelFileEdit_);
     centralBodyGravityLayout_->addLayout(modelLayout_, 0, 0, 1, 2);
     
-    maxDegreeLayout_ = new QHBoxLayout();
-    maxDegreeLabel_ = new QLabel("最大阶数:", this);
-    maxDegreeEdit_ = new UiInteger(this);
-    maxDegreeEdit_->setValue(2);
-    maxDegreeLayout_->addWidget(maxDegreeLabel_);
-    maxDegreeLayout_->addWidget(maxDegreeEdit_);
-    centralBodyGravityLayout_->addLayout(maxDegreeLayout_, 1, 0);
+    degreeLayout_ = new QHBoxLayout();
+    degreeLabel_ = new QLabel("阶数:", this);
+    degreeEdit_ = new UiInteger(this);
+    degreeEdit_->setValue(2);
+    degreeLayout_->addWidget(degreeLabel_);
+    degreeLayout_->addWidget(degreeEdit_);
+    centralBodyGravityLayout_->addLayout(degreeLayout_, 1, 0);
     
-    maxOrderLayout_ = new QHBoxLayout();
-    maxOrderLabel_ = new QLabel("最大次数:", this);
-    maxOrderEdit_ = new UiInteger(this);
-    maxOrderEdit_->setValue(0);
-    maxOrderLayout_->addWidget(maxOrderLabel_);
-    maxOrderLayout_->addWidget(maxOrderEdit_);
-    centralBodyGravityLayout_->addLayout(maxOrderLayout_, 1, 1);
+    orderLayout_ = new QHBoxLayout();
+    orderLabel_ = new QLabel("次数:", this);
+    orderEdit_ = new UiInteger(this);
+    orderEdit_->setValue(0);
+    orderLayout_->addWidget(orderLabel_);
+    orderLayout_->addWidget(orderEdit_);
+    centralBodyGravityLayout_->addLayout(orderLayout_, 1, 1);
     
     secularVariationsLayout_ = new QHBoxLayout();
     secularVariationsCheck_ = new QCheckBox("包含引力场长期变化", this);
@@ -101,21 +101,21 @@ void UiGravityForce::setupUi()
     useOceanTidesLayout_->addWidget(useOceanTidesCheck_);
     oceanTidesLayout_->addLayout(useOceanTidesLayout_, 0, 0, 1, 2);
     
-    maxDegreeOceanLayout_ = new QHBoxLayout();
-    maxDegreeOceanLabel_ = new QLabel("最大阶数:", this);
-    maxDegreeOceanEdit_ = new UiInteger(this);
-    maxDegreeOceanEdit_->setValue(2);
-    maxDegreeOceanLayout_->addWidget(maxDegreeOceanLabel_);
-    maxDegreeOceanLayout_->addWidget(maxDegreeOceanEdit_);
-    oceanTidesLayout_->addLayout(maxDegreeOceanLayout_, 1, 0);
+    degreeOceanLayout_ = new QHBoxLayout();
+    degreeOceanLabel_ = new QLabel("阶数:", this);
+    degreeOceanEdit_ = new UiInteger(this);
+    degreeOceanEdit_->setValue(2);
+    degreeOceanLayout_->addWidget(degreeOceanLabel_);
+    degreeOceanLayout_->addWidget(degreeOceanEdit_);
+    oceanTidesLayout_->addLayout(degreeOceanLayout_, 1, 0);
     
-    maxOrderOceanLayout_ = new QHBoxLayout();
-    maxOrderOceanLabel_ = new QLabel("最大次数:", this);
-    maxOrderOceanEdit_ = new UiInteger(this);
-    maxOrderOceanEdit_->setValue(0);
-    maxOrderOceanLayout_->addWidget(maxOrderOceanLabel_);
-    maxOrderOceanLayout_->addWidget(maxOrderOceanEdit_);
-    oceanTidesLayout_->addLayout(maxOrderOceanLayout_, 1, 1);
+    orderOceanLayout_ = new QHBoxLayout();
+    orderOceanLabel_ = new QLabel("次数:", this);
+    orderOceanEdit_ = new UiInteger(this);
+    orderOceanEdit_->setValue(0);
+    orderOceanLayout_->addWidget(orderOceanLabel_);
+    orderOceanLayout_->addWidget(orderOceanEdit_);
+    oceanTidesLayout_->addLayout(orderOceanLayout_, 1, 1);
     
     minAmplitudeOceanLayout_ = new QHBoxLayout();
     minAmplitudeOceanLabel_ = new QLabel("最小振幅:", this);
@@ -125,10 +125,14 @@ void UiGravityForce::setupUi()
     minAmplitudeOceanLayout_->addWidget(minAmplitudeOceanEdit_);
     oceanTidesLayout_->addLayout(minAmplitudeOceanLayout_, 2, 0, 1, 2);
     
+    // 潮汐布局
+    QHBoxLayout* tideLayout = new QHBoxLayout();
+    tideLayout->addWidget(solidTidesGroup_, 1);
+    tideLayout->addWidget(oceanTidesGroup_, 1);
+    
     // 添加到主布局
     mainLayout_->addWidget(centralBodyGravityGroup_);
-    mainLayout_->addWidget(solidTidesGroup_);
-    mainLayout_->addWidget(oceanTidesGroup_);
+    mainLayout_->addLayout(tideLayout);
     mainLayout_->addStretch();
     
     // 刷新UI
@@ -138,42 +142,46 @@ void UiGravityForce::setupUi()
 
 GravityForce* UiGravityForce::getGravityForce() const
 {
-    return gravityForce_;
+    return dynamic_cast<GravityForce*>(getObject());
 }
 
 void UiGravityForce::setGravityForce(GravityForce* gravity)
 {
-    gravityForce_ = gravity;
-    refreshUi();
+    if (gravity) {
+        setObject(gravity);
+        refreshUi();
+    }
 }
 
 void UiGravityForce::refreshUi()
 {
-    if (!gravityForce_) return;
+    auto gravity = getGravityForce();
+    if (!gravity) return;
     
     // 中心天体重力场配置
-    modelFileEdit_->setPath(gravityForce_->model_);
-    maxDegreeEdit_->setValue(gravityForce_->maxDegree_);
-    maxOrderEdit_->setValue(gravityForce_->maxOrder_);
-    secularVariationsCheck_->setChecked(gravityForce_->useSecularVariations_);
+    modelFileEdit_->setPath(gravity->model_);
+    degreeEdit_->setValue(gravity->maxDegree_);
+    orderEdit_->setValue(gravity->maxOrder_);
+    secularVariationsCheck_->setChecked(gravity->useSecularVariations_);
     
     // 固体潮汐配置
-    solidTideTypeCombo_->setCurrentIndex(static_cast<int>(gravityForce_->solidTideType_));
-    timeDependentCheck_->setChecked(gravityForce_->includeTimeDependentSolidTides_);
-    minAmplitudeEdit_->setValue(gravityForce_->minAmplitudeSolidTides_);
-    truncateCheck_->setChecked(gravityForce_->truncateSolidTides_);
+    solidTideTypeCombo_->setCurrentIndex(static_cast<int>(gravity->solidTideType_));
+    timeDependentCheck_->setChecked(gravity->includeTimeDependentSolidTides_);
+    minAmplitudeEdit_->setValue(gravity->minAmplitudeSolidTides_);
+    truncateCheck_->setChecked(gravity->truncateSolidTides_);
     
     // 海洋潮汐配置
-    useOceanTidesCheck_->setChecked(gravityForce_->useOceanTides_);
-    maxDegreeOceanEdit_->setValue(gravityForce_->maxDegreeOceanTides_);
-    maxOrderOceanEdit_->setValue(gravityForce_->maxOrderOceanTides_);
-    minAmplitudeOceanEdit_->setValue(gravityForce_->minAmplitudeOceanTides_);
+    useOceanTidesCheck_->setChecked(gravity->useOceanTides_);
+    degreeOceanEdit_->setValue(gravity->maxDegreeOceanTides_);
+    orderOceanEdit_->setValue(gravity->maxOrderOceanTides_);
+    minAmplitudeOceanEdit_->setValue(gravity->minAmplitudeOceanTides_);
 }
 
 void UiGravityForce::apply()
 {
-    if (gravityForce_) {
-        applyTo(gravityForce_);
+    auto gravity = getGravityForce();
+    if (gravity) {
+        applyTo(gravity);
     }
 }
 
@@ -183,8 +191,8 @@ void UiGravityForce::applyTo(GravityForce* gravity)
     
     // 中心天体重力场配置
     gravity->model_ = modelFileEdit_->path().toUtf8().data();
-    gravity->maxDegree_ = maxDegreeEdit_->value();
-    gravity->maxOrder_ = maxOrderEdit_->value();
+    gravity->maxDegree_ = degreeEdit_->value();
+    gravity->maxOrder_ = orderEdit_->value();
     gravity->useSecularVariations_ = secularVariationsCheck_->isChecked();
     
     // 固体潮汐配置
@@ -195,8 +203,8 @@ void UiGravityForce::applyTo(GravityForce* gravity)
     
     // 海洋潮汐配置
     gravity->useOceanTides_ = useOceanTidesCheck_->isChecked();
-    gravity->maxDegreeOceanTides_ = maxDegreeOceanEdit_->value();
-    gravity->maxOrderOceanTides_ = maxOrderOceanEdit_->value();
+    gravity->maxDegreeOceanTides_ = degreeOceanEdit_->value();
+    gravity->maxOrderOceanTides_ = orderOceanEdit_->value();
     gravity->minAmplitudeOceanTides_ = minAmplitudeOceanEdit_->value();
 }
 
