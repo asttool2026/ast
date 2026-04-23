@@ -3,21 +3,23 @@
 #include "AstGUI/UiSolarRadiationPressure.hpp"
 #include <QApplication>
 
+AST_USING_NAMESPACE
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     
     // 创建太阳光压模型对象
-    auto solarRadiationPressure = new ast::SolarRadiationPressure();
+    auto solarRadiationPressure = new SolarRadiationPressure();
     
     // 创建界面
-    ast::UiSolarRadiationPressure ui(solarRadiationPressure);
+    UiSolarRadiationPressure ui(solarRadiationPressure);
     ui.show();
     
     int result = app.exec();
     
     // 清理内存
-    delete solarRadiationPressure;
+    solarRadiationPressure->destruct();
     
     return result;
 }

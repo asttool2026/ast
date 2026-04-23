@@ -3,21 +3,23 @@
 #include "AstGUI/UiThirdBodyForce.hpp"
 #include <QApplication>
 
+AST_USING_NAMESPACE
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     
     // 创建三体引力模型对象
-    auto thirdBodyForce = new ast::ThirdBodyForce();
+    ThirdBodyForce* thirdBodyForce = new ThirdBodyForce();
     
     // 创建界面
-    ast::UiThirdBodyForce ui(thirdBodyForce);
+    UiThirdBodyForce ui(thirdBodyForce);
     ui.show();
     
     int result = app.exec();
     
     // 清理内存
-    delete thirdBodyForce;
+    thirdBodyForce->destruct();
     
     return result;
 }

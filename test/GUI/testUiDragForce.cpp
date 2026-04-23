@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     int result = app.exec();
     
     // 清理内存
-    delete dragForce;
+    dragForce->destruct();
     
     return result;
 }
