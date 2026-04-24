@@ -247,6 +247,15 @@
 #define AST_LOADER_CAPI A_DECL_EXTERN_C AST_LOADER_API
 
 
+// ast项目AI模块导出声明
+#ifdef AST_BUILD_LIB_AI
+#    define AST_AI_API A_DECL_EXPORT
+#else
+#    define AST_AI_API A_DECL_IMPORT
+#endif
+#define AST_AI_CAPI A_DECL_EXTERN_C AST_AI_API
+
+
 
 #ifndef AST_PROJECT_NAME
 #   define AST_PROJECT_NAME "ast"

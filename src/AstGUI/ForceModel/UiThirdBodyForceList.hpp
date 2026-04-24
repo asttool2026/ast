@@ -12,7 +12,7 @@
 #include "AstGUI/UiObject.hpp"
 #include "AstCore/ThirdBodyForce.hpp"
 #include "AstCore/HPOPForceModel.hpp"
-#include "AstGUI/ForceModel/UiThirdBodyForce.hpp"
+#include "AstGUI/UiThirdBodyForce.hpp"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QListWidget>

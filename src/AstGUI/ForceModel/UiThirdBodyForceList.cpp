@@ -149,7 +149,7 @@ void UiThirdBodyForceList::onThirdBodySelected(int index)
     if (!hpop) return;
     
     const auto& thirdBodies = hpop->getThirdBodies();
-    if (index >= 0 && index < thirdBodies.size()) {
+    if (index >= 0 && index < static_cast<int>(thirdBodies.size())) {
         // 注意：这里需要传递一个指向ThirdBodyForce的指针
         // 由于thirdBodies是std::vector<ThirdBodyForce>，我们需要获取地址
         thirdBodyWidget_->setThirdBodyForce(const_cast<ThirdBodyForce*>(&thirdBodies[index]));

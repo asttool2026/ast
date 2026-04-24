@@ -1,5 +1,5 @@
 #include "UiODEVarStepIntegrator.hpp"
-#include "AstMath/ODE/ODEVarStepIntegrator.hpp"
+#include "AstMath/ODEVarStepIntegrator.hpp"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGroupBox>

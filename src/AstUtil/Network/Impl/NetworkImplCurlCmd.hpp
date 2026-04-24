@@ -1,5 +1,5 @@
 ///
-/// @file      NetworkInterface.hpp
+/// @file      NetworkImplCurlCmd.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,8 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "NetworkRequest.hpp"
-#include "NetworkResponse.hpp"
+#include "AstUtil/NetworkInterface.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -31,32 +30,21 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-// 判断 HTTP 方法是否允许携带请求体
-bool aMethodAllowsBody(const std::string& method);
-
-// 简单验证端口字符串并转换为整数，非法则返回默认端口
-int aParsePort(const std::string& portStr, int defaultPort);
-
-
-/// 网络接口
-/// @details   网络接口，用于与网络进行交互。
-class NetworkInterface
+/// 网络接口实现，通过curl命令与网络进行交互
+class NetworkImplCurlCmd : public NetworkInterface
 {
 public:
-    NetworkInterface() = default;
+    static NetworkImplCurlCmd* Instance();
+
+    NetworkImplCurlCmd() = default;
     
-    virtual ~NetworkInterface() = default;
+    virtual ~NetworkImplCurlCmd() = default;
     
-    /// 发送网络请求
-    /// @details   发送网络请求，返回网络响应
-    /// @param request 网络请求
-    /// @param response 网络响应
-    /// @return 错误码
-    virtual errc_t request(const NetworkRequest& request, NetworkResponse& response) = 0;
+    virtual errc_t request(const NetworkRequest& request, NetworkResponse& response) override;
 
     /// @brief 检查是否支持该网络实现
     /// @return true 如果支持，false 否则
-    virtual bool isSupported() const = 0;
+    virtual bool isSupported() const override;
 };
 
 

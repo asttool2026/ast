@@ -1,6 +1,6 @@
 #include "AstGlobal.h"
-#include "AstCore/ForceModel/PointMassForce.hpp"
-#include "AstGUI/ForceModel/UiPointMassForce.hpp"
+#include "AstCore/PointMassForce.hpp"
+#include "AstGUI/UiPointMassForce.hpp"
 #include <QApplication>
 
 AST_USING_NAMESPACE

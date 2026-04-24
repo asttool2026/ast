@@ -1,6 +1,6 @@
 #include "UiPointMassForce.hpp"
-#include "AstCore/ForceModel/PointMassForce.hpp"
-#include "AstCore/ForceModel/ForceModel.hpp"
+#include "AstCore/PointMassForce.hpp"
+#include "AstCore/ForceModel.hpp"
 
 AST_NAMESPACE_BEGIN
 
