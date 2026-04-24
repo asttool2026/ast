@@ -1,7 +1,7 @@
 ///
 /// @file      OpenAI.cpp
-/// @brief     
-/// @details   
+/// @brief     OpenAI规范API调用接口实现
+/// @details   实现OpenAI规范的API调用接口，包括聊天、工具调用等。
 /// @author    axel
 /// @date      2026-04-23
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
@@ -20,19 +20,11 @@
 
 
 #include "OpenAI.hpp"
-#include <curl/curl.h>
+#include "AstUtil/Network.hpp"
 #include <sstream>
 #include <iostream>
 
 AST_NAMESPACE_BEGIN
-
-/**
- * @brief 回调函数，用于接收HTTP响应
- */
-size_t writeCallback(void* contents, size_t size, size_t nmemb, void* userp) {
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
 
 /**
  * @brief 构造函数
@@ -46,11 +38,6 @@ OpenAIClient::OpenAIClient(const std::string& api_key, const std::string& base_u
  */
 std::string OpenAIClient::chat(const std::string& model, const std::vector<ChatMessage>& messages, 
                               const std::vector<AITool>& tools, float temperature) {
-    CURL* curl = curl_easy_init();
-    if (!curl) {
-        return "{\"error\": \"Failed to initialize curl\"}";
-    }
-
     std::string response;
     std::stringstream ss;
     
@@ -86,11 +73,11 @@ std::string OpenAIClient::chat(const std::string& model, const std::vector<ChatM
         ss << "}";
         if (i < messages.size() - 1) ss << ",";
     }
-    ss << "],";
+    ss << "]";
     
     // 添加工具
     if (!tools.empty()) {
-        ss << "\"tools\": [";
+        ss << ",\"tools\": [";
         for (size_t i = 0; i < tools.size(); ++i) {
             const auto& tool = tools[i];
             ss << "{";
@@ -131,4 +118,32 @@ std::string OpenAIClient::chat(const std::string& model, const std::vector<ChatM
             ss << "}}";
             if (i < tools.size() - 1) ss << ",";
         }
-        ss << "]",
+        ss << "]";
+    }
+    
+    // 添加温度参数
+    ss << ",\"temperature\": " << temperature;
+    ss << "}";
+    
+    // 构建网络请求
+    NetworkRequest request;
+    request.setMethod(ENetworkRequestMethod::ePost);
+    request.setUrl(base_url_ + "/chat/completions");
+    request.setBody(ss.str());
+    
+    // 设置请求头
+    request.addHeader("Content-Type", "application/json");
+    request.addHeader("Authorization", "Bearer " + api_key_);
+    
+    // 发送请求
+    NetworkResponse network_response;
+    errc_t error = aNetworkRequest(request, network_response);
+    
+    if (error != 0) {
+        return "{\"error\": \"Failed to send request\"}";
+    }
+    
+    return network_response.body();
+}
+
+AST_NAMESPACE_END

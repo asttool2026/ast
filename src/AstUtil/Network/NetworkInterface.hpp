@@ -38,8 +38,8 @@ bool aMethodAllowsBody(const std::string& method);
 int aParsePort(const std::string& portStr, int defaultPort);
 
 
-/// 网络接口
-/// @details   网络接口，用于与网络进行交互。
+/// 网络抽象接口
+/// @details   网络抽象接口，用于与网络进行交互
 class NetworkInterface
 {
 public:
@@ -51,10 +51,15 @@ public:
     /// @details   发送网络请求，返回网络响应
     /// @param request 网络请求
     /// @param response 网络响应
+    /// @note 该接口会阻塞调用线程，直到网络请求完成或超时为止
     /// @return 错误码
     virtual errc_t request(const NetworkRequest& request, NetworkResponse& response) = 0;
 
     /// @brief 检查是否支持该网络实现
+    /// @details 检查该网络实现是否在当前操作系统上受支持，例如：
+    /// 基于curl命令的实现会检查当前操作系统是否安装了curl 命令行工具
+    /// 基于WinHTTP的实现会检查是否是Windows操作系统，且支持加载WinHTTP库
+    /// 基于WinINet的实现会检查是否是Windows操作系统，且支持加载WinINet库
     /// @return true 如果支持，false 否则
     virtual bool isSupported() const = 0;
 };

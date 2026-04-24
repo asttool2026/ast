@@ -60,8 +60,9 @@ namespace
         case ENetworkRequestMethod::eTrace:   return "TRACE";
         case ENetworkRequestMethod::eConnect: return "CONNECT";
         case ENetworkRequestMethod::ePatch:   return "PATCH";
+        default:
+            return "GET";
         }
-        return "GET";
     }
 
     // 转义单引号，以便在单引号字符串中安全使用

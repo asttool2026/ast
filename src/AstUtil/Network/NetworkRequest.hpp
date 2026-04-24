@@ -44,6 +44,7 @@ enum class ENetworkRequestMethod
     eTrace,
     eConnect,
     ePatch,
+    eUnknown=-1,
 };
 
 
@@ -61,6 +62,11 @@ public:
     
     /// 设置网络请求方法
     void setMethod(ENetworkRequestMethod method) { method_ = method; }
+
+    /// 设置网络请求方法
+    /// @details   从字符串视图设置网络请求方法，支持 GET、POST、PUT、DELETE 等方法。
+    AST_UTIL_API
+    void setMethod(StringView method);
     
     /// 获取网络请求 URL
     const std::string& url() const { return url_; }

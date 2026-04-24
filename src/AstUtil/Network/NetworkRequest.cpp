@@ -19,9 +19,31 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "NetworkRequest.hpp"
+#include "StringView.hpp"
+#include "AstUtil/StringUtil.hpp"
 
 AST_NAMESPACE_BEGIN
 
-
+void NetworkRequest::setMethod(StringView method)
+{
+    if(aEqualsIgnoreCase(method, "GET"))
+        method_ = ENetworkRequestMethod::eGet;
+    else if(aEqualsIgnoreCase(method, "POST"))
+        method_ = ENetworkRequestMethod::ePost;
+    else if(aEqualsIgnoreCase(method, "PUT"))
+        method_ = ENetworkRequestMethod::ePut;
+    else if(aEqualsIgnoreCase(method, "DELETE"))
+        method_ = ENetworkRequestMethod::eDelete;
+    else if(aEqualsIgnoreCase(method, "OPTIONS"))
+        method_ = ENetworkRequestMethod::eOptions;
+    else if(aEqualsIgnoreCase(method, "TRACE"))
+        method_ = ENetworkRequestMethod::eTrace;
+    else if(aEqualsIgnoreCase(method, "CONNECT"))
+        method_ = ENetworkRequestMethod::eConnect;
+    else if(aEqualsIgnoreCase(method, "PATCH"))
+        method_ = ENetworkRequestMethod::ePatch;
+    else
+        method_ = ENetworkRequestMethod::eUnknown;
+}
 
 AST_NAMESPACE_END

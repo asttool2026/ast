@@ -49,6 +49,9 @@ enum class ENetworkImplType {
 /// @details   发送网络请求，返回网络响应
 /// @param request 网络请求
 /// @param response 网络响应
+/// @note 该接口会阻塞调用线程，直到网络请求完成或超时为止
+/// @warning 注意不要通过该接口发送敏感数据，如密码、API密钥等，
+/// 因为该接口的其中一个实现使用了临时文件与curl命令行工具交互，存在安全风险
 /// @return 错误码
 AST_UTIL_CAPI errc_t aNetworkRequest(const NetworkRequest& request, NetworkResponse& response);
 
