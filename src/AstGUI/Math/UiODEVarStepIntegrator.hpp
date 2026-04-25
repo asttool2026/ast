@@ -21,10 +21,7 @@
 
 AST_NAMESPACE_BEGIN
 
-namespace astmath {
 class ODEVarStepIntegrator;
-}
-using astmath::ODEVarStepIntegrator;
 
 class AST_GUI_API UiODEVarStepIntegrator: public UiObject
 {
