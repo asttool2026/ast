@@ -20,8 +20,8 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AITool.hpp"
-#include "ChatMessage.hpp"
+#include "AstAI/ChatMessage.hpp"
+#include "AstAI/ChatTool.hpp"
 #include <string>
 #include <vector>
 #include <map>
@@ -55,7 +55,7 @@ public:
     /// @return 响应内容
     std::string chat(
         const std::string& model, const std::vector<ChatMessage>& messages, 
-        const std::vector<AITool>& tools = {}, float temperature = 0.7f
+        const std::vector<ChatTool>& tools = {}, float temperature = 0.7f
     );
 
 public: // 底层json接口

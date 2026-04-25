@@ -1,1 +1,1 @@
-#include "../../src/AstAI/ChatSession.hpp"
+#include "../../src/AstAI/Chat/ChatSession.hpp"

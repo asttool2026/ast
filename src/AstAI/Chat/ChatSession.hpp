@@ -20,8 +20,9 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "OpenAI.hpp"
-#include "AITool.hpp"
+#include "AstAI/OpenAI.hpp"
+#include "AstAI/ChatTool.hpp"
+#include "AstAI/ChatMessages.hpp"
 #include <string>
 #include <vector>
 #include <functional>
@@ -50,7 +51,7 @@ public:
     /// @brief 添加工具
     /// @param tool 工具定义
     /// @param executor 工具执行函数
-    void addTool(const AITool& tool, ToolExecutor executor);
+    void addTool(const ChatTool& tool, ToolExecutor executor);
 
     /// @brief 发送消息
     /// @param message 消息内容
@@ -75,11 +76,11 @@ private:
     bool parseToolCalls(const std::string& response, std::vector<AIToolCall>& tool_calls, std::string& content);
 
 private:
-    using AIToolMap = std::map<std::string, std::pair<AITool, ToolExecutor>>;
+    using ChatToolMap = std::map<std::string, std::pair<ChatTool, ToolExecutor>>;
     
-    OpenAI client_;                                                     ///< OpenAI客户端接口
-    std::vector<ChatMessage> messages_;                                 ///< 消息历史
-    AIToolMap tools_;                                                   ///< 工具映射
+    OpenAI client_;                                         ///< OpenAI客户端接口
+    ChatMessages messages_;                                 ///< 消息历史
+    ChatToolMap tools_;                                       ///< 工具映射
 };
 
 /*! @} */

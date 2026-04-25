@@ -41,7 +41,7 @@ struct AIToolParameter {
 };
 
 /// @brief AI工具定义
-struct AITool {
+struct ChatTool {
     std::string name;                      ///< 工具名称
     std::string description;               ///< 工具描述
     std::map<std::string, AIToolParameter> parameters;  ///< 工具参数

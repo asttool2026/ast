@@ -1,1 +1,1 @@
-#include "../../src/AstAI/OpenAI.hpp"
+#include "../../src/AstAI/Providers/OpenAI.hpp"
