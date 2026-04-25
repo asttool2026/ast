@@ -26,17 +26,13 @@
 
 AST_NAMESPACE_BEGIN
 
-/**
- * @brief 构造函数
- */
-OpenAIClient::OpenAIClient(const std::string& api_key, const std::string& base_url) 
+
+OpenAI::OpenAI(const std::string& api_key, const std::string& base_url) 
     : api_key_(api_key), base_url_(base_url) {
 }
 
-/**
- * @brief 发送聊天请求
- */
-std::string OpenAIClient::chat(const std::string& model, const std::vector<ChatMessage>& messages, 
+
+std::string OpenAI::chat(const std::string& model, const std::vector<ChatMessage>& messages, 
                               const std::vector<AITool>& tools, float temperature) {
     std::string response;
     std::stringstream ss;
@@ -52,22 +48,22 @@ std::string OpenAIClient::chat(const std::string& model, const std::vector<ChatM
         
         // 角色转换
         std::string role_str;
-        switch (msg.role) {
-            case MessageRole::USER: role_str = "user";
- break;
-            case MessageRole::ASSISTANT: role_str = "assistant";
- break;
-            case MessageRole::SYSTEM: role_str = "system";
- break;
-            case MessageRole::TOOL: role_str = "tool";
- break;
+        switch (msg.role_) {
+            case EChatMessageRole::eUser: role_str = "user";
+                break;
+            case EChatMessageRole::eAssistant: role_str = "assistant";
+                break;
+            case EChatMessageRole::eSystem: role_str = "system";
+                break;
+            case EChatMessageRole::eTool: role_str = "tool";
+                break;
         }
         
         ss << "\"role\": \"" << role_str << "\",";
-        ss << "\"content\": \"" << msg.content << "\"";
+        ss << "\"content\": \"" << msg.content_ << "\"";
         
-        if (msg.role == MessageRole::TOOL && !msg.tool_call_id.empty()) {
-            ss << ",\"tool_call_id\": \"" << msg.tool_call_id << "\"";
+        if (msg.role_ == EChatMessageRole::eTool && !msg.toolCallId_.empty()) {
+            ss << ",\"tool_call_id\": \"" << msg.toolCallId_ << "\"";
         }
         
         ss << "}";

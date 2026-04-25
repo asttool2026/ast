@@ -1,9 +1,9 @@
 ///
-/// @file      NetworkResponse.cpp
+/// @file      Chat.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-23
+/// @date      2026-04-25
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,31 +18,40 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "NetworkResponse.hpp"
-#include "AstUtil/JsonValue.hpp"
-#include "AstUtil/Logger.hpp"
+#include "Chat.hpp"
+#include "ChatSession.hpp"
+#include "AstUtil/StringView.hpp"
 
 AST_NAMESPACE_BEGIN
 
-void NetworkResponse::setJson(const JsonValue &json)
+
+ChatSession& aChatSession()
 {
-    body_ = json.toJsonString();
+    static ChatSession session;
+    return session;
 }
 
-errc_t NetworkResponse::toJson(JsonValue &json) const
+std::string aChat(StringView message)
 {
-    return json.parseFromString(body_);
+    // return aChatSession().sendMessage(message);
+    return "";
 }
 
-JsonValue NetworkResponse::toJson() const
+
+errc_t aChat(StringView message, std::string& response)
 {
-    JsonValue json;
-    errc_t ret = toJson(json);
-    if(ret != 0)
-        aError("failed to parse response body to json");
-    return json;
+    // return aChatSession().sendMessage(message, response);
+    return 0;
+}
+
+void aChatClearMessages()
+{
+
+}
+
+void aChatClearAllMessages()
+{
+    
 }
 
 AST_NAMESPACE_END
-
-

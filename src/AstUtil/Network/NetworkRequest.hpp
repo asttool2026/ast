@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstUtil/JsonValue.hpp"
 #include <string>
 #include <map>
 
@@ -79,6 +80,20 @@ public:
     
     /// 设置网络请求体
     void setBody(const std::string& body) { body_ = body; }
+
+    /// 设置网络请求体为 JSON 格式
+    AST_UTIL_API
+    void setJson(const JsonValue& json);
+
+    /// 获取网络请求体为 JSON 格式
+    /// @warning 内部会进行一次 JSON 解析操作
+    AST_UTIL_API
+    errc_t toJson(JsonValue& json) const;
+
+    /// 获取网络请求体为 JSON 格式
+    /// @warning 内部会进行一次 JSON 解析操作
+    AST_UTIL_API
+    JsonValue toJson() const;
     
     /// 获取网络请求头
     const std::map<std::string, std::string>& headers() const { return headers_; }

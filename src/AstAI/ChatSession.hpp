@@ -45,8 +45,7 @@ public:
     /// @param api_key API密钥
     /// @param model 模型名称
     /// @param base_url API基础URL
-    ChatSession(const std::string& api_key, const std::string& model, 
-                const std::string& base_url = "https://api.openai.com/v1");
+    ChatSession();
 
     /// @brief 添加工具
     /// @param tool 工具定义
@@ -75,10 +74,12 @@ private:
     /// @return 是否包含工具调用
     bool parseToolCalls(const std::string& response, std::vector<AIToolCall>& tool_calls, std::string& content);
 
-    OpenAIClient client_;          ///< OpenAI客户端
-    std::string model_;            ///< 模型名称
-    std::vector<ChatMessage> messages_;  ///< 消息历史
-    std::map<std::string, std::pair<AITool, ToolExecutor>> tools_;  ///< 工具映射
+private:
+    using AIToolMap = std::map<std::string, std::pair<AITool, ToolExecutor>>;
+    
+    OpenAI client_;                                                     ///< OpenAI客户端接口
+    std::vector<ChatMessage> messages_;                                 ///< 消息历史
+    AIToolMap tools_;                                                   ///< 工具映射
 };
 
 /*! @} */

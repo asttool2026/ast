@@ -32,51 +32,45 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/**
- * @brief 消息角色
- */
-enum class MessageRole {
-    USER,      ///< 用户
-    ASSISTANT, ///< 助手
-    SYSTEM,    ///< 系统
-    TOOL       ///< 工具
+
+/// @brief 消息角色
+enum class EChatMessageRole {
+    eUser,      ///< 用户
+    eAssistant, ///< 助手
+    eSystem,    ///< 系统
+    eTool       ///< 工具
 };
 
-/**
- * @brief 聊天消息
- */
+/// @brief 聊天消息
 struct ChatMessage {
-    MessageRole role;          ///< 消息角色
-    std::string content;       ///< 消息内容
-    std::string tool_call_id;  ///< 工具调用ID（当角色为TOOL时使用）
+    EChatMessageRole role_;          ///< 消息角色
+    std::string      content_;       ///< 消息内容
+    std::string      toolCallId_;    ///< 工具调用ID（当角色为TOOL时使用）
 };
 
-/**
- * @brief OpenAI客户端
- */
-class OpenAIClient {
+/// @brief OpenAI客户端
+class OpenAI {
 public:
-    /**
-     * @brief 构造函数
-     * @param api_key API密钥
-     * @param base_url API基础URL
-     */
-    OpenAIClient(const std::string& api_key, const std::string& base_url = "https://api.openai.com/v1");
+    /// @brief 构造函数
+    /// @param api_key API密钥
+    /// @param base_url API基础URL
+    OpenAI(const std::string& api_key, const std::string& base_url);
 
-    /**
-     * @brief 发送聊天请求
-     * @param model 模型名称
-     * @param messages 消息列表
-     * @param tools 工具列表
-     * @param temperature 温度参数
-     * @return 响应内容
-     */
-    std::string chat(const std::string& model, const std::vector<ChatMessage>& messages, 
-                    const std::vector<AITool>& tools = {}, float temperature = 0.7f);
+    /// @brief 发送聊天请求
+    /// @param model 模型名称
+    /// @param messages 消息列表
+    /// @param tools 工具列表
+    /// @param temperature 温度参数
+    /// @return 响应内容
+    std::string chat(
+        const std::string& model, const std::vector<ChatMessage>& messages, 
+        const std::vector<AITool>& tools = {}, float temperature = 0.7f
+    );
 
 private:
-    std::string api_key_;  ///< API密钥
-    std::string base_url_; ///< API基础URL
+    std::string model_;            ///< 模型名称
+    std::string api_key_;          ///< API密钥
+    std::string base_url_;         ///< API基础URL
 };
 
 /*! @} */
