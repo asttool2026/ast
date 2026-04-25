@@ -46,6 +46,16 @@ enum class EJsonValueType
 class AST_UTIL_API JsonValue
 {
 public:
+    /// @brief 从字符串构造 JSON 值
+    /// @param json JSON 字符串
+    /// @return JSON 值
+    static JsonValue FromString(StringView json);
+
+    /// @brief 从文件构造 JSON 值
+    /// @param filePath JSON 文件路径
+    /// @return JSON 值
+    static JsonValue FromFile(const StringView filePath);
+
     /// @brief 默认构造函数，创建 null 值
     JsonValue();
     
@@ -305,5 +315,15 @@ private:
     /// @return 格式化的字符串
     std::string formatString(int indent, int indentSize) const;
 };
+
+
+/// @brief 字符串字面量操作符（JSON 格式）
+/// @param str JSON 字符串
+/// @param len 字符串长度
+/// @return JSON 值
+inline JsonValue operator ""_json(const char* str, size_t len)
+{
+    return JsonValue::FromString(StringView(str, len));
+}
 
 AST_NAMESPACE_END

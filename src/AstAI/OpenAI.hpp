@@ -21,6 +21,7 @@
 
 #include "AstGlobal.h"
 #include "AITool.hpp"
+#include "ChatMessage.hpp"
 #include <string>
 #include <vector>
 #include <map>
@@ -32,29 +33,19 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-
-/// @brief 消息角色
-enum class EChatMessageRole {
-    eUser,      ///< 用户
-    eAssistant, ///< 助手
-    eSystem,    ///< 系统
-    eTool       ///< 工具
-};
-
-/// @brief 聊天消息
-struct ChatMessage {
-    EChatMessageRole role_;          ///< 消息角色
-    std::string      content_;       ///< 消息内容
-    std::string      toolCallId_;    ///< 工具调用ID（当角色为TOOL时使用）
-};
+class JsonValue;
 
 /// @brief OpenAI客户端
 class OpenAI {
 public:
+    /// @brief 默认构造函数
+    /// 从环境变量中获取API密钥和基础URL
+    OpenAI();
+
     /// @brief 构造函数
-    /// @param api_key API密钥
-    /// @param base_url API基础URL
-    OpenAI(const std::string& api_key, const std::string& base_url);
+    /// @param apiKey API密钥
+    /// @param baseUrl API基础URL
+    OpenAI(const std::string& apiKey, const std::string& baseUrl);
 
     /// @brief 发送聊天请求
     /// @param model 模型名称
@@ -67,10 +58,24 @@ public:
         const std::vector<AITool>& tools = {}, float temperature = 0.7f
     );
 
+public: // 底层json接口
+
+    /// @brief 聊天
+    /// @param request 请求参数
+    /// @return 响应参数
+    JsonValue chat(const JsonValue& request);
+
+    /// @brief 聊天
+    /// @param request 请求参数
+    /// @param response 响应参数
+    /// @return 错误码
+    errc_t chat(const JsonValue& request, JsonValue& response);
+protected:
+    const std::string& apiKey() const { return apiKey_; }
+    const std::string& baseUrl() const { return baseUrl_; }
 private:
-    std::string model_;            ///< 模型名称
-    std::string api_key_;          ///< API密钥
-    std::string base_url_;         ///< API基础URL
+    std::string apiKey_;          ///< API密钥
+    std::string baseUrl_;         ///< API基础URL
 };
 
 /*! @} */

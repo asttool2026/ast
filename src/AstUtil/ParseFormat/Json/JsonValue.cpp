@@ -36,6 +36,26 @@ JsonValue& JsonValue::NullValue()
     return nullInstance;
 }
 
+
+JsonValue JsonValue::FromString(StringView json)
+{
+    JsonValue value;
+    errc_t rc = value.parseFromString(json);
+    if(rc)
+        aError("failed to parse json from string");
+    return value;
+}
+
+
+JsonValue JsonValue::FromFile(const StringView filePath)
+{
+    JsonValue value;
+    errc_t rc = value.parseFromFile(filePath);
+    if(rc)
+        aError("failed to parse json from file '%.*s'", filePath.size(), filePath.data());
+    return value;
+}
+
 // 默认构造函数
 JsonValue::JsonValue()
     : type_(EJsonValueType::eNull)

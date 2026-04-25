@@ -21,125 +21,157 @@
 
 #include "OpenAI.hpp"
 #include "AstUtil/Network.hpp"
+#include "AstUtil/JsonValue.hpp"
+#include "AstUtil/Posix.hpp"
+#include "AstUtil/Logger.hpp"
 #include <sstream>
 #include <iostream>
 
 AST_NAMESPACE_BEGIN
 
 
-OpenAI::OpenAI(const std::string& api_key, const std::string& base_url) 
-    : api_key_(api_key), base_url_(base_url) {
+OpenAI::OpenAI() 
+{
+    apiKey_ = posix::getenv("AST_AI_API_KEY");
+    baseUrl_ = posix::getenv("AST_AI_BASE_URL");
+    if(!apiKey_.empty())
+        aWarning("empty api key");
+    if(!baseUrl_.empty())
+        aWarning("empty base url");
 }
 
+OpenAI::OpenAI(const std::string& apiKey, const std::string& baseUrl) 
+    : apiKey_(apiKey), baseUrl_(baseUrl) 
+{
+}
+
+
+#if 0
 
 std::string OpenAI::chat(const std::string& model, const std::vector<ChatMessage>& messages, 
                               const std::vector<AITool>& tools, float temperature) {
     std::string response;
-    std::stringstream ss;
     
     // 构建请求体
-    ss << "{";
-    ss << "\"model\": \"" << model << "\",";
-    ss << "\"messages\": [";
+    JsonValue request_body;
     
-    for (size_t i = 0; i < messages.size(); ++i) {
-        const auto& msg = messages[i];
-        ss << "{";
+    // 添加模型参数
+    request_body["model"] = model;
+    request_body["temperature"] = temperature;
+    
+    auto& messages_array = request_body["messages"];
+    
+    for (const auto& msg : messages) {
+        JsonValue message_obj;
         
         // 角色转换
         std::string role_str;
-        switch (msg.role_) {
-            case EChatMessageRole::eUser: role_str = "user";
+        switch (msg.role()) {
+            case EChatRole::eUser: role_str = "user";
                 break;
-            case EChatMessageRole::eAssistant: role_str = "assistant";
+            case EChatRole::eAssistant: role_str = "assistant";
                 break;
-            case EChatMessageRole::eSystem: role_str = "system";
+            case EChatRole::eSystem: role_str = "system";
                 break;
-            case EChatMessageRole::eTool: role_str = "tool";
+            case EChatRole::eTool: role_str = "tool";
                 break;
         }
         
-        ss << "\"role\": \"" << role_str << "\",";
-        ss << "\"content\": \"" << msg.content_ << "\"";
+        message_obj["role"] = role_str;
+        message_obj["content"] = msg.content();
         
-        if (msg.role_ == EChatMessageRole::eTool && !msg.toolCallId_.empty()) {
-            ss << ",\"tool_call_id\": \"" << msg.toolCallId_ << "\"";
+        if (msg.role() == EChatRole::eTool && !msg.toolCallId().empty()) {
+            message_obj["tool_call_id"] = msg.toolCallId();
         }
         
-        ss << "}";
-        if (i < messages.size() - 1) ss << ",";
+        messages_array.append(message_obj);
     }
-    ss << "]";
+    
     
     // 添加工具
     if (!tools.empty()) {
-        ss << ",\"tools\": [";
-        for (size_t i = 0; i < tools.size(); ++i) {
-            const auto& tool = tools[i];
-            ss << "{";
-            ss << "\"type\": \"function\",";
-            ss << "\"function\": {";
-            ss << "\"name\": \"" << tool.name << "\",";
-            ss << "\"description\": \"" << tool.description << "\",";
-            ss << "\"parameters\": {";
-            ss << "\"type\": \"object\",";
-            ss << "\"properties\": {";
+        JsonValue& tools_array = request_body["tools"];
+        
+        for (const auto& tool : tools) {
+            JsonValue tool_obj;
+            tool_obj["type"] = "function";
             
-            size_t param_count = 0;
+            JsonValue function_obj;
+            function_obj["name"] = tool.name;
+            function_obj["description"] = tool.description;
+            
+            JsonValue parameters_obj;
+            parameters_obj["type"] = "object";
+            
+            JsonValue properties_obj;
+            JsonValue required_array;
+            
             for (const auto& param : tool.parameters) {
-                if (param_count > 0) ss << ",";
-                ss << "\"" << param.first << "\": {";
-                ss << "\"type\": \"" << param.second.type << "\",";
-                ss << "\"description\": \"" << param.second.description << "\"";
+                JsonValue param_obj;
+                param_obj["type"] = param.second.type;
+                param_obj["description"] = param.second.description;
+                
                 if (param.second.required) {
-                    ss << ",\"required\": true";
+                    param_obj["required"] = true;
+                    required_array.append(param.first);
                 }
-                ss << "}";
-                param_count++;
+                
+                properties_obj[param.first] = param_obj;
             }
             
-            ss << "},";
-            ss << "\"required\": [";
-            
-            size_t required_count = 0;
-            for (const auto& param : tool.parameters) {
-                if (param.second.required) {
-                    if (required_count > 0) ss << ",";
-                    ss << "\"" << param.first << "\"";
-                    required_count++;
-                }
-            }
-            
-            ss << "]";
-            ss << "}}";
-            if (i < tools.size() - 1) ss << ",";
+            parameters_obj["properties"] = properties_obj;
+            parameters_obj["required"] = required_array;
+            function_obj["parameters"] = parameters_obj;
+            tool_obj["function"] = function_obj;
+            tools_array.append(tool_obj);
         }
-        ss << "]";
+        
     }
     
     // 添加温度参数
-    ss << ",\"temperature\": " << temperature;
-    ss << "}";
     
+    return network_response.body();
+}
+#endif
+
+
+JsonValue OpenAI::chat(const JsonValue &request)
+{
+    JsonValue response;
+    errc_t error = chat(request, response);
+    if(error != 0)
+    {
+        aError("failed to call ai api for chat completions, error: %d", error);   
+        return JsonValue();
+    }
+    return response;
+}
+
+
+errc_t OpenAI::chat(const JsonValue &request, JsonValue &response)
+{
     // 构建网络请求
-    NetworkRequest request;
-    request.setMethod(ENetworkRequestMethod::ePost);
-    request.setUrl(base_url_ + "/chat/completions");
-    request.setBody(ss.str());
+    NetworkRequest networkRequest;
+    networkRequest.setMethod(ENetworkRequestMethod::ePost);
+    networkRequest.setUrl(baseUrl() + "/chat/completions");
+    networkRequest.setBody(request.toJsonString());
     
     // 设置请求头
-    request.addHeader("Content-Type", "application/json");
-    request.addHeader("Authorization", "Bearer " + api_key_);
+    networkRequest.addHeader("Content-Type", "application/json");
+    networkRequest.addHeader("Authorization", "Bearer " + apiKey());
     
     // 发送请求
     NetworkResponse network_response;
-    errc_t error = aNetworkRequest(request, network_response);
-    
-    if (error != 0) {
-        return "{\"error\": \"Failed to send request\"}";
+    errc_t error = aNetworkRequest(networkRequest, network_response);
+    if(!error)
+    {
+        error = network_response.toJson(response);
+        if(error != 0)
+        {
+            aError("failed to parse response body, error: %d", error);   
+        }
     }
-    
-    return network_response.body();
+    return error;
 }
 
 AST_NAMESPACE_END
