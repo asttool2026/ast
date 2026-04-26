@@ -363,6 +363,22 @@ const std::vector<JsonValue>& JsonValue::getArray(const std::vector<JsonValue>& 
     return defaultValue;
 }
 
+
+// 获取数组或对象的元素数量
+size_t JsonValue::size() const
+{
+    if (type_ == EJsonValueType::eArray)
+    {
+        return value_.array_->size();
+    }
+    if (type_ == EJsonValueType::eObject)
+    {
+        return value_.object_->size();
+    }
+    return 0;
+}
+
+
 // 安全获取对象引用
 const std::map<std::string, JsonValue>& JsonValue::getObject(const std::map<std::string, JsonValue>& defaultValue) const
 {
@@ -414,6 +430,12 @@ JsonValue& JsonValue::operator[](size_t index)
     return NullValue();
 }
 
+
+JsonValue& JsonValue::operator[](int index)
+{
+    return this->operator[](size_t(index));
+}
+
 // 数组下标运算符（常量版本）
 const JsonValue& JsonValue::operator[](size_t index) const
 {
@@ -423,6 +445,12 @@ const JsonValue& JsonValue::operator[](size_t index) const
     }
     return NullValue();
 }
+
+const JsonValue& JsonValue::operator[](int index) const
+{
+    return this->operator[](size_t(index));
+}
+
 
 // 对象下标运算符（std::string）
 JsonValue& JsonValue::operator[](const std::string& key)

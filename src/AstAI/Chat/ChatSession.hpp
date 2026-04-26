@@ -40,7 +40,7 @@ AST_NAMESPACE_BEGIN
 typedef std::function<std::string(const std::map<std::string, std::string>&)> ToolExecutor;
 
 /// @brief 聊天会话
-class ChatSession {
+class AST_AI_API ChatSession {
 public:
     /// @brief 构造函数
     /// @param api_key API密钥
@@ -56,13 +56,27 @@ public:
     /// @brief 发送消息
     /// @param message 消息内容
     /// @return 响应内容
-    std::string sendMessage(const std::string& message);
+    std::string sendMessage(StringView message);
 
     /// @brief 设置系统提示
-    /// @param system_prompt 系统提示
-    void setSystemPrompt(const std::string& system_prompt);
+    /// @param systemPrompt 系统提示
+    void setSystemPrompt(StringView systemPrompt);
+
+    /// @brief 获取消息历史
+    /// @return 消息历史
+    ChatMessages& messages(){return messages_;}
 
 private:
+    std::string makeChatCompletion();
+
+    /// @brief 处理工具调用
+    /// @param toolCalls 工具调用列表
+    void handleToolCalls(const JsonValue& toolCalls);
+
+    /// @brief 处理单个工具调用
+    /// @param toolCall 单个工具调用
+    static std::string handleToolCall(const JsonValue& toolCall);
+
     /// @brief 处理工具调用
     /// @param tool_calls 工具调用列表
     /// @return 工具响应列表
@@ -75,12 +89,15 @@ private:
     /// @return 是否包含工具调用
     bool parseToolCalls(const std::string& response, std::vector<AIToolCall>& tool_calls, std::string& content);
 
+    /// @brief 获取当前使用的AI接口
+    /// @note 目前还不支持指定或者切换client，只能使用对象内部默认的AI接口
+    OpenAI& client();
 private:
     using ChatToolMap = std::map<std::string, std::pair<ChatTool, ToolExecutor>>;
-    
-    OpenAI client_;                                         ///< OpenAI客户端接口
-    ChatMessages messages_;                                 ///< 消息历史
-    ChatToolMap tools_;                                       ///< 工具映射
+    OpenAI* client_;                        ///< 当前使用的AI接口
+    OpenAI internalClient_;                 ///< 对象默认的AI接口
+    ChatMessages messages_;                 ///< 消息历史
+    ChatToolMap tools_;                     ///< 工具映射
 };
 
 /*! @} */

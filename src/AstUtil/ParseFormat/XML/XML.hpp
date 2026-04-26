@@ -1,5 +1,5 @@
 ///
-/// @file      Anthropic.hpp
+/// @file      XML.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -20,23 +20,8 @@
 
 #pragma once
 
-#include "AstGlobal.h"
-#include "LLMClient.hpp"
-
-AST_NAMESPACE_BEGIN
-
-/*!
-    @addtogroup 
-    @{
-*/
-
-/// @brief     Anthropic客户端接口
-/// @todo      实现Anthropic客户端的API调用
-class AST_AI_API Anthropic: public LLMClient 
-{
-
-};
-
-/*! @} */
-
-AST_NAMESPACE_END
+#include "XMLDocument.hpp"
+#include "XMLDomSax.hpp"
+#include "XMLNode.hpp"
+#include "XMLParser.hpp"
+#include "XMLSax.hpp"

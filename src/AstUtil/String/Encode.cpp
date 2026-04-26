@@ -91,6 +91,11 @@ _locale_t aUTF8Locale()
     };
 
     if (A_UNLIKELY(!t_utf8_locale)) {
+        // 设置控制台I/O编码为UTF-8
+        {
+            SetConsoleOutputCP(CP_UTF8);
+            SetConsoleCP(CP_UTF8);
+        }
         for (const char* locale_str : locale_strs) {
             _locale_t locale = _create_locale(LC_CTYPE, locale_str);
             if (locale) {

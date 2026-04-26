@@ -32,6 +32,15 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+
+
+class ChatTool {
+public:
+    ChatTool() = default;
+    ~ChatTool() = default;
+};
+
+
 /// @brief AI工具参数
 struct AIToolParameter {
     std::string name;          ///< 参数名
@@ -40,12 +49,17 @@ struct AIToolParameter {
     bool required;             ///< 是否必填
 };
 
+#if 0
+
 /// @brief AI工具定义
 struct ChatTool {
     std::string name;                      ///< 工具名称
     std::string description;               ///< 工具描述
     std::map<std::string, AIToolParameter> parameters;  ///< 工具参数
 };
+
+#endif
+
 
 /// @brief AI工具调用请求
 struct AIToolCall {

@@ -21,12 +21,96 @@
 #include "AstUtil/Network.hpp"
 #include "AstUtil/IO.hpp"
 #include "AstUtil/Posix.hpp"
+#include "AstUtil/Json.hpp"
+#include "AstAI/DeepSeek.hpp"
+#include "AstAI/ChatSession.hpp"
+#include "AstSim/Satellite.hpp"
 #include "AstTest/Test.h"
 
 AST_USING_NAMESPACE
 
+TEST(DeepSeekTest, ChatSession)
+{
+    {Satellite sat;} // for link libray AstSim
+    ChatSession session;
+    std::vector<std::string> messages({
+        "帮我设计一个太阳同步轨道"
+    });
+    for(auto& message : messages)
+    {
+        std::string response = session.sendMessage(message);
+        // ast_printf("AI: %s\n", response.c_str());
+    }
+}
+
+
 TEST(DeepSeekTest, OpenAI)
 {
+    GTEST_SKIP();
+    DeepSeek client;
+    auto req = u8R"(
+    {
+        "model": "deepseek-v4-flash",
+        "messages": [
+            {
+                "role": "system", 
+                "content": "你是你个专业工程师，擅长航天任务设计与分析，能够熟练使用航天任务设计软件，你需要协助用户使用航天进行任务设计与分析。\n更具体一点的描述：\n- 正在使用的软件是ATK，类似于STK软件;\n- 你正在协助用户建立一个航天任务分析场景\n- 场景中的对象包括：卫星、地面站、传感器等"
+            },
+            {"role": "user", "content": "帮我设计一个太阳同步轨道"}
+        ],
+        "temperature": 0.2,
+        "tools":[
+            {
+                "type": "function",
+                "function": {
+                    "name": "find_classes",
+                    "description": "查找软件支持的所有对象类型"
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "create_object",
+                    "description": "创建一个新的对象",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "class": {
+                                "type": "string",
+                                "description": "对象的类型，必须是通过find_classes返回的类型"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "find_objects",
+                    "description": "查找当前设计场景中的对象",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "class": {
+                                "type": "string",
+                                "description": "对象的类型，必须是通过find_classes返回的类型，如果没有指定类型，默认查找所有对象"
+                            }
+                        }
+                    }
+                }
+            }
+        ],
+        "thinking": {"type": "disabled"},
+        "stream": false
+    }
+)"_json;
+    auto res = client.chat(req);
+    ast_printf("res: \n%s\n", res.toJsonString().c_str());
+}
+
+TEST(DeepSeekTest, API)
+{
+    GTEST_SKIP();
     NetworkRequest req;
     NetworkResponse res;
     const char* url = posix::getenv("AST_AI_BASE_URL");

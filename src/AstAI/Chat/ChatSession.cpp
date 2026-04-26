@@ -19,9 +19,222 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ChatSession.hpp"
+#include "AstUtil/JsonValue.hpp"
+#include "AstUtil/IO.hpp"
+#include "AstUtil/Logger.hpp"
+
+#include "AstUtil/RTTIAPI.hpp"
 
 AST_NAMESPACE_BEGIN
 
 
+const char* defaultSystemPrompt = u8R"(
+你是你个专业工程师，擅长航天任务设计与分析，能够熟练使用航天任务设计软件，你需要协助用户使用航天进行任务设计与分析。
+更具体一点的描述：
+- 正在使用的软件是ATK，类似于STK软件
+- 你正在协助用户建立一个航天任务分析场景
+- 场景中的对象包括：卫星、地面站、传感器等
+)";
+
+ChatSession::ChatSession()
+{
+    this->setSystemPrompt(defaultSystemPrompt);
+}
+
+std::string ChatSession::sendMessage(StringView message)
+{
+    this->messages_.addUserMessage(message);
+    return this->makeChatCompletion();
+}
+
+
+std::string ChatSession::makeChatCompletion()
+{
+    auto& client = this->client();
+    JsonValue json;
+    json["messages"] = this->messages_.toJson();
+    json["model"] = "deepseek-v4-flash";
+    json["temperature"] = 0.2;
+    json["thinking"]["type"] = "enabled";  // "enabled" or "disabled"
+    json["stream"] = false;
+    json["tools"] = u8R"(
+        [
+            {
+                "type": "function",
+                "function": {
+                    "name": "find_classes",
+                    "description": "查找软件支持的所有对象类型"
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "create_object",
+                    "description": "创建一个新的对象",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "class": {
+                                "type": "string",
+                                "description": "对象的类型，必须是通过find_classes返回的类型"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "find_objects",
+                    "description": "查找当前设计场景中的对象",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "class": {
+                                "type": "string",
+                                "description": "对象的类型，必须是通过find_classes返回的类型，如果没有指定类型，默认查找所有对象"
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    )"_json;
+
+    {
+        JsonValue res = client.chat(json);
+        if(!res["error"].isNull())
+        {
+            aError("%s", res["error"]["message"].toString().c_str());
+            return aText("系统错误");
+        }
+        // ast_printf("res: %s\n", res.toJsonString().c_str());
+        JsonValue& message = res["choices"][0]["message"];
+        std::string response = message["content"].toString();
+        ast_printf("ai response: \n%s\n", response.c_str());
+        JsonValue& toolCalls = message["tool_calls"];
+        auto msg = ChatMessage::Assistant(response, toolCalls);
+        if(!message["reasoning_content"].isNull())
+            msg.setReasoningContent(message["reasoning_content"].toString());
+        this->messages_.addMessage(msg);
+
+        if(toolCalls.isArray() && toolCalls.size() > 0)
+        {
+            this->handleToolCalls(toolCalls);
+        }
+        return response;
+    }
+}
+
+void ChatSession::setSystemPrompt(StringView systemPrompt)
+{
+    this->messages_.setSystemPrompt(systemPrompt);
+}
+
+void ChatSession::handleToolCalls(const JsonValue &toolCalls)
+{
+    if(toolCalls.isArray() && toolCalls.size() > 0)
+    {
+        for(auto& item: toolCalls.getArray())
+        {
+            std::string response = this->handleToolCall(item);
+            std::string id = item["id"];
+            this->messages_.addToolMessage(response, id);
+        }
+        this->makeChatCompletion();
+    }
+}
+
+/// @brief 将对象转换为简化的JSON格式
+/// @details 包含对象的名称、类型、ID和父作用域ID
+/// @param obj 对象指针
+/// @return 简化的JSON对象
+JsonValue aObjectToBriefJson(Object* obj)
+{
+    JsonValue json;
+    json["name"] = obj->getName();
+    json["type"] = obj->getType()->name();
+    json["id"] = static_cast<int>(obj->getID());
+    if(auto parent = obj->getParentScope())
+        json["parent_id"] = static_cast<int>(parent->getID());
+    return json;
+}
+
+std::string ChatSession::handleToolCall(const JsonValue &toolCall)
+{
+    auto& function = toolCall["function"];
+    std::string name = function["name"];
+    JsonValue args;
+    args.parseFromString(function["arguments"].toString());
+    // ast_printf("name: %s, arguments: %s\n", name.c_str(), args.toJsonString().c_str());
+    if(name == "find_classes")
+    {
+        std::vector<std::string> classes;
+        aGetAllClassNames(classes);
+        JsonValue json;
+        for(auto& cls : classes)
+        {
+            json.append(cls);
+        }
+        return json.toJsonString();
+    }
+    else if(name == "create_object")
+    {
+        std::string className = args["class"];
+        // aDebug("creating object: %s", className.c_str());
+        Object* obj = aNewObject(className);
+        if(obj)
+        {
+            return aObjectToBriefJson(obj).toJsonString();
+        }
+        else
+        {
+            aError("create object failed: %s", className.c_str());
+            return u8"创建对象失败";
+        }
+    }
+    else if(name == "find_objects")
+    {
+        std::vector<Object*> objectsMatched;
+        std::vector<Object*> objects = aGetAllObjects();
+        if(!args["class"].isNull())
+        {
+            Class* cls = aGetClass(args["class"].toString());
+            if(cls)
+            {
+                for(auto& obj : objects)
+                {
+                    if(obj->getType() == cls)
+                    {
+                        objectsMatched.push_back(obj);
+                    }
+                }
+            }
+        }
+        else{
+            objectsMatched = objects;
+        }
+
+        JsonValue json;
+        for(auto& obj : objectsMatched)
+        {
+            JsonValue objJson = aObjectToBriefJson(obj);
+            json.append(objJson);
+        }
+        return json.toJsonString();
+    }
+    else
+    {
+        aError("unsupported tool call: %s", name.c_str());
+        return u8"不支持的工具调用";
+    }
+}
+
+OpenAI& ChatSession::client() {
+    if (client_ == nullptr) {
+        client_ = &internalClient_;
+    }
+    return *client_;
+}
 
 AST_NAMESPACE_END

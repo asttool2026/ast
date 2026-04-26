@@ -20,6 +20,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstAI/LLMClient.hpp"
 #include "AstAI/ChatMessage.hpp"
 #include "AstAI/ChatTool.hpp"
 #include <string>
@@ -36,7 +37,7 @@ AST_NAMESPACE_BEGIN
 class JsonValue;
 
 /// @brief OpenAI客户端
-class OpenAI {
+class AST_AI_API OpenAI: public LLMClient {
 public:
     /// @brief 默认构造函数
     /// 从环境变量中获取API密钥和基础URL

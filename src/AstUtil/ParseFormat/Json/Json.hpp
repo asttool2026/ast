@@ -1,5 +1,5 @@
 ///
-/// @file      Anthropic.hpp
+/// @file      Json.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -20,23 +20,9 @@
 
 #pragma once
 
-#include "AstGlobal.h"
-#include "LLMClient.hpp"
+#include "JsonDomSax.hpp"
+#include "JsonParser.hpp"
+#include "JsonSax.hpp"
+#include "JsonSchema.hpp"
+#include "JsonValue.hpp"
 
-AST_NAMESPACE_BEGIN
-
-/*!
-    @addtogroup 
-    @{
-*/
-
-/// @brief     Anthropic客户端接口
-/// @todo      实现Anthropic客户端的API调用
-class AST_AI_API Anthropic: public LLMClient 
-{
-
-};
-
-/*! @} */
-
-AST_NAMESPACE_END

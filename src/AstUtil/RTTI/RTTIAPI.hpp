@@ -136,6 +136,13 @@ AST_UTIL_CAPI errc_t aSetParentScope(Object* obj, Object* parentScope);
 /// @return 父作用域指针
 AST_UTIL_CAPI Object* aGetParentScope(Object* obj);
 
+
+/// @brief 获取所有对象
+/// @details 获取所有已添加的对象
+/// @return 所有对象指针向量
+AST_UTIL_API std::vector<Object*> aGetAllObjects();
+
+
 /// @brief 查找对象的子对象
 /// @details 根据父对象、类指针和子对象名查找子对象
 /// @param parentScope 父对象指针

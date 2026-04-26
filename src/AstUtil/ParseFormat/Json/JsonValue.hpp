@@ -180,6 +180,8 @@ public:
     /// @return 对象引用，如果类型不匹配返回默认值
     const std::map<std::string, JsonValue>& getObject(const std::map<std::string, JsonValue>& defaultValue = std::map<std::string, JsonValue>()) const;
     
+    /// @brief 获取数组或对象的元素数量
+    size_t size() const;
     
     /// @brief 转换为布尔值运算符
     /// @return 布尔值，null 值返回 false，数值非零返回 true，字符串非空返回 true
@@ -202,11 +204,14 @@ public:
     /// @param index 数组索引
     /// @return 对应索引的 JSON 值引用，如果类型不匹配或索引越界返回空值
     JsonValue& operator[](size_t index);
+    JsonValue& operator[](int index);
     
     /// @brief 数组下标运算符（常量版本）
     /// @param index 数组索引
     /// @return 对应索引的 JSON 值常量引用，如果类型不匹配或索引越界返回空值
     const JsonValue& operator[](size_t index) const;
+    const JsonValue& operator[](int index) const;
+
     
     /// @brief 对象下标运算符
     /// @param key 对象键

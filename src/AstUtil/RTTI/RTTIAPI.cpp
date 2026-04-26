@@ -96,6 +96,11 @@ Object *aGetParentScope(Object *obj)
     return ObjectManager::CurrentInstance().getParentScope(obj);
 }
 
+std::vector<Object*> aGetAllObjects()
+{
+    return ObjectManager::CurrentInstance().getAllObjects();
+}
+
 Object *aFindChild(Object *parentScope, Class *cls, StringView name)
 {
     if(!parentScope)

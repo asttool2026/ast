@@ -21,6 +21,8 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstUtil/StringView.hpp"
+#include "AstUtil/JsonValue.hpp"
 #include <string>
 
 AST_NAMESPACE_BEGIN
@@ -30,6 +32,7 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+class JsonValue;
 
 
 /// @brief 消息角色
@@ -41,14 +44,74 @@ enum class EChatRole {
 };
 
 
+AST_AI_API std::string toString(EChatRole role);
+
+
 /// @brief 聊天消息
 class ChatMessage 
 {
 public:
     /// @brief 构造函数
     ChatMessage() = default;
+
+    /// @brief 构造函数
+    /// @param role 消息角色
+    /// @param content 消息内容
+    ChatMessage(EChatRole role, StringView content)
+        : role_(role), content_(content) 
+    {}
+
     /// @brief 析构函数
     ~ChatMessage() = default;
+
+    /// @brief 创建系统提示消息
+    /// @param content 系统提示
+    /// @return 系统提示消息
+    static ChatMessage System(StringView content)
+    {
+        return ChatMessage(EChatRole::eSystem, content);
+    }
+
+    /// @brief 创建用户消息
+    /// @param content 用户消息内容
+    /// @return 用户消息
+    static ChatMessage User(StringView content)
+    {
+        return ChatMessage(EChatRole::eUser, content);
+    }
+
+    /// @brief 创建助手消息
+    /// @param content 助手消息内容
+    /// @return 助手消息
+    static ChatMessage Assistant(StringView content)
+    {
+        return ChatMessage(EChatRole::eAssistant, content);
+    }
+
+    static ChatMessage Assistant(StringView content, const JsonValue& toolCalls)
+    {
+        ChatMessage msg(EChatRole::eAssistant, content);
+        msg.setToolCalls(toolCalls);
+        return msg;
+    }
+    
+    
+
+    /// @brief 创建工具消息
+    /// @param content 工具消息内容
+    /// @param toolCallId 工具调用ID
+    /// @return 工具消息
+    static ChatMessage Tool(StringView content, StringView toolCallId)
+    {
+        ChatMessage msg(EChatRole::eTool, content);
+        msg.setToolCallId(toolCallId);
+        return msg;
+    }
+
+    /// @brief 转换为JSON值
+    /// @return JSON值
+    AST_AI_API
+    JsonValue toJson() const;
 
     /// @brief 设置消息角色
     void setRole(EChatRole role) { role_ = role; }
@@ -61,21 +124,35 @@ public:
     std::string name() const { return name_; }
 
     /// @brief 设置消息内容
-    void setContent(const std::string& content) { content_ = content; }
+    void setContent(StringView content) { content_ = std::string(content); }
     /// @brief 获取消息内容
     std::string content() const { return content_; }
+
+    /// @brief 设置推理内容
+    void setReasoningContent(StringView reasoningContent) { reasoningContent_ = std::string(reasoningContent); }
+    /// @brief 获取推理内容
+    std::string reasoningContent() const { return reasoningContent_; }
     
     /// @brief 设置工具调用ID
-    void setToolCallId(const std::string& toolCallId) { toolCallId_ = toolCallId; }
+    void setToolCallId(StringView toolCallId) { toolCallId_ = std::string(toolCallId); }
     
     /// @brief 获取工具调用ID
     std::string toolCallId() const { return toolCallId_; }
     
+
+    /// @brief 设置工具调用列表
+    void setToolCalls(const JsonValue& toolCalls) { toolCalls_ = toolCalls; }
+
+    /// @brief 获取工具调用列表
+    const JsonValue& toolCalls() const { return toolCalls_; }
+
 private:
     EChatRole        role_{EChatRole::eUser};           ///< 消息角色
     std::string      name_;                             ///< 角色名称
     std::string      content_;                          ///< 消息内容
+    std::string      reasoningContent_;                 ///< 推理内容（当角色为ASSISTANT时使用）
     std::string      toolCallId_;                       ///< 工具调用ID（当角色为TOOL时使用）
+    JsonValue        toolCalls_;                        ///< 工具调用列表
 };
 
 

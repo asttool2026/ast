@@ -34,9 +34,9 @@ OpenAI::OpenAI()
 {
     apiKey_ = posix::getenv("AST_AI_API_KEY");
     baseUrl_ = posix::getenv("AST_AI_BASE_URL");
-    if(!apiKey_.empty())
+    if(apiKey_.empty())
         aWarning("empty api key");
-    if(!baseUrl_.empty())
+    if(baseUrl_.empty())
         aWarning("empty base url");
 }
 
@@ -156,16 +156,18 @@ errc_t OpenAI::chat(const JsonValue &request, JsonValue &response)
     networkRequest.setUrl(baseUrl() + "/chat/completions");
     networkRequest.setBody(request.toJsonString());
     
+    // ast_printf("request: %s\n", request.toJsonString(2).c_str());
+
     // 设置请求头
     networkRequest.addHeader("Content-Type", "application/json");
     networkRequest.addHeader("Authorization", "Bearer " + apiKey());
     
     // 发送请求
-    NetworkResponse network_response;
-    errc_t error = aNetworkRequest(networkRequest, network_response);
+    NetworkResponse networkResponse;
+    errc_t error = aNetworkRequest(networkRequest, networkResponse);
     if(!error)
     {
-        error = network_response.toJson(response);
+        error = networkResponse.toJson(response);
         if(error != 0)
         {
             aError("failed to parse response body, error: %d", error);   

@@ -19,9 +19,44 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ChatMessage.hpp"
+#include "AstUtil/JsonValue.hpp"
 
 AST_NAMESPACE_BEGIN
 
+std::string toString(EChatRole role)
+{
+    switch (role)
+    {
+    case EChatRole::eUser:
+        return "user";
+    case EChatRole::eAssistant:
+        return "assistant";
+    case EChatRole::eSystem:
+        return "system";
+    case EChatRole::eTool:
+        return "tool";
+    default:
+        return "unknown";
+    }
+}
+
+
+
+JsonValue ChatMessage::toJson() const
+{
+    JsonValue json;
+    json["role"] = toString(role_);
+    json["content"] = content_;
+    if (!reasoningContent_.empty())
+        json["reasoning_content"] = reasoningContent_;
+    if (!toolCallId_.empty())
+        json["tool_call_id"] = toolCallId_;
+    if (!name_.empty())
+        json["name"] = name_;
+    if (!toolCalls_.isNull())
+        json["tool_calls"] = toolCalls_;
+    return json;
+}
 
 
 AST_NAMESPACE_END
