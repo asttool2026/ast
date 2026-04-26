@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstCore/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -65,7 +66,7 @@ AST_CORE_API errc_t aAxesTransform(Axes* source, Axes* target, const TimePoint& 
 
 /// @brief 轴系类
 /// @details 轴系类表示一个三维空间中的轴系，包含了轴系的旋转信息。
-class AST_CORE_API Axes : public Object
+class AST_CORE_API Axes : public ObjectNamed
 {
 public:
     ~Axes() override = default;

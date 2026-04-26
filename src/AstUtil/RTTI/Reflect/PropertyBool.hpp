@@ -33,6 +33,7 @@ class AST_UTIL_API PropertyBool final: public Property
 {
 public:
     using Property::Property;
+    using Property::getValue;
     using InputType = bool;
     using OutputType = bool;
     

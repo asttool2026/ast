@@ -32,12 +32,17 @@ AST_NAMESPACE_BEGIN
 
 OpenAI::OpenAI() 
 {
-    apiKey_ = posix::getenv("AST_AI_API_KEY");
-    baseUrl_ = posix::getenv("AST_AI_BASE_URL");
-    if(apiKey_.empty())
+    auto apiKey = posix::getenv("AST_AI_API_KEY");
+    if(!apiKey || !*apiKey)
         aWarning("empty api key");
-    if(baseUrl_.empty())
+    else
+        apiKey_ = apiKey;
+        
+    auto baseUrl = posix::getenv("AST_AI_BASE_URL");
+    if(!baseUrl || !*baseUrl)
         aWarning("empty base url");
+    else
+        baseUrl_ = baseUrl;
 }
 
 OpenAI::OpenAI(const std::string& apiKey, const std::string& baseUrl) 

@@ -36,6 +36,8 @@ public:
     using OutputType = std::string;
 public:
     using Property::Property;
+    using Property::getValue;
+
     errc_t getValueBool(const void* container, bool& value) override;
     errc_t setValueBool(void* container, bool value) override;
     errc_t getValueInt(const void* container, int& value) override;

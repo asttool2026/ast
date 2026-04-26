@@ -24,6 +24,7 @@
 #include "AstCore/Ephemeris.hpp"
 #include "AstUtil/ScopedPtr.hpp"
 #include "AstCore/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -46,7 +47,7 @@ class MotionMissionCommand;
 class MotionSGP4;
 
 /// @brief 运动定义接口
-class AST_SIM_API MotionProfile: public Object
+class AST_SIM_API MotionProfile: public ObjectNamed
 {
 public:
     MotionProfile() = default;

@@ -107,7 +107,9 @@ public:
     /// @return const char* 对象名称
     virtual const std::string& getName() const;
 
-
+    /// @brief 设置对象的名称
+    /// @param name 对象名称
+    virtual void setName(StringView name) = 0;
 public: // 编辑属性
     
     /// @brief 打开编辑对话框，用于编辑对象的属性
@@ -213,6 +215,16 @@ public: // 对象ID
     /// @brief 获取对象的父作用域
     /// @return Object* 父作用域指针
     Object* getParentScope() const;
+
+    /// @brief 判断对象是否为指定类型的实例
+    /// @param type 类型元信息
+    /// @return bool 是否为指定类型的实例
+    bool isOfType(Class* type) const;
+
+    /// @brief 判断对象是否为指定类型的实例
+    /// @param typeName 类型名
+    /// @return bool 是否为指定类型的实例   
+    bool isOfType(StringView typeName) const;
 public: // 引用计数
     /// @brief 获取强引用计数
     /// @return uint32_t 强引用计数

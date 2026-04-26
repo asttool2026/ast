@@ -69,6 +69,7 @@ AST_UTIL_CAPI Property* _aNewPropertyInt(FPropertyGet getter, FPropertySet sette
 AST_UTIL_CAPI Property* _aNewPropertyDouble(FPropertyGet getter, FPropertySet setter);
 AST_UTIL_CAPI Property* _aNewPropertyString(FPropertyGet getter, FPropertySet setter);
 AST_UTIL_CAPI Property* _aNewPropertyQuantity(FPropertyGet getter, FPropertySet setter, Dimension dimension);
+AST_UTIL_CAPI Property* _aNewPropertyObject(FPropertyGet getter, FPropertySet setter, Class* cls);
 
 // ----------------------------------------------------------------------------
 // 类型到工厂函数的分发
@@ -133,7 +134,8 @@ namespace detail
         {
             return [](void* obj, const void* value) -> errc_t
             {
-                static_cast<T*>(obj)->*Member = *static_cast<const ValueType*>(value);
+                using InputType = typename property_trait<ValueType>::input_type;
+                static_cast<T*>(obj)->*Member = ValueType(*static_cast<const InputType*>(value));
                 return 0;
             };
         }
@@ -374,6 +376,58 @@ A_ALWAYS_INLINE Property* aNewPropertyQuantityWithError(Dimension dim)
         Builder::template makeGetter<Getter>(),
         Builder::template makeSetter<Setter>(),
         dim
+    );
+}
+
+// ============================================================================
+// 对象类型属性
+// ============================================================================
+
+// 成员指针版本
+template<typename T, typename ObjectType, ObjectType* T::*Member>
+A_ALWAYS_INLINE Property* aNewPropertyObject()
+{
+    using Builder = detail::PropertyBuilder<T, ObjectType*, detail::MemberPtrTag>;
+    return _aNewPropertyObject(
+        Builder::template makeGetter<Member>(),
+        Builder::template makeSetter<Member>(),
+        &ObjectType::staticType
+    );
+}
+
+// 只读 getter 版本
+template<typename T, typename ObjectType, ObjectType* (T::*Getter)() const>
+A_ALWAYS_INLINE Property* aNewPropertyObject()
+{
+    using Builder = detail::PropertyBuilder<T, ObjectType*, detail::GetterOnlyTag>;
+    return _aNewPropertyObject(
+        Builder::template makeGetter<Getter>(),
+        nullptr,
+        &ObjectType::staticType
+    );
+}
+
+// getter + void setter 版本
+template<typename T, typename ObjectType, ObjectType* (T::*Getter)() const, void (T::*Setter)(ObjectType*)>
+A_ALWAYS_INLINE Property* aNewPropertyObject()
+{
+    using Builder = detail::PropertyBuilder<T, ObjectType*, detail::GetterVoidSetterTag>;
+    return _aNewPropertyObject(
+        Builder::template makeGetter<Getter>(),
+        Builder::template makeSetter<Setter>(),
+        &ObjectType::staticType
+    );
+}
+
+// getter + errc_t setter 版本
+template<typename T, typename ObjectType, ObjectType* (T::*Getter)() const, errc_t (T::*Setter)(ObjectType*)>
+A_ALWAYS_INLINE Property* aNewPropertyObjectWithError()
+{
+    using Builder = detail::PropertyBuilder<T, ObjectType*, detail::GetterErrorSetterTag>;
+    return _aNewPropertyObject(
+        Builder::template makeGetter<Getter>(),
+        Builder::template makeSetter<Setter>(),
+        &ObjectType::staticType
     );
 }
 

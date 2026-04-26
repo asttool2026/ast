@@ -193,6 +193,30 @@ Object *Object::getParentScope() const
     return aGetParentScope(const_cast<Object*>(this));
 }
 
+bool Object::isOfType(Class* type) const
+{
+    auto t = getType();
+    while(t)
+    {
+        if(t == type)
+            return true;
+        t = t->getParent();
+    }
+    return false;
+}
+
+bool Object::isOfType(StringView typeName) const
+{
+    auto t = getType();
+    while(t)
+    {
+        if(typeName == t->name())
+            return true;
+        t = t->getParent();
+    }
+    return false;
+}
+
 Object::~Object()
 {
     /*

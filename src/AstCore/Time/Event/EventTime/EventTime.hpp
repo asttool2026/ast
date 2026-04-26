@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 #include "AstCore/TimePoint.hpp"
 
 AST_NAMESPACE_BEGIN
@@ -38,7 +39,7 @@ using HEventTime = SharedPtr<EventTime>;
 
 /// @brief 事件时间
 /// @details 
-class AST_CORE_API EventTime: public Object
+class AST_CORE_API EventTime: public ObjectNamed
 {
 public:
     virtual ~EventTime() override = default;

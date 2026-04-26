@@ -1,9 +1,9 @@
 ///
-/// @file      Burn.hpp
+/// @file      Referenced.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-18
+/// @date      2026-04-26
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,28 +18,10 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#pragma once
-
-#include "AstGlobal.h"
-#include "AstUtil/Object.hpp"
-#include "AstUtil/ObjectNamed.hpp"
+#include "Referenced.hpp"
 
 AST_NAMESPACE_BEGIN
 
-/*!
-    @addtogroup 
-    @{
-*/
 
-/// @brief 发动机点火
-class AST_CORE_API Burn: public ObjectNamed
-{
-
-};
-
-
-
-
-/*! @} */
 
 AST_NAMESPACE_END

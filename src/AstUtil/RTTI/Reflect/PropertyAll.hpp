@@ -1,9 +1,9 @@
 ///
-/// @file      Burn.hpp
+/// @file      PropertyAll.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-18
+/// @date      2026-04-26
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -20,26 +20,10 @@
 
 #pragma once
 
-#include "AstGlobal.h"
-#include "AstUtil/Object.hpp"
-#include "AstUtil/ObjectNamed.hpp"
-
-AST_NAMESPACE_BEGIN
-
-/*!
-    @addtogroup 
-    @{
-*/
-
-/// @brief 发动机点火
-class AST_CORE_API Burn: public ObjectNamed
-{
-
-};
-
-
-
-
-/*! @} */
-
-AST_NAMESPACE_END
+#include "AstUtil/PropertyBool.hpp"
+#include "AstUtil/PropertyInt.hpp"
+#include "AstUtil/PropertyDouble.hpp"
+#include "AstUtil/PropertyString.hpp"
+#include "AstUtil/PropertyQuantity.hpp"
+#include "AstUtil/PropertyTimePoint.hpp"
+#include "AstUtil/PropertyVisitor.hpp"

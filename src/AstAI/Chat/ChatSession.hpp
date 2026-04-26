@@ -94,7 +94,7 @@ private:
     OpenAI& client();
 private:
     using ChatToolMap = std::map<std::string, std::pair<ChatTool, ToolExecutor>>;
-    OpenAI* client_;                        ///< 当前使用的AI接口
+    OpenAI* client_{nullptr};               ///< 当前使用的AI接口
     OpenAI internalClient_;                 ///< 对象默认的AI接口
     ChatMessages messages_;                 ///< 消息历史
     ChatToolMap tools_;                     ///< 工具映射

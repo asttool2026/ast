@@ -33,6 +33,8 @@ void Mover::ClassInit(Class* cls)
     cls->addToRegistry();
     cls->setParent<Point>();
     cls->setConstructor<Mover>();
+
+    cls->addProperty("motionProfile", aNewPropertyObject<Mover, MotionProfile, &Mover::getMotionProfile, &Mover::setMotionProfile>());
 }
 
 errc_t Mover::generateEphemeris()

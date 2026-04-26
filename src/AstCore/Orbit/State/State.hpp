@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 #include "AstCore/Frame.hpp"
 #include "AstCore/EventTime.hpp"
 
@@ -49,7 +50,7 @@ using HState = SharedPtr<State>;
 /// @brief 航天器状态
 /// @details 参考了orekit的Orbit类
 /// 但是这个可能不只是限制于轨道状态，所以取名为State
-class AST_CORE_API State: public Object
+class AST_CORE_API State: public ObjectNamed
 {
 public:
     State() = default;

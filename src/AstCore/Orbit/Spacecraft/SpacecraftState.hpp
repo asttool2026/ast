@@ -23,6 +23,7 @@
 #include "AstGlobal.h"
 #include "AstCore/State.hpp"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -32,7 +33,7 @@ AST_NAMESPACE_BEGIN
 */
 
 /// @brief 空间飞行器状态量
-class SpacecraftState: public Object
+class SpacecraftState: public ObjectNamed
 {
 public:
     SpacecraftState() = default;

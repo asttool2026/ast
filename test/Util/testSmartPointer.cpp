@@ -33,7 +33,7 @@ AST_USING_NAMESPACE
 // 测试SharedPtr
 TEST(SmartPointer, SharedPtr)
 {
-    auto obj = new Object{  };
+    auto obj = new ObjectNamed{  };
     {
         SharedPtr<Object> ptr = obj;
         EXPECT_EQ(ptr->refCount(), 1);
@@ -49,7 +49,7 @@ TEST(SmartPointer, SharedPtr)
 TEST(SmartPointer, WeakPtr)
 {
     {
-        auto obj = new Object{  };
+        auto obj = new ObjectNamed{  };
         WeakPtr<Object> ptrweak = obj;
         EXPECT_EQ(obj->weakRefCount(), 2);
         obj->destruct();
@@ -59,7 +59,7 @@ TEST(SmartPointer, WeakPtr)
     {
         WeakPtr<Object> ptrweak;
         {
-            auto obj = new Object{  };
+            auto obj = new ObjectNamed{  };
             ptrweak = obj;
             EXPECT_EQ(obj->weakRefCount(), 2);
             obj->destruct();
@@ -70,7 +70,7 @@ TEST(SmartPointer, WeakPtr)
     {
         WeakPtr<Object> ptrweak;
         {
-            auto obj = new Object{  };
+            auto obj = new ObjectNamed{  };
             ptrweak = obj;
             EXPECT_EQ(obj->weakRefCount(), 2);
             auto ptrweak2 = ptrweak;
@@ -88,7 +88,7 @@ TEST(SmartPointer, ScopedPtr)
 {
     ScopedPtr<double> ptr{new double{1.0}};
     ptr = nullptr;
-    Object *obj = new Object{};
+    ObjectNamed *obj = new ObjectNamed{};
     {
         ScopedPtr<Object> ptr{obj};
     }

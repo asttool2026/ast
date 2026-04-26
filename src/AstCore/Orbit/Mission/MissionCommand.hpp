@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -38,7 +39,7 @@ using HMissionCommand = SharedPtr<MissionCommand>;
 /// @brief 任务命令
 /// @details 任务命令负责执行任务序列中的任务
 /// 参考GMAT的GmatCommand.hpp
-class AST_CORE_API MissionCommand: public Object
+class AST_CORE_API MissionCommand: public ObjectNamed
 {
 public:
     /// @brief 控制命令

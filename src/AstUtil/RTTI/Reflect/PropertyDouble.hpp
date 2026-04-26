@@ -32,6 +32,7 @@ class AST_UTIL_API PropertyDouble: public Property
 {
 public:
     using Property::Property;
+    using Property::getValue;
     using InputType = double;
     using OutputType = double;
 

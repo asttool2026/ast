@@ -26,6 +26,7 @@
 #include "AstMath/ODEInnerStateObserver.hpp"
 #include "AstMath/OrdinaryDifferentialEquation.hpp"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 #include <vector>
 #include <type_traits>
 
@@ -36,7 +37,7 @@ class ODEEventDetector;
 /// @brief ODE 积分器接口类
 /// @details 积分器是ODE求解的基础类，提供了积分ODE的通用接口。
 /// @ingroup ODE
-class AST_MATH_API IODEIntegrator: public Object
+class AST_MATH_API IODEIntegrator: public ObjectNamed
 {
 public:
     virtual ~IODEIntegrator() {};

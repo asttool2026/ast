@@ -24,6 +24,8 @@
 #include "AstUtil/Logger.hpp"
 
 #include "AstUtil/RTTIAPI.hpp"
+#include "AstUtil/PropertyVisitor.hpp"
+#include "AstUtil/PropertyAll.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -35,6 +37,114 @@ const char* defaultSystemPrompt = u8R"(
 - 你正在协助用户建立一个航天任务分析场景
 - 场景中的对象包括：卫星、地面站、传感器等
 )";
+
+
+namespace{
+    class PropertyVisitorImplForJson : public PropertyVisitor 
+    {
+    public:
+    PropertyVisitorImplForJson()
+        : internalJson_()
+        , json_(internalJson_)
+    {
+    }
+    PropertyVisitorImplForJson(JsonValue& json)
+        : json_(json)
+    {
+    }
+    ~PropertyVisitorImplForJson() override = default;
+    errc_t visit(Property& property, const void* container) override
+    {
+
+        json()[property.name()] = property.getValue<std::string>(container);
+        return 0;
+    }
+    errc_t visit(PropertyBool& property, const void* container) override
+    {
+        json()[property.name()] = property.getValue<bool>(container);
+        return 0;
+    }
+    errc_t visit(PropertyDouble& property, const void* container) override
+    {
+        json()[property.name()] = property.getValue<double>(container);
+        return 0;
+    }
+    errc_t visit(PropertyInt& property, const void* container) override
+    {
+        json()[property.name()] = property.getValue<int>(container);
+        return 0;
+    }
+    errc_t visit(PropertyString& property, const void* container) override
+    {
+        json()[property.name()] = property.getValue<std::string>(container);
+        return 0;
+    }
+
+    errc_t visit(PropertyObject& property, const void* container) override
+    {
+        aWarning("PropertyObject is not supported in JsonVisitorImplForJson");
+        return 0;
+    }
+    errc_t visit(PropertyStruct& property, const void* container) override
+    {
+        // @todo
+        aWarning("PropertyStruct is not supported in JsonVisitorImplForJson");
+        return 0;
+    }
+    errc_t visit(PropertyQuantity& property, const void* container) override
+    {
+        json()[property.name()] = property.getValue<std::string>(container);
+        return 0;
+    }
+    errc_t visit(PropertyPOD& property, const void* container) override
+    {
+        // @todo
+        aWarning("PropertyPOD is not supported in JsonVisitorImplForJson");
+        return 0;
+    }
+    errc_t visit(PropertyTimePoint& property, const void* container) override
+    {
+        // json()[property.name()] = property.getValue<std::string>(container);
+        aWarning("PropertyTimePoint is not supported in JsonVisitorImplForJson");
+        return 0;
+    }
+    JsonValue& json() { return json_; }
+private:
+    JsonValue internalJson_;
+    JsonValue& json_;
+};
+}
+
+
+/// @brief 将对象转换为简化的JSON格式
+/// @details 包含对象的名称、类型、ID和父作用域ID
+/// @param obj 对象指针
+/// @return 简化的JSON对象
+JsonValue aObjectToBriefJson(Object* obj)
+{
+    JsonValue json;
+    json["name"] = obj->getName();
+    json["$type"] = obj->getType()->name();
+    json["$id"] = static_cast<int>(obj->getID());
+    if(auto parent = obj->getParentScope())
+        json["$parent_id"] = static_cast<int>(parent->getID());
+    return json;
+}
+
+JsonValue aObjectToJson(Object* obj)
+{
+    if(!obj){return JsonValue();}
+    JsonValue json = aObjectToBriefJson(obj);
+    auto clazz = obj->getType();
+    PropertyVisitorImplForJson visitor(json);
+    auto& properties = clazz->getProperties();
+    for (auto property : properties) {
+        if (!property) continue;
+        property->accept(visitor, obj);
+    }
+    return visitor.json();
+}
+
 
 ChatSession::ChatSession()
 {
@@ -97,6 +207,46 @@ std::string ChatSession::makeChatCompletion()
                         }
                     }
                 }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_object_attributes",
+                    "description": "获取指定对象的详细属性信息",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "description": "对象的ID"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "set_object_attribute",
+                    "description": "设置指定对象的属性值",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "description": "对象的ID"
+                            },
+                            "attribute": {
+                                "type": "string",
+                                "description": "要设置的属性名"
+                            },
+                            "value": {
+                                "type": "string",
+                                "description": "要设置的属性值"
+                            }
+                        }
+                    }
+                }
             }
         ]
     )"_json;
@@ -145,20 +295,7 @@ void ChatSession::handleToolCalls(const JsonValue &toolCalls)
     }
 }
 
-/// @brief 将对象转换为简化的JSON格式
-/// @details 包含对象的名称、类型、ID和父作用域ID
-/// @param obj 对象指针
-/// @return 简化的JSON对象
-JsonValue aObjectToBriefJson(Object* obj)
-{
-    JsonValue json;
-    json["name"] = obj->getName();
-    json["type"] = obj->getType()->name();
-    json["id"] = static_cast<int>(obj->getID());
-    if(auto parent = obj->getParentScope())
-        json["parent_id"] = static_cast<int>(parent->getID());
-    return json;
-}
+
 
 std::string ChatSession::handleToolCall(const JsonValue &toolCall)
 {
@@ -166,7 +303,7 @@ std::string ChatSession::handleToolCall(const JsonValue &toolCall)
     std::string name = function["name"];
     JsonValue args;
     args.parseFromString(function["arguments"].toString());
-    // ast_printf("name: %s, arguments: %s\n", name.c_str(), args.toJsonString().c_str());
+    ast_printf("name: %s, arguments: %s\n", name.c_str(), args.toJsonString().c_str());
     if(name == "find_classes")
     {
         std::vector<std::string> classes;
@@ -223,10 +360,26 @@ std::string ChatSession::handleToolCall(const JsonValue &toolCall)
         }
         return json.toJsonString();
     }
+    else if(name == "get_object_attributes")
+    {
+        int id = args["id"].toInt();
+        Object* obj = aGetObject(id);
+        if(obj)
+        {
+            JsonValue json = aObjectToJson(obj);
+            std::string str = json.toJsonString();
+            return str;
+        }
+        else
+        {
+            aError("get object failed: %d", id);
+            return u8"获取对象失败，可能是相应id的对象不存在或已被删除";
+        }
+    }
     else
     {
         aError("unsupported tool call: %s", name.c_str());
-        return u8"不支持的工具调用";
+        return u8"暂时还不支持调用工具" + name;
     }
 }
 
