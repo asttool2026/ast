@@ -25,6 +25,7 @@ class PropertyType(Enum):
     INT = "Int"
     BOOL = "Bool"
     STRING = "String"
+    OBJECT = "Object"
     UNKNOWN = "Unknown"
 
 class PropertyInfo:
@@ -117,16 +118,16 @@ class TypeMapper:
             cpp_type = cpp_type[:-6]
         
         # 移除引用和指针
+        has_pointer = '*' in cpp_type
         cpp_type = cpp_type.replace('&', '').replace('*', '').strip()
         
         # 查找映射
         if cpp_type in cls.TYPE_MAPPING:
             return cls.TYPE_MAPPING[cpp_type]
         
-        # 尝试查找部分匹配（如std::string）
-        # for key, value in cls.TYPE_MAPPING.items():
-        #     if key in cpp_type:
-        #         return value
+        # 检查是否是对象类型（有指针或引用，或包含::，或包含ScopedPtr）
+        if has_pointer or '::' in cpp_type or 'ScopedPtr' in cpp_type:
+            return PropertyType.OBJECT
         
         # 默认返回UNKNOWN
         return PropertyType.UNKNOWN
@@ -139,6 +140,7 @@ class TypeMapper:
             PropertyType.INT: "aNewPropertyInt",
             PropertyType.BOOL: "aNewPropertyBool",
             PropertyType.STRING: "aNewPropertyString",
+            PropertyType.OBJECT: "aNewPropertyObject",
             PropertyType.UNKNOWN: "aNewProperty"  # 默认
         }
         return mapping.get(prop_type, "aNewProperty")
@@ -264,6 +266,21 @@ class BaseHeaderAnalyzer:
                     lines.append(f'    cls->addProperty("{prop_name}", aNewPropertyQuantity<{class_info.name}, &{class_info.name}::{prop_info.getter}, &{class_info.name}::{prop_info.setter}>({dimension}));')
                 elif prop_info.getter:
                     lines.append(f'    cls->addProperty("{prop_name}", aNewPropertyQuantity<{class_info.name}, &{class_info.name}::{prop_info.getter}>({dimension}));')
+            elif prop_info.property_type == PropertyType.OBJECT:
+                # 对象类型
+                prop_func = TypeMapper.get_property_function(prop_info.property_type)
+                # 提取对象类型名（去掉指针和引用）
+                object_type = prop_info.type_name.strip()
+                if object_type.startswith('const '):
+                    object_type = object_type[6:]
+                if object_type.endswith(' const'):
+                    object_type = object_type[:-6]
+                object_type = object_type.replace('&', '').replace('*', '').strip()
+                
+                if prop_info.getter and prop_info.setter:
+                    lines.append(f'    cls->addProperty("{prop_name}", {prop_func}<{class_info.name}, {object_type}, &{class_info.name}::{prop_info.getter}, &{class_info.name}::{prop_info.setter}>());')
+                elif prop_info.getter:
+                    lines.append(f'    cls->addProperty("{prop_name}", {prop_func}<{class_info.name}, {object_type}, &{class_info.name}::{prop_info.getter}>());')
             else:
                 # 普通类型
                 prop_func = TypeMapper.get_property_function(prop_info.property_type)

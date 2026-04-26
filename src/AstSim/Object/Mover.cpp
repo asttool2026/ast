@@ -23,20 +23,6 @@
 
 AST_NAMESPACE_BEGIN
 
-_AST_IMPL_OBJECT(Mover)
-
-static bool Mover_ClassInited = (Mover::ClassInit(&Mover::staticType), true);
-
-void Mover::ClassInit(Class* cls)
-{
-    cls->setName("Mover");
-    cls->addToRegistry();
-    cls->setParent<Point>();
-    cls->setConstructor<Mover>();
-
-    cls->addProperty("motionProfile", aNewPropertyObject<Mover, MotionProfile, &Mover::getMotionProfile, &Mover::setMotionProfile>());
-}
-
 errc_t Mover::generateEphemeris()
 {
     if(!motionProfile_)

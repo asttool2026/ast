@@ -38,6 +38,7 @@ const char* defaultSystemPrompt = u8R"(
 - 场景中的对象包括：卫星、地面站、传感器等
 )";
 
+JsonValue aObjectToJson(Object* obj);
 
 namespace{
     class PropertyVisitorImplForJson : public PropertyVisitor 
@@ -82,7 +83,9 @@ namespace{
 
     errc_t visit(PropertyObject& property, const void* container) override
     {
-        aWarning("PropertyObject is not supported in JsonVisitorImplForJson");
+        Object* obj = nullptr;
+        property.getValue(container, &obj);
+        json()[property.name()] = aObjectToJson(obj);
         return 0;
     }
     errc_t visit(PropertyStruct& property, const void* container) override
@@ -137,10 +140,14 @@ JsonValue aObjectToJson(Object* obj)
     JsonValue json = aObjectToBriefJson(obj);
     auto clazz = obj->getType();
     PropertyVisitorImplForJson visitor(json);
-    auto& properties = clazz->getProperties();
-    for (auto property : properties) {
-        if (!property) continue;
-        property->accept(visitor, obj);
+    while(clazz)
+    {
+        auto& properties = clazz->getProperties();
+        for (auto property : properties) {
+            if (!property) continue;
+            property->accept(visitor, obj);
+        }
+        clazz = clazz->getParent();
     }
     return visitor.json();
 }
@@ -180,13 +187,21 @@ std::string ChatSession::makeChatCompletion()
                 "type": "function",
                 "function": {
                     "name": "create_object",
-                    "description": "创建一个新的对象",
+                    "description": "创建一个新的对象，如果创建成功，将会返回所创建对象的详细属性信息",
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "class": {
                                 "type": "string",
                                 "description": "对象的类型，必须是通过find_classes返回的类型"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "对象的名称，可选"
+                            },
+                            "parent_id": {
+                                "type": "integer",
+                                "description": "对象的父作用域ID，对象的生命周期将与其父作用域绑定，可选"
                             }
                         }
                     }
@@ -241,7 +256,6 @@ std::string ChatSession::makeChatCompletion()
                                 "description": "要设置的属性名"
                             },
                             "value": {
-                                "type": "string",
                                 "description": "要设置的属性值"
                             }
                         }
@@ -261,7 +275,7 @@ std::string ChatSession::makeChatCompletion()
         // ast_printf("res: %s\n", res.toJsonString().c_str());
         JsonValue& message = res["choices"][0]["message"];
         std::string response = message["content"].toString();
-        ast_printf("ai response: \n%s\n", response.c_str());
+        ast_printf("ai: \n%s\n", response.c_str());
         JsonValue& toolCalls = message["tool_calls"];
         auto msg = ChatMessage::Assistant(response, toolCalls);
         if(!message["reasoning_content"].isNull())
@@ -289,6 +303,7 @@ void ChatSession::handleToolCalls(const JsonValue &toolCalls)
         {
             std::string response = this->handleToolCall(item);
             std::string id = item["id"];
+            aDebug("tool %s: %s", item["function"]["name"].toString().c_str(), response.c_str());
             this->messages_.addToolMessage(response, id);
         }
         this->makeChatCompletion();
@@ -318,11 +333,21 @@ std::string ChatSession::handleToolCall(const JsonValue &toolCall)
     else if(name == "create_object")
     {
         std::string className = args["class"];
-        // aDebug("creating object: %s", className.c_str());
-        Object* obj = aNewObject(className);
+        Object* parentObj = nullptr;
+        if(!args["parent_id"].isNull())
+        {
+            parentObj = aGetObject(args["parent_id"].toInt());
+            if(!parentObj)
+            {
+                aError("parent object %d not found", args["parent_id"].toInt());
+                return u8"父对象不存在";
+            }
+        }
+        Object* obj = aNewObject(className, parentObj);
         if(obj)
         {
-            return aObjectToBriefJson(obj).toJsonString();
+            obj->setName(args["name"].toString());
+            return aObjectToJson(obj).toJsonString();
         }
         else
         {
@@ -374,6 +399,31 @@ std::string ChatSession::handleToolCall(const JsonValue &toolCall)
         {
             aError("get object failed: %d", id);
             return u8"获取对象失败，可能是相应id的对象不存在或已被删除";
+        }
+    }
+    else if(name == "set_object_attribute")
+    {
+        int id = args["id"].toInt();
+        std::string attr = args["attribute"].toString();
+        std::string value = args["value"].toString();
+        Object* obj = aGetObject(id);
+        if(obj)
+        {
+            errc_t rc = obj->setAttrString(attr, value);
+            if(rc != 0)
+            {
+                aError("failed to set object attribute: %s", attr.c_str());
+                return u8"设置对象属性失败，可能是数值不合法或者属性是只读的";
+            }
+            else
+            {
+                return u8"设置对象属性成功";
+            }
+        }
+        else
+        {
+            aError("set object attribute failed: %d", id);
+            return u8"设置对象属性失败，可能是相应id的对象不存在或已被删除";
         }
     }
     else

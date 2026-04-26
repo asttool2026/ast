@@ -204,6 +204,19 @@ std::string aDimSymbol(EDimension dimension)
 }
 
 
+void Dimension::decompose(std::array<Dimension, 8>& basicDimensions) const
+{
+    basicDimensions.fill(EDimension::eUnit);
+    basicDimensions[kIdxMass].setMass(this->getMass());
+    basicDimensions[kIdxLength].setLength(this->getLength());
+    basicDimensions[kIdxAngle].setAngle(this->getAngle());
+    basicDimensions[kIdxTime].setTime(this->getTime());
+    basicDimensions[kIdxTemperature].setTemperature(this->getTemperature());
+    basicDimensions[kIdxCurrent].setCurrent(this->getCurrent());
+    basicDimensions[kIdxAmount].setAmount(this->getAmount());    
+    basicDimensions[kIdxLuminous].setLuminous(this->getLuminous());
+}
+
 
 AST_NAMESPACE_END
 

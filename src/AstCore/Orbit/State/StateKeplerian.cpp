@@ -1078,7 +1078,7 @@ void StateKeplerian::holdLAN(const ModOrbElem &originalElem)
         aError("failed to get body");
         return;
     }
-    TimePoint stateEpoch = this->getStateEpoch();
+    TimePoint stateEpoch = this->getStateEpoch_TimePoint();
     TimePoint timeOfAscNodePassage = originalElem.getTimeOfAscNodePassage(stateEpoch, getGM());
     auto inertialAxes = frame_->getAxes();
     auto bodyFixedAxes = body->getAxesFixed();

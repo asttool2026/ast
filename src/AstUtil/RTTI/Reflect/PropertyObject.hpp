@@ -49,7 +49,6 @@ public:
     errc_t setValueString(void* container, StringView value) override;
     errc_t getValueDouble(const void* container, double& value) override;
     errc_t setValueDouble(void* container, double value) override;
-protected:
     /// @brief 设置属性值（对象类型）
     /// @param container 容器指针
     /// @param value 属性值指针

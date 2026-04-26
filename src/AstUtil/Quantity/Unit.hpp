@@ -401,7 +401,7 @@ public:
 
 public:
     /// @brief 默认无单位
-    Unit(): Unit{units::none}{}
+    Unit(): Unit{Unit::None()}{}
 
     /// @brief 根据单位名称创建单位
     AST_UTIL_API

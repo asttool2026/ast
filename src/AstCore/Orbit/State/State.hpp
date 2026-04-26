@@ -33,7 +33,6 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-class CartState;
 
 /// @brief 状态类型
 enum class EStateType
@@ -53,6 +52,10 @@ using HState = SharedPtr<State>;
 class AST_CORE_API State: public ObjectNamed
 {
 public:
+    AST_OBJECT(State)
+    AST_PROPERT(Frame)
+    AST_PROPERT(StateEpoch)
+;
     State() = default;
     ~State() override = default;
 
@@ -96,11 +99,6 @@ public:
     /// @return errc_t 错误码
     virtual errc_t setState(const CartState& state) = 0;
 public:
-    /// @brief 获取参考坐标系
-    Frame* getFrame() const{ return frame_.get(); }
-
-    /// @brief 设置参考坐标系
-    void setFrame(Frame* frame);
 
     /// @brief 设置参考坐标系
     /// @param frameName 坐标系名称
@@ -111,9 +109,7 @@ public:
     /// @return errc_t 错误码
     errc_t changeFrame(Frame* frame);
 
-    /// @brief 设置状态历元时间
-    /// @param stateEpoch 状态历元时间
-    void setStateEpoch(EventTime* stateEpoch);
+
 
     /// @brief 设置状态历元时间
     /// @param stateEpoch 状态历元时间
@@ -126,7 +122,7 @@ public:
 
     /// @brief 获取状态历元时间
     /// @return TimePoint 状态历元时间
-    TimePoint getStateEpoch() const;
+    TimePoint getStateEpoch_TimePoint() const;
 
     /// @brief 获取状态历元时间句柄
     /// @return SharedPtr<EventTime>& 状态历元时间句柄
@@ -182,6 +178,20 @@ public: // 与历元坐标系定义相关的接口：
 
     Axes* getCoordAxes() const;
 #endif
+
+PROPERTIES:
+    /// @brief 获取参考坐标系
+    Frame* getFrame() const{ return frame_.get(); }
+
+    /// @brief 设置参考坐标系
+    void setFrame(Frame* frame);
+
+    /// @brief 获取状态历元时间
+    EventTime* getStateEpoch() const{ return stateEpoch_.get(); }
+
+    /// @brief 设置状态历元时间
+    /// @param stateEpoch 状态历元时间
+    void setStateEpoch(EventTime* stateEpoch);
 
 protected:
     SharedPtr<Frame>        frame_;                ///< 参考坐标系

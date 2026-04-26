@@ -107,6 +107,52 @@ Unit* UnitManager::getUnit(StringView name)
     return it->second;
 }
 
+Unit* UnitManager::getSiUnit(Dimension dim)
+{
+    // 1. 先从缓存中查找
+    auto it = siUnits_.find(dim);
+    if(it != siUnits_.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        // 2. 从单位表中查找
+        for(auto& item : units_)
+        {
+            auto& unit = item.second;
+            if(unit->dimension() == dim && unit->getScale() == 1.0)
+            {
+                Unit* siUnit = new Unit(*unit);
+                siUnits_[dim] = siUnit;
+                return siUnit;
+            }
+        }
+        // 3. 从基本单位进行组合
+        {
+            std::array<Dimension, 8> basicDimensions;
+            dim.decompose(basicDimensions);
+            Unit composedUnit = Unit::None();
+            for(auto& basicDim : basicDimensions)
+            {
+                Unit* basicUnit = getSiUnit(basicDim);
+                if(basicUnit)
+                {
+                    composedUnit = composedUnit * (*basicUnit);
+                }
+                else
+                {
+                    aError("failed to get si unit for basic dimension %s", basicDim.name().c_str());
+                    return nullptr;
+                }
+            }
+            Unit* siUnit = new Unit(composedUnit);
+            siUnits_[dim] = siUnit;
+            return siUnit;
+        }
+    }
+}
+
 errc_t UnitManager::_addUnit(const std::string &name, const Unit &unit)
 {
     if (units_.find(name) != units_.end())
@@ -121,6 +167,11 @@ errc_t UnitManager::_addUnit(const std::string &name, const Unit &unit)
 Unit* aUnitGet(StringView name)
 {
     return UnitManager::Instance().getUnit(name);
+}
+
+Unit* aUnitSIGet(Dimension dim)
+{
+    return UnitManager::Instance().getSiUnit(dim);
 }
 
 errc_t aUnitAdd(const Unit& unit)

@@ -26,4 +26,5 @@
 #include "AstUtil/PropertyString.hpp"
 #include "AstUtil/PropertyQuantity.hpp"
 #include "AstUtil/PropertyTimePoint.hpp"
+#include "AstUtil/PropertyObject.hpp"
 #include "AstUtil/PropertyVisitor.hpp"

@@ -84,12 +84,17 @@ public:
     /// @warning 内部使用，不建议外部调用，否则可能导致未定义行为
     /// @param T 构造函数类型
     template<typename T>
-    void setConstructor(){
-        setConstructor([](Object* parentScope) -> Object* { 
-            auto obj = new T(); 
-            obj->setParentScope(parentScope); 
-            return obj; 
+    typename std::enable_if<!std::is_abstract<T>::value>::type setConstructor() {
+        setConstructor([](Object* parentScope) -> Object* {
+            auto obj = new T();
+            obj->setParentScope(parentScope);
+            return obj;
         });
+    }
+
+    template<typename T>
+    typename std::enable_if<std::is_abstract<T>::value>::type setConstructor() {
+        setConstructor(nullptr);
     }
 protected:
     Class* parent_{nullptr};                       ///< 父类

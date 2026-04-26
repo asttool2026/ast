@@ -24,6 +24,8 @@
 #include "AstUtil/QuantityParser.hpp"
 #include "AstUtil/Logger.hpp"
 #include "AstUtil/PropertyVisitor.hpp"
+#include "AstUtil/UnitManager.hpp"
+
 
 AST_NAMESPACE_BEGIN
 
@@ -48,8 +50,21 @@ errc_t PropertyQuantity::accept(PropertyVisitor &visitor, const void *container)
 
 errc_t PropertyQuantity::getValueString(const void *container, std::string &value)
 {
-    /// @todo 这里需要一个通过量纲获取国际制单位的函数
-    return PropertyDouble::getValueString(container, value);
+    // 通过量纲获取国际制单位
+    Unit* siUnit = aUnitSIGet(dimension_);
+    if(siUnit)
+    {
+        double d = 0;
+        errc_t rc = PropertyDouble::getValueDouble(container, d);
+        Quantity quantity(d, *siUnit);
+        value = quantity.toString();
+        return rc;
+    }
+    else
+    {
+        aWarning("failed to get si unit for dimension %s", dimension_.name().c_str());
+        return PropertyDouble::getValueString(container, value);
+    }
 }
 
 errc_t PropertyQuantity::setValueString(void *container, StringView value)
