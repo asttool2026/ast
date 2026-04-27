@@ -322,26 +322,52 @@ JsonValue aSetObjectAttributeParamSchema()
 std::string aSetObjectAttribute(const JsonValue& arguments)
 {
     int id = arguments["id"].toInt();
-    std::string attr = arguments["attribute"].toString();
-    std::string value = arguments["value"].toString();
     Object* obj = aGetObject(id);
-    if(obj)
+    if(!obj)
     {
-        errc_t rc = obj->setAttrString(attr, value);
-        if(rc != 0)
+        aError("object %d not found", id);
+        return u8"未找到对象，可能是相应id的对象不存在或已被删除";
+    }
+    std::string attr = arguments["attribute"].toString();
+    Property* prop = obj->getProperty(attr);
+    if(!prop)
+    {
+        aError("property %s not found", attr.c_str());
+        return u8"未找到属性" + attr;
+    }
+    auto& valueJson = arguments["value"];
+    errc_t rc = 0;
+    if(valueJson.isNumber()){
+        double value = valueJson.toDouble();
+        if(fmod(value, 1.0) == 0.0)
         {
-            aError("failed to set object attribute: %s", attr.c_str());
-            return u8"设置对象属性失败，可能是数值不合法或者属性是只读的";
+            rc = prop->setValueInt(obj, static_cast<int>(value));
         }
-        else
+        else{
+            rc = prop->setValueDouble(obj, value);
+        }
+    }
+    else if(valueJson.isBool())
+    {
+        rc = prop->setValueBool(obj, valueJson.toBool());
+    }
+    else //if(valueJson.isString())
+    {
+        rc = prop->setValueString(obj, valueJson.toString());
+        // 如果属性是对象类型，尝试设置为对象ID
+        if (rc && prop->isObject())
         {
-            return u8"设置对象属性成功";
+            rc = prop->setValueInt(obj, valueJson.toInt());
         }
+    }
+    if(rc != 0)
+    {
+        aError("failed to set object attribute '%s' to '%s'", attr.c_str(), valueJson.toString().c_str());
+        return u8"设置对象属性失败，可能是数值不合法或者属性是只读的";
     }
     else
     {
-        aError("set object attribute failed: %d", id);
-        return u8"设置对象属性失败，可能是相应id的对象不存在或已被删除";
+        return u8"设置对象属性成功";
     }
 }
 

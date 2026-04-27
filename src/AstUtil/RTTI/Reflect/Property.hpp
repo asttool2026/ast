@@ -136,7 +136,10 @@ public:
     
     template<typename T>
     T getValue(const void* container);
-
+public:
+    /// @brief 检查属性是否为对象类型
+    /// @return bool 是否为对象类型
+    bool isObject() const;
 
 protected:
     /// @brief 获取属性值

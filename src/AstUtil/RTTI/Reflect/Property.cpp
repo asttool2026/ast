@@ -19,7 +19,9 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "Property.hpp"
+#include "PropertyObject.hpp"
 #include "AstUtil/Logger.hpp"
+
 
 AST_NAMESPACE_BEGIN
 
@@ -77,6 +79,12 @@ std::string Property::getValueString(const void* container)
         aError("failed to get string value");
     }
     return value;
+}
+
+
+bool Property::isObject() const
+{
+    return dynamic_cast<const PropertyObject*>(this) != nullptr;
 }
 
 AST_NAMESPACE_END

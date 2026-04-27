@@ -93,7 +93,7 @@ errc_t PropertyObject::setValue(void* container, const InputType* value)
         return eErrorNullInput;
     if(class_ && !value->isOfType(class_))
     {
-        aError("invalid type for property object: %s", value->getType()->name().c_str());
+        aError("invalid type for property object, expect '%s', but given '%s'", class_->name().c_str(), value->getType()->name().c_str());
         return eErrorInvalidType;
     }
     return setter_(container, &value);

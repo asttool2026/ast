@@ -54,7 +54,7 @@ public:
     const std::string& getName() const override { return name_; }
 
 public:
-    ScopedPtr<MotionProfile>& getMotionProfileHandle() { return motionProfile_; }
+    // ScopedPtr<MotionProfile>& getMotionProfileHandle() { return motionProfile_; }
 
     /// @brief 获取星历句柄
     /// @return 星历句柄
@@ -74,7 +74,7 @@ PROPERTIES:
     MotionProfile* getMotionProfile() const { return motionProfile_.get(); }
     /// @brief 设置运动定义
     /// @param profile 运动定义指针
-    void setMotionProfile(MotionProfile* profile) { motionProfile_ = profile; }
+    void setMotionProfile(MotionProfile* profile);
     /// @brief 获取姿态定义
     /// @return 姿态定义指针
     AttitudeProfile* getAttitudeProfile() const { return attitudeProfile_.get(); }
@@ -87,11 +87,17 @@ PROPERTIES:
     /// @brief 设置星历
     /// @param ephemeris 星历指针
     void setEphemeris(Ephemeris* ephemeris) { ephemeris_ = ephemeris; }
+public:
+    
+    /// @brief 获取初始状态
+    /// @warning 如果运动定义不是轨道动力学模型，则返回空指针
+    /// @return 初始状态指针
+    State* getInitialState() const;
 
 protected:
     std::string                 name_;                  ///< 名称
-    ScopedPtr<MotionProfile>    motionProfile_;         ///< 运动定义
-    ScopedPtr<AttitudeProfile>  attitudeProfile_;       ///< 姿态定义
+    WeakPtr<MotionProfile>      motionProfile_;         ///< 运动定义
+    WeakPtr<AttitudeProfile>    attitudeProfile_;       ///< 姿态定义
     ScopedPtr<Ephemeris>        ephemeris_;             ///< 星历
 };
 

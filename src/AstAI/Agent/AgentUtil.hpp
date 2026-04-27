@@ -36,12 +36,12 @@ class JsonValue;
 /// @details 包含对象的名称、类型、ID和父作用域ID
 /// @param obj 对象指针
 /// @return 简化的JSON对象
-JsonValue aObjectToBriefJson(Object* obj);
+AST_AI_API JsonValue aObjectToBriefJson(Object* obj);
 
 /// @brief 将对象转换为JSON值
 /// @param object 对象
 /// @return JSON值
-JsonValue aObjectToJson(Object* object);
+AST_AI_API JsonValue aObjectToJson(Object* object);
 
 
 //--------------

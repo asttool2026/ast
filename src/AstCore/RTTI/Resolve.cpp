@@ -30,6 +30,8 @@ AST_NAMESPACE_BEGIN
 
 Frame *aObject_GetFrame(Object* obj, StringView frameName)
 {
+    if(!obj)
+        return nullptr;
     auto frame = aFindChild(obj, Frame::StaticType(), frameName);
     if(frame)
         return (Frame*)frame;
