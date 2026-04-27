@@ -204,17 +204,15 @@ std::string aDimSymbol(EDimension dimension)
 }
 
 
-void Dimension::decompose(std::array<Dimension, 8>& basicDimensions) const
+void Dimension::decompose(std::array<std::pair<Dimension, int>, 8>& basicDimensions) const
 {
-    basicDimensions.fill(EDimension::eUnit);
-    basicDimensions[kIdxMass].setMass(this->getMass());
-    basicDimensions[kIdxLength].setLength(this->getLength());
-    basicDimensions[kIdxAngle].setAngle(this->getAngle());
-    basicDimensions[kIdxTime].setTime(this->getTime());
-    basicDimensions[kIdxTemperature].setTemperature(this->getTemperature());
-    basicDimensions[kIdxCurrent].setCurrent(this->getCurrent());
-    basicDimensions[kIdxAmount].setAmount(this->getAmount());    
-    basicDimensions[kIdxLuminous].setLuminous(this->getLuminous());
+    const EDimension dimension = *this;
+    for (int i = 0; i < 8; i++)
+    {
+        int exponent = dim_get_exponent(dimension, i);
+        EDimension basicDim = dim_set_exponent(EDimension::eUnit, i, 1);
+        basicDimensions[i] = {basicDim, exponent};
+    }
 }
 
 

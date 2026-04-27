@@ -109,33 +109,23 @@ Unit* UnitManager::getUnit(StringView name)
 
 Unit* UnitManager::getSiUnit(Dimension dim)
 {
-    // 1. 先从缓存中查找
-    auto it = siUnits_.find(dim);
-    if(it != siUnits_.end())
-    {
-        return it->second;
-    }
+    Unit* unit = _getSiUnitCache(dim);
+    if(unit)
+        return unit;
     else
     {
-        // 2. 从单位表中查找
-        for(auto& item : units_)
+        // 从基本单位进行组合
         {
-            auto& unit = item.second;
-            if(unit->dimension() == dim && unit->getScale() == 1.0)
-            {
-                Unit* siUnit = new Unit(*unit);
-                siUnits_[dim] = siUnit;
-                return siUnit;
-            }
-        }
-        // 3. 从基本单位进行组合
-        {
-            std::array<Dimension, 8> basicDimensions;
+            std::array<std::pair<Dimension, int>, 8> basicDimensions;
             dim.decompose(basicDimensions);
             Unit composedUnit = Unit::None();
-            for(auto& basicDim : basicDimensions)
+            for(auto& item : basicDimensions)
             {
-                Unit* basicUnit = getSiUnit(basicDim);
+                int exponent = item.second;
+                Dimension basicDim = item.first;
+                if(exponent == 0)
+                    continue;
+                Unit* basicUnit = _getSiUnitCache(basicDim);
                 if(basicUnit)
                 {
                     composedUnit = composedUnit * (*basicUnit);
@@ -151,6 +141,7 @@ Unit* UnitManager::getSiUnit(Dimension dim)
             return siUnit;
         }
     }
+    return nullptr;
 }
 
 errc_t UnitManager::_addUnit(const std::string &name, const Unit &unit)
@@ -162,6 +153,32 @@ errc_t UnitManager::_addUnit(const std::string &name, const Unit &unit)
     }
     units_[name] = new Unit(unit);
     return eNoError;
+}
+
+Unit* UnitManager::_getSiUnitCache(Dimension dim)
+{
+    // 1. 先从缓存中查找
+    auto it = siUnits_.find(dim);
+    if (it != siUnits_.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        // 2. 从单位表中查找
+        for (auto& item : units_)
+        {
+            auto unit = item.second;
+            if (unit->dimension() == dim && unit->getScale() == 1.0)
+            {
+                //Unit* siUnit = new Unit(unit->clone());
+                Unit* siUnit = new Unit(*unit);
+                siUnits_[dim] = siUnit;
+                return siUnit;
+            }
+        }
+    }
+    return nullptr;
 }
 
 Unit* aUnitGet(StringView name)

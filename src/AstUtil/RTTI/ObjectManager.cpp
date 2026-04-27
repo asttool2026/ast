@@ -72,6 +72,21 @@ uint32_t ObjectManager::addObject(Object *object)
     return index;
 }
 
+void ObjectManager::removeAllObjects()
+{
+    for(auto objNode : objects_)
+    {
+        SharedPtr<Object> object = objNode->getObject();
+        if(object)
+            object->index_ = static_cast<uint32_t>(INVALID_ID);
+        objNode->clear();
+    }
+    nextIndex_ = 0;
+}
+
+
+
+
 errc_t ObjectManager::setParentScope(Object *obj, Object *parentScope)
 {
     if(!obj || !parentScope)
@@ -118,6 +133,44 @@ uint32_t ObjectManager::getObjectCount() const
     }
     return count;
 }
+
+std::vector<Object*> ObjectManager::findObjects(Class* cls, StringView name)
+{
+    std::vector<Object*> objects;
+    for(auto objNode : objects_)
+    {
+        if(auto object = objNode->getObject())
+        {
+            if(cls == nullptr || object->isOfType(cls))
+            {
+                if(name.empty() || name == object->getName())
+                {
+                    objects.push_back(object);
+                }
+            }
+        }
+    }
+    return objects;
+}
+
+Object* ObjectManager::findObject(Class* cls, StringView name)
+{
+    for(auto objNode : objects_)
+    {
+        if(auto object = objNode->getObject())
+        {
+            if(cls == nullptr || object->isOfType(cls))
+            {
+                if(name.empty() || name == object->getName())
+                {
+                    return object;
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
 
 ObjectNode* ObjectManager::getObjectNode(Object* obj)
 {

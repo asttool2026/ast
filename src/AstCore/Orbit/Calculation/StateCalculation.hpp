@@ -35,7 +35,7 @@ AST_NAMESPACE_BEGIN
 class AST_CORE_API StateCalculation: public ObjectCalculation
 {
 public:
-    Class* getExpectedType() const override {return State::getStaticType();};
+    Class* getExpectedType() const override {return State::StaticType();};
     errc_t calculate(const Object* obj, double& result) override;
     virtual errc_t calculate(const State& state, double& result) = 0;
 protected:

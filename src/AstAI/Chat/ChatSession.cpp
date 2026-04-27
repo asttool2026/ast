@@ -26,6 +26,7 @@
 #include "AstUtil/RTTIAPI.hpp"
 #include "AstUtil/PropertyVisitor.hpp"
 #include "AstUtil/PropertyAll.hpp"
+#include "AstCore/PropertyTimePoint.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -107,8 +108,7 @@ namespace{
     }
     errc_t visit(PropertyTimePoint& property, const void* container) override
     {
-        // json()[property.name()] = property.getValue<std::string>(container);
-        aWarning("PropertyTimePoint is not supported in JsonVisitorImplForJson");
+        json()[property.name()] = property.getValue<std::string>(container);
         return 0;
     }
     JsonValue& json() { return json_; }
@@ -187,7 +187,7 @@ std::string ChatSession::makeChatCompletion()
                 "type": "function",
                 "function": {
                     "name": "create_object",
-                    "description": "创建一个新的对象，如果创建成功，将会返回所创建对象的详细属性信息",
+                    "description": "创建一个新的对象，如果创建成功，将会返回所创建对象的详细属性信息（与get_object_attributes函数接口返回的属性信息相同）",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -303,7 +303,7 @@ void ChatSession::handleToolCalls(const JsonValue &toolCalls)
         {
             std::string response = this->handleToolCall(item);
             std::string id = item["id"];
-            aDebug("tool %s: %s", item["function"]["name"].toString().c_str(), response.c_str());
+            // aDebug("tool %s: %s", item["function"]["name"].toString().c_str(), response.c_str());
             this->messages_.addToolMessage(response, id);
         }
         this->makeChatCompletion();
@@ -318,7 +318,7 @@ std::string ChatSession::handleToolCall(const JsonValue &toolCall)
     std::string name = function["name"];
     JsonValue args;
     args.parseFromString(function["arguments"].toString());
-    ast_printf("name: %s, arguments: %s\n", name.c_str(), args.toJsonString().c_str());
+    // ast_printf("name: %s, arguments: %s\n", name.c_str(), args.toJsonString().c_str());
     if(name == "find_classes")
     {
         std::vector<std::string> classes;
@@ -351,6 +351,11 @@ std::string ChatSession::handleToolCall(const JsonValue &toolCall)
         }
         else
         {
+            if(aIsVirtualClass(className))
+            {
+                aError("virtual class %s is not supported", className.c_str());
+                return u8"虚类" + className + u8"不支持创建对象";
+            }
             aError("create object failed: %s", className.c_str());
             return u8"创建对象失败";
         }

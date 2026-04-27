@@ -76,8 +76,11 @@ errc_t PropertyQuantity::setValueString(void *container, StringView value)
         return rc;
     }
     // 检查量纲是否匹配
-    if(quant.dimension() != dimension_)
+    if (quant.dimension() != EDimension::eUnit && quant.dimension() != dimension_)
+    {
+        aError("quantity dimension %s does not match property dimension %s", quant.dimension().name().c_str(), dimension_.name().c_str());
         return eErrorInvalidParam;
+    }
     return PropertyDouble::setValueDouble(container, quant.getValueSI());
 }
 

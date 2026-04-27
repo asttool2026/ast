@@ -534,8 +534,8 @@ public:
     }
 public:
     /// @brief 分解量纲为基本量纲
-    /// @param basicDimensions 输出参数，存储分解后的基本量纲
-    void decompose(std::array<Dimension, 8>& basicDimensions) const;
+    /// @param basicDimensions 输出参数，存储分解后的基本量纲与相应指数
+    void decompose(std::array<std::pair<Dimension, int>, 8>& basicDimensions) const;
 protected:
     EDimension dimension_;
 };

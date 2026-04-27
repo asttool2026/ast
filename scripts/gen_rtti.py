@@ -241,6 +241,10 @@ class BaseHeaderAnalyzer:
         else:
             lines.append("    cls->setParent(nullptr);")
         lines.append(f"    cls->setConstructor<{class_info.name}>();")
+        # 检查是否有 Resolve 方法
+        if hasattr(class_info, 'has_resolve') and class_info.has_resolve:
+            lines.append(f"    cls->setResolve<{class_info.name}>();")
+        # lines.append(f"    cls->setResolve<{class_info.name}>();")
         
         lines.append("")  # 空行
         
@@ -381,6 +385,17 @@ class ClangHeaderAnalyzer(BaseHeaderAnalyzer):
         if cursor.kind in [CursorKind.CLASS_DECL, CursorKind.STRUCT_DECL]:
             class_name = cursor.spelling
             
+            # 检查是否是前置声明
+            has_body = False
+            for child in cursor.get_children():
+                if child.kind in [CursorKind.CXX_ACCESS_SPEC_DECL, CursorKind.FIELD_DECL, CursorKind.CXX_METHOD, CursorKind.CXX_BASE_SPECIFIER]:
+                    has_body = True
+                    break
+            
+            # 只处理具有完整定义的类
+            if not has_body:
+                return
+            
             # 如果指定了目标类，只处理目标类
             if self.target_classes and class_name not in self.target_classes:
                 return
@@ -413,6 +428,7 @@ class ClangHeaderAnalyzer(BaseHeaderAnalyzer):
         
         found_mark = False
         in_property_area = False
+        class_info.has_resolve = False
         
         def process_child(child: Cursor):
             nonlocal in_property_area, found_mark
@@ -430,6 +446,11 @@ class ClangHeaderAnalyzer(BaseHeaderAnalyzer):
                 else:
                     in_property_area = False
 
+            # 检查是否是 Resolve 静态方法
+            if child.kind == CursorKind.CXX_METHOD:
+                method_name = child.spelling
+                if method_name == 'Resolve' and child.is_static_method():
+                    class_info.has_resolve = True
 
             # 如果在属性区域
             if in_property_area:

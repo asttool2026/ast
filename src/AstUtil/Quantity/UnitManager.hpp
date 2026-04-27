@@ -99,6 +99,7 @@ protected:
     /// @return errc_t 错误码
     errc_t _addUnit(const std::string& name, const Unit& unit);
 
+    Unit* _getSiUnitCache(Dimension dim);
 protected:
     std::unordered_map<std::string, Unit*> units_;       ///< 单位映射表
     std::map<Dimension, Unit*> siUnits_;                 ///< 国际制单位映射表

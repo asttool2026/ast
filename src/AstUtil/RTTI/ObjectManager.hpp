@@ -55,6 +55,11 @@ public:
     /// @return 对象的索引/对象ID
     uint32_t addObject(Object* object);
 
+
+    /// @brief 移除所有对象
+    /// @details 从对象管理器中移除所有对象，包括子对象
+    void removeAllObjects();
+
     /// @brief 设置对象的父作用域
     /// @details obj 对象指针
     /// @param parentScope 父作用域指针
@@ -85,6 +90,20 @@ public:
     /// @warning 这个函数会遍历所有对象节点判断对象是否存活，时间复杂度为O(n)，请谨慎使用
     /// @return 当前对象数量
     uint32_t getObjectCount() const;
+
+    /// @brief 查找对象
+    /// @details 根据类指针和对象名查找对象
+    /// @param cls 类指针，如果为空则匹配所有类型
+    /// @param name 对象名，如果为空则匹配所有名称
+    /// @return 对象指针向量
+    std::vector<Object*> findObjects(Class* cls, StringView name=StringView());
+
+    /// @brief 查找对象
+    /// @details 根据类指针和对象名查找对象
+    /// @param cls 类指针，如果为空则匹配所有类型
+    /// @param name 对象名，如果为空则匹配所有名称
+    /// @return 对象指针
+    Object* findObject(Class* cls, StringView name=StringView());
 
     /// @brief 获取对象对应的对象节点
     /// @param obj 对象指针

@@ -33,7 +33,12 @@ AST_NAMESPACE_BEGIN
 
 static_assert(sizeof(Object) == sizeof(void*) * 1 + sizeof(uint32_t) * 4, "size not correct");      // 检查 Object 类的大小是否正确
 
-Class Object::staticType;
+
+Object* Object::Resolve(StringView value)
+{
+    /// @todo 实现解析对象的逻辑
+    return nullptr;
+}
 
 Object::Object(Object *parentScope)
     : Object{}

@@ -57,7 +57,7 @@ typedef AttributeBasic<WeakPtr<Object>, Property> Attribute;
 // AST 对象运行时元信息
 #define AST_OBJECT(TYPE) \
     static Class staticType;\
-    static inline Class* getStaticType(){return &staticType;}\
+    static inline Class* StaticType(){return &staticType;}\
     Class* getType() const override{return &staticType;} \
     static void ClassInit(Class* cls);\
 
@@ -83,6 +83,11 @@ enum {
 class AST_UTIL_API Object
 {
 public:
+    /// @brief 解析字符串
+    /// @param value 字符串值
+    /// @return Object* 解析结果
+    static Object* Resolve(StringView value);
+    
     // friend uint32_t aObject_IncRef(Object* obj);
     // friend uint32_t aObject_DecRef(Object* obj);
     // friend uint32_t aObject_IncWeakRef(Object* obj);
@@ -97,7 +102,8 @@ public:
     Object(std::nullptr_t);
 public:
     static Class staticType;
-    static inline Class* getStaticType(){return &staticType;}
+    static void ClassInit(Class* cls);
+    static inline Class* StaticType(){return &staticType;}
 
     /// @brief 获取对象的类型元信息
     /// @return Class* 类型元信息指针

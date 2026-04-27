@@ -29,22 +29,7 @@
 
 AST_USING_NAMESPACE
 
-TEST(DeepSeekTest, ChatSession)
-{
-    {Satellite sat;} // for link libray AstSim
-    ChatSession session;
-    std::vector<std::string> messages({
-        "帮我设计一个太阳同步轨道"
-    });
-    for(auto& message : messages)
-    {
-        std::string response = session.sendMessage(message);
-        // ast_printf("AI: %s\n", response.c_str());
-    }
-}
-
-
-TEST(DeepSeekTest, OpenAI)
+TEST(DeepSeekTest, Client)
 {
     GTEST_SKIP();
     DeepSeek client;

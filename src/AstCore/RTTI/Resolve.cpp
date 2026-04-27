@@ -24,15 +24,16 @@
 #include "AstCore/CelestialBody.hpp"
 #include "AstCore/BuiltinFrame.hpp"
 #include "AstCore/FrameAssembly.hpp"
+#include "AstCore/EventTimeExplicit.hpp"
 
 AST_NAMESPACE_BEGIN
 
 Frame *aObject_GetFrame(Object* obj, StringView frameName)
 {
-    auto frame = aFindChild(obj, Frame::getStaticType(), frameName);
+    auto frame = aFindChild(obj, Frame::StaticType(), frameName);
     if(frame)
         return (Frame*)frame;
-    if(obj->getType() == CelestialBody::getStaticType())
+    if(obj->getType() == CelestialBody::StaticType())
     {
         CelestialBody* body = (CelestialBody*)obj;
         HFrame frame;
@@ -47,6 +48,10 @@ Frame *aObject_GetFrame(Object* obj, StringView frameName)
         else if(frameName == "TOD")
         {
             frame = body->makeFrameTOD();
+        }
+        else if(frameName == "J2000")
+        {
+            frame = body->makeFrameJ2000();
         }
         if(frame)
         {
@@ -65,7 +70,7 @@ Body *aResolveBody(StringView name)
     auto iter = name.find("/");
     if(iter == StringView::npos)
     {
-        return nullptr;
+        return aGetBody(name);
     }
     auto prefix = name.substr(0, iter);
     if(prefix!="CentralBody")
@@ -78,30 +83,70 @@ Frame *aResolveFrame(StringView name)
 {
     auto iter = name.find(' ');
     if(iter == StringView::npos)
-        return nullptr;
+    {
+        if(name == "EarthInertial")
+        {
+            return aObject_GetFrame(aGetEarth(), "Inertial");
+        }
+        else if(name == "EarthICRF")
+        {
+            return aObject_GetFrame(aGetEarth(), "ICRF");
+        }
+        else if(name == "EarthTOD")
+        {
+            return aObject_GetFrame(aGetEarth(), "TOD");
+        }
+        else if(name == "EarthJ2000")
+        {
+            return aObject_GetFrame(aGetEarth(), "J2000");
+        }
+    }
     StringView objpath = name.substr(0, iter);
     auto obj = aResolveObject(objpath);
     if(obj == nullptr)
-        return nullptr;
+        obj = aResolveBody(objpath);
     StringView frameName = name.substr(iter + 1);
     return aObject_GetFrame(obj, frameName);
 }
 
-Object *aResolveObject(StringView path)
+#if 0
+
+Object *aResolveObject(StringView value, Class* type)
 {
-    auto iter = path.find("/");
-    if(iter == StringView::npos)
+    if(type == EventTime::StaticType())
     {
-        return nullptr;
+        /// @todo 处理新建对象的父作用域问题
+        auto eventTime = new EventTimeExplicit(TimePoint::Parse(value));
+        return eventTime;
     }
-    auto className = path.substr(0, iter);
-    auto objName = path.substr(iter + 1);
-    if(className=="CentralBody")
+    else if(type == Frame::StaticType())
     {
-        return aGetBody(objName);
+        return aResolveFrame(value);
     }
+    else
+    {
+        StringView path = value;
+        auto iter = path.find("/");
+        if(iter == StringView::npos)
+        {
+            return nullptr;
+        }
+        auto className = path.substr(0, iter);
+        auto objName = path.substr(iter + 1);
+        if(className=="CentralBody")
+        {
+            return aGetBody(objName);
+        }
+    }
+    if(type == nullptr || type == CelestialBody::StaticType())
+    {
+        return aGetBody(value);
+    }
+
     return nullptr;    
 }
+
+#endif
 
 AST_NAMESPACE_END
 

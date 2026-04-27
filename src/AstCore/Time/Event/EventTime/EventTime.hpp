@@ -24,6 +24,7 @@
 #include "AstUtil/Object.hpp"
 #include "AstUtil/ObjectNamed.hpp"
 #include "AstCore/TimePoint.hpp"
+#include "AstCore/ReflectAPI.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -42,6 +43,10 @@ using HEventTime = SharedPtr<EventTime>;
 class AST_CORE_API EventTime: public ObjectNamed
 {
 public:
+    AST_OBJECT(EventTime)
+    
+    static EventTime* Resolve(StringView value);
+
     virtual ~EventTime() override = default;
     /// @brief 获取时间点
     /// @param tp 时间点

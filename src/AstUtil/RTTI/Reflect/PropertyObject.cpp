@@ -70,8 +70,8 @@ errc_t PropertyObject::getValueString(const void* container, std::string& value)
 
 errc_t PropertyObject::setValueString(void* container, StringView value)
 {
-    aError("failed to set string value to property object");
-    return -1;
+    Object* object = aResolveObject(value, class_);
+    return setValue(container, object);
 }
 
 errc_t PropertyObject::getValueDouble(const void* container, double& value)
@@ -96,7 +96,7 @@ errc_t PropertyObject::setValue(void* container, const InputType* value)
         aError("invalid type for property object: %s", value->getType()->name().c_str());
         return eErrorInvalidType;
     }
-    return setter_(container, value);
+    return setter_(container, &value);
 }
 
 
