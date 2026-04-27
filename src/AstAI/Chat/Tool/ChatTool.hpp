@@ -20,9 +20,9 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstUtil/StringView.hpp"
+#include "AstUtil/JsonValue.hpp"
 #include <string>
-#include <vector>
-#include <map>
 
 AST_NAMESPACE_BEGIN
 
@@ -32,51 +32,67 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+class JsonValue;
 
-
-class ChatTool {
+/// @brief AI工具基类
+/// @details 所有AI工具的基类，定义了工具的基本属性和方法
+class ChatTool
+{
 public:
     ChatTool() = default;
-    ~ChatTool() = default;
+    
+    virtual ~ChatTool() = default;
+    /// @brief 调用工具
+    /// @param arguments 函数参数
+    /// @return 执行结果
+    virtual std::string call(const JsonValue& arguments) = 0;
+
+    /// @brief 获取工具名称
+    /// @return 工具名称
+    const std::string& name() const { return name_; }
+
+    /// @brief 设置工具名称
+    /// @param name 工具名称
+    void setName(StringView name){name_ = std::string(name);}
+    
+    /// @brief 获取工具描述
+    /// @return 工具描述
+    const std::string& description() const { return description_; }
+
+    /// @brief 设置工具描述
+    /// @param description 工具描述
+    void setDescription(StringView description){description_ = std::string(description);}
+
+    /// @brief 获取工具参数schema
+    /// @return 工具参数schema
+    const JsonValue& parameters() const { return parameters_; }
+
+    /// @brief 设置工具参数schema
+    /// @param parameters 工具参数schema
+    void setParameters(const JsonValue& parameters){parameters_ = parameters;}
+
+    /// @brief 转换为JSON值
+    /// @return JSON值
+    JsonValue toJson() const;
+private:
+    std::string name_;              ///< 工具名称
+    std::string description_;       ///< 工具描述
+    JsonValue parameters_;          ///< 工具参数schema
 };
 
-
-/// @brief AI工具参数
-struct AIToolParameter {
-    std::string name;          ///< 参数名
-    std::string type;          ///< 参数类型
-    std::string description;   ///< 参数描述
-    bool required;             ///< 是否必填
+/// @brief 通用模板封装
+template<typename Func>
+class ChatToolGeneric: public ChatTool
+{
+public:
+    ChatToolGeneric(Func func) : func_(std::move(func)) {}
+    std::string call(const JsonValue& arguments) override { return func_(arguments); }
+private:
+    Func func_;
 };
 
-#if 0
-
-/// @brief AI工具定义
-struct ChatTool {
-    std::string name;                      ///< 工具名称
-    std::string description;               ///< 工具描述
-    std::map<std::string, AIToolParameter> parameters;  ///< 工具参数
-};
-
-#endif
-
-
-/// @brief AI工具调用请求
-struct AIToolCall {
-    std::string id;            ///< 调用ID
-    std::string type;          ///< 调用类型（function）
-    std::string function_name; ///< 函数名称
-    std::map<std::string, std::string> arguments; ///< 函数参数
-};
-
-/// @brief AI工具调用响应
-struct AIToolResponse {
-    std::string id;            ///< 调用ID
-    std::string type;          ///< 响应类型（function）
-    std::string function_name; ///< 函数名称
-    std::string result;        ///< 执行结果
-};
 
 /*! @} */
+
 
 AST_NAMESPACE_END

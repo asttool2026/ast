@@ -79,6 +79,9 @@ HStateKeplerian StateKeplerian::MakeShared(const ModOrbElem &modOrbElem)
 
 StateKeplerian::StateKeplerian()
 {
+    auto frame = aGetEarth()->makeFrameInertial();
+    frame->setName("Inertial");
+    this->setFrame(frame);
 }
 
 StateKeplerian::StateKeplerian(const ModOrbElem &modOrbElem)

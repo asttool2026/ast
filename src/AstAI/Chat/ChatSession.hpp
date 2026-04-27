@@ -23,6 +23,7 @@
 #include "AstAI/OpenAI.hpp"
 #include "AstAI/ChatTool.hpp"
 #include "AstAI/ChatMessages.hpp"
+#include "AstAI/ChatTools.hpp"
 #include <string>
 #include <vector>
 #include <functional>
@@ -34,10 +35,7 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/**
- * @brief 工具执行函数类型
- */
-typedef std::function<std::string(const std::map<std::string, std::string>&)> ToolExecutor;
+
 
 /// @brief 聊天会话
 class AST_AI_API ChatSession {
@@ -47,11 +45,6 @@ public:
     /// @param model 模型名称
     /// @param base_url API基础URL
     ChatSession();
-
-    /// @brief 添加工具
-    /// @param tool 工具定义
-    /// @param executor 工具执行函数
-    void addTool(const ChatTool& tool, ToolExecutor executor);
 
     /// @brief 发送消息
     /// @param message 消息内容
@@ -66,6 +59,9 @@ public:
     /// @return 消息历史
     ChatMessages& messages(){return messages_;}
 
+    /// @brief 获取工具集合
+    /// @return 工具集合
+    ChatTools& tools(){return tools_;}
 private:
     std::string makeChatCompletion();
 
@@ -75,29 +71,16 @@ private:
 
     /// @brief 处理单个工具调用
     /// @param toolCall 单个工具调用
-    static std::string handleToolCall(const JsonValue& toolCall);
-
-    /// @brief 处理工具调用
-    /// @param tool_calls 工具调用列表
-    /// @return 工具响应列表
-    std::vector<AIToolResponse> handleToolCalls(const std::vector<AIToolCall>& tool_calls);
-
-    /// @brief 解析工具调用响应
-    /// @param response 模型响应
-    /// @param tool_calls 输出的工具调用列表
-    /// @param content 输出的内容
-    /// @return 是否包含工具调用
-    bool parseToolCalls(const std::string& response, std::vector<AIToolCall>& tool_calls, std::string& content);
+    std::string handleToolCall(const JsonValue& toolCall);
 
     /// @brief 获取当前使用的AI接口
     /// @note 目前还不支持指定或者切换client，只能使用对象内部默认的AI接口
     OpenAI& client();
 private:
-    using ChatToolMap = std::map<std::string, std::pair<ChatTool, ToolExecutor>>;
     OpenAI* client_{nullptr};               ///< 当前使用的AI接口
-    OpenAI internalClient_;                 ///< 对象默认的AI接口
+    OpenAI internalClient_;                 ///< 内部默认的AI接口
     ChatMessages messages_;                 ///< 消息历史
-    ChatToolMap tools_;                     ///< 工具映射
+    ChatTools tools_;                       ///< 工具集合
 };
 
 /*! @} */

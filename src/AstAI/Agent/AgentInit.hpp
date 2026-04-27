@@ -1,8 +1,9 @@
 ///
-/// @file      AITool.cpp
-/// @brief     AI工具实现
+/// @file      ChatToolsDefault.hpp
+/// @brief     
+/// @details   
 /// @author    axel
-/// @date      2026-04-23
+/// @date      2026-04-27
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -17,19 +18,41 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "ChatTool.hpp"
-#include "AstUtil/JsonValue.hpp"
+#pragma once
+
+#include "AstGlobal.h"
+#include <string>
 
 AST_NAMESPACE_BEGIN
 
+/*!
+    @addtogroup 
+    @{
+*/
 
-JsonValue ChatTool::toJson() const
-{
-    JsonValue json;
-    json["name"] = name_;
-    json["description"] = description_;
-    json["parameters"] = parameters_;
-    return json;
-}
+class ChatTools;
+class ChatSession;
+class JsonValue;
+
+
+
+
+
+/// @brief 初始化智能体工具集合
+/// @param tools 工具集合
+void aInitAgentTools(ChatTools& tools);
+
+
+/// @brief 初始化智能体会话
+/// @param session 会话
+/// @details 初始化智能体会话
+void aInitAgentSession(ChatSession& session);
+
+
+/// @brief 获取智能体系统提示
+/// @return 智能体系统提示
+const char* aAgentSystemPrompt();
+
+/*! @} */
 
 AST_NAMESPACE_END

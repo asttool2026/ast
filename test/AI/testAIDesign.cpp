@@ -19,8 +19,10 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "AstAI/ChatSession.hpp"
+#include "AstAI/AgentSession.hpp"
 #include "AstSim/Satellite.hpp"
 #include "AstCore/StateCartesian.hpp"
+#include "AstCore/StateKeplerian.hpp"
 #include "AstCore/TimePoint.hpp"
 #include "AstUtil/IO.hpp"
 #include "AstUtil/RTTIAPI.hpp"
@@ -29,6 +31,32 @@
 
 AST_USING_NAMESPACE
 
+TEST(DeepSeekTest, StateKeplerian)
+{
+    if (aIsCI())
+        GTEST_SKIP();
+    aRemoveAllObjects();
+    AgentSession session;
+    std::vector<std::string> messages({
+        R"(帮我新建一个开普勒状态，不用关联到卫星:
+        - 参考系是地球惯性系
+        - 轨道历元是2026-04-25 00:00:00
+        - 圆轨道高度是 500km, 倾角91度, 升交点赤经20°, 纬度幅角40°
+        )"
+        });
+    for (auto& message : messages)
+    {
+        std::string response = session.sendMessage(message);
+    }
+    StateKeplerian* state = dynamic_cast<StateKeplerian*>(aFindObject(StateKeplerian::StaticType()));
+    ASSERT_TRUE(state != nullptr);
+    EXPECT_EQ(state->getPeriAlt(), 500_km);
+    EXPECT_EQ(state->getEcc(), 0);
+    EXPECT_NEAR(state->getInc(), 91_deg, 0.001_deg);
+    EXPECT_NEAR(state->getRAAN(), 20_deg, 0.001_deg);
+    EXPECT_NEAR(state->getArgLat(), 40_deg, 0.001_deg);
+}
+
 
 
 TEST(DeepSeekTest, StateCartesian)
@@ -36,7 +64,7 @@ TEST(DeepSeekTest, StateCartesian)
     if(aIsCI())
         GTEST_SKIP();
     aRemoveAllObjects();
-    ChatSession session;
+    AgentSession session;
     std::vector<std::string> messages({
         R"(帮我新建一个笛卡尔状态:
         - 参考系是地球惯性系
@@ -64,7 +92,7 @@ TEST(DeepSeekTest, SSODesign)
 {
     GTEST_SKIP();
     {Satellite sat;} // for link libray AstSim
-    ChatSession session;
+    AgentSession session;
     std::vector<std::string> messages({
         "帮我设计一个太阳同步轨道"
     });

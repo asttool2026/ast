@@ -1,8 +1,9 @@
 ///
-/// @file      AITool.cpp
-/// @brief     AI工具实现
+/// @file      AgentSession.hpp
+/// @brief     
+/// @details   
 /// @author    axel
-/// @date      2026-04-23
+/// @date      2026-04-27
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -17,19 +18,26 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "ChatTool.hpp"
-#include "AstUtil/JsonValue.hpp"
+#pragma once
+
+#include "AstGlobal.h"
+#include "AstAI/ChatSession.hpp"
 
 AST_NAMESPACE_BEGIN
 
+/*!
+    @addtogroup 
+    @{
+*/
 
-JsonValue ChatTool::toJson() const
+/// @brief 智能体会话
+class AST_AI_API AgentSession : public ChatSession
 {
-    JsonValue json;
-    json["name"] = name_;
-    json["description"] = description_;
-    json["parameters"] = parameters_;
-    return json;
-}
+public:
+    AgentSession();
+    ~AgentSession() = default;
+};
+
+/*! @} */
 
 AST_NAMESPACE_END
