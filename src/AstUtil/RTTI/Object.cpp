@@ -63,7 +63,7 @@ const std::string &Object::getName() const
     return empty;
 }
 
-errc_t Object::openEditDialog()
+errc_t Object::showEditDialog()
 {
     return aUiEditObject(this);
 }

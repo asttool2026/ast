@@ -31,10 +31,12 @@ AST_NAMESPACE_BEGIN
 
 const char* defaultSystemPrompt = u8R"(
 你是你个专业工程师，擅长航天任务设计与分析，能够熟练使用航天任务设计软件，你需要协助用户使用航天进行任务设计与分析。
-更具体一点的描述：
-- 正在使用的软件是ATK，类似于STK软件
+更具体一点的描述:
+- 正在使用的软件是ATK, 类似于STK软件
 - 你正在协助用户建立一个航天任务分析场景
 - 场景中的对象包括：卫星、地面站、传感器等
+要求:
+- 如果可能，建议单次同时调用多个工具函数，提高调用效率和响应速度
 )";
 
 
@@ -72,6 +74,12 @@ void aInitAgentTools(ChatTools& tools)
         tool->setName("set_object_attribute");
         tool->setDescription(u8"设置指定对象的属性值");
         tool->setParameters(aSetObjectAttributeParamSchema());
+    }
+    {
+        auto tool = tools.addTool(aShowEditDialog);
+        tool->setName("show_edit_dialog");
+        tool->setDescription(u8"显示指定对象的编辑界面");
+        tool->setParameters(aShowEditDialogParamSchema());
     }
 }
 

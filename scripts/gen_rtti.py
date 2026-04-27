@@ -471,8 +471,11 @@ class ClangHeaderAnalyzer(BaseHeaderAnalyzer):
         var_name = cursor.spelling
         type_name = self._get_type_name(cursor)
         
-        # 去掉m_前缀
+        # 去掉m_前缀和末尾的下划线
         prop_name = var_name[2:] if var_name.startswith('m_') else var_name
+        # 去掉末尾的下划线
+        if prop_name.endswith('_'):
+            prop_name = prop_name[:-1]
         
         # 映射类型
         prop_type = TypeMapper.map_type(type_name)

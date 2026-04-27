@@ -39,6 +39,46 @@ AST_USING_NAMESPACE
 const bool testAI = aIsCI();
 
 
+TEST(AIDesignTest, ShowEditDialog)
+{
+    if(testAI)
+        GTEST_SKIP();
+    aRemoveAllObjects();
+    AgentSession session;
+    const char* message =
+        R"(帮我新建一个开普勒状态，然后显示他的编辑界面:
+        - 参考系是地球惯性系
+        - 轨道历元是2026-04-24 00:00:00
+        - 圆轨道高度是 500km, 倾角91度, 升交点赤经20°, 纬度幅角40°
+        )";
+    std::string response = session.sendMessage(message);
+    
+}
+
+
+TEST(AIDesignTest, WalkerDesign)
+{
+    if(testAI)
+        GTEST_SKIP();
+    aRemoveAllObjects();
+    clock_t startTime = clock();
+    AgentSession session;
+    const char* message = u8R"(
+    帮我设计一个Walker星座:
+    - 轨道高度大约 500km
+    - 设计参数(i:T:P:F) = 55°:24:6:1
+    )";
+    session.sendMessage(message);
+    clock_t endTime = clock();
+    printf("WalkerDesign time: %f s\n", double(endTime - startTime) / CLOCKS_PER_SEC);
+    std::vector<Object*> objects = aFindObjects(Satellite::StaticType());
+    size_t numSatellites = objects.size();
+    EXPECT_GT(numSatellites, 0);
+    printf("numSatellites: %zu\n", numSatellites);
+    aPrintAllObjects();
+}
+
+
 TEST(AIDesignTest, Facility)
 {
     if(testAI)
@@ -53,7 +93,6 @@ TEST(AIDesignTest, Facility)
     EXPECT_NEAR(facility->longitude(), 110.3_deg, 0.5_deg);
     EXPECT_NEAR(facility->altitude(), 0.0_m, 10_m);
     EXPECT_EQ(facility->body(), aGetEarth());
-
 }
 
 

@@ -325,14 +325,14 @@ std::string aSetObjectAttribute(const JsonValue& arguments)
     Object* obj = aGetObject(id);
     if(!obj)
     {
-        aError("object %d not found", id);
+        aError("object '%d' not found", id);
         return u8"未找到对象，可能是相应id的对象不存在或已被删除";
     }
     std::string attr = arguments["attribute"].toString();
     Property* prop = obj->getProperty(attr);
     if(!prop)
     {
-        aError("property %s not found", attr.c_str());
+        aError("property '%s' not found", attr.c_str());
         return u8"未找到属性" + attr;
     }
     auto& valueJson = arguments["value"];
@@ -360,6 +360,12 @@ std::string aSetObjectAttribute(const JsonValue& arguments)
             rc = prop->setValueInt(obj, valueJson.toInt());
         }
     }
+    // 特殊处理名称属性
+    if(rc && attr == "name")
+    {
+        obj->setName(valueJson.toString());
+        rc = 0;
+    }
     if(rc != 0)
     {
         aError("failed to set object attribute '%s' to '%s'", attr.c_str(), valueJson.toString().c_str());
@@ -371,6 +377,40 @@ std::string aSetObjectAttribute(const JsonValue& arguments)
     }
 }
 
+JsonValue aShowEditDialogParamSchema()
+{
+    return u8R"(
+        {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "对象的ID"
+                }
+            }
+        }
+    )"_json;
+}
 
+std::string aShowEditDialog(const JsonValue &arguments)
+{
+    int id = arguments["id"].toInt();
+    Object* obj = aGetObject(id);
+    if(!obj)
+    {
+        aError("object '%d' not found", id);
+        return u8"未找到对象，可能是相应id的对象不存在或已被删除";
+    }
+    errc_t rc = obj->showEditDialog();
+    if(rc != 0)
+    {
+        aError("failed to show edit dialog for object '%d'", id);
+        return u8"显示编辑对话框失败，可能是当前环境不支持显示对话框";
+    }
+    else
+    {
+        return u8"显示编辑对话框成功";
+    }
+}
 
 AST_NAMESPACE_END

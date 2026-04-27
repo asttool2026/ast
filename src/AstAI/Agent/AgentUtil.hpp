@@ -96,6 +96,16 @@ JsonValue aSetObjectAttributeParamSchema();
 std::string aSetObjectAttribute(const JsonValue& arguments);
 
 
+/// @brief 显示编辑对话框的参数结构定义
+/// @return 显示编辑对话框参数结构定义
+JsonValue aShowEditDialogParamSchema();
+
+/// @brief 显示编辑对话框
+/// @param arguments 显示编辑对话框参数
+/// @return 显示编辑对话框结果
+std::string aShowEditDialog(const JsonValue& arguments);
+
+
 /*! @} */
 
 AST_NAMESPACE_END

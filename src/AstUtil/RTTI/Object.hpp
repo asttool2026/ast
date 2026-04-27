@@ -118,9 +118,9 @@ public:
     virtual void setName(StringView name) = 0;
 public: // 编辑属性
     
-    /// @brief 打开编辑对话框，用于编辑对象的属性
+    /// @brief 显示编辑对话框，用于编辑对象的属性
     /// @return errc_t 错误码
-    errc_t openEditDialog();
+    errc_t showEditDialog();
 
 public: // 通用属性访问
     /// @brief 获取属性，属性路径格式为 "attr1.attr2.attr3"

@@ -38,7 +38,7 @@ TEST(ObjectLoaderTest, LoadFacility)
         SharedPtr<Object> object;
         errc_t ret = aLoadObject(file, "Facility", object);
         Facility* facility = dynamic_cast<Facility*>(object.get());
-        auto body = facility->getBody();
+        auto body = facility->body();
         EXPECT_TRUE(body != nullptr);
         EXPECT_TRUE(facility != nullptr);
         EXPECT_EQ(ret, 0);
@@ -57,7 +57,7 @@ TEST(ObjectLoaderTest, LoadTarget)
         SharedPtr<Object> object;
         errc_t ret = aLoadObject(file, "Target", object);
         Target* target = dynamic_cast<Target*>(object.get());
-        auto body = target->getBody();
+        auto body = target->body();
         EXPECT_TRUE(body != nullptr);
         EXPECT_TRUE(target != nullptr);
         EXPECT_EQ(ret, 0);
@@ -76,7 +76,7 @@ TEST(ObjectLoaderTest, LoadPlace)
         SharedPtr<Object> object;
         errc_t ret = aLoadObject(file, "Place", object);
         Place* place = dynamic_cast<Place*>(object.get());
-        auto body = place->getBody();
+        auto body = place->body();
         EXPECT_TRUE(body != nullptr);
         EXPECT_TRUE(place != nullptr);
         EXPECT_EQ(ret, 0);
