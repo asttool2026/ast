@@ -27,35 +27,20 @@
 
 AST_NAMESPACE_BEGIN
 
-/// @brief 射击控制器
+/// @brief 控制变量，用于定义微分修正中的控制变量
 class AST_CORE_API ShooterControl : public ObjectNamed
 {
 public:
-
     ShooterControl() = default;
     ~ShooterControl() override = default;
-
-    bool active_ = true;
-    std::string category_;
-    bool clonable_ = true;
-    std::string controlName_;
-    double correction_ = 0.0;
-    std::string description_;
-    std::string dimension_;
-    double maxStep_ = 100.0;
-    std::string parentSegmentName_;
-    std::string parentType_;
-    double perturbation_ = 0.1;
-    bool readOnly_ = false;
-    double scale_ = 1.0;
-    std::string slaveSegments_;
-    int stkVersion_ = 1160;
-    double tolerance_ = 1e-6;
-    double totalCorrection_ = 0.0;
-    std::string unit_;
-    bool useCustomUnit_ = false;
-    std::string userComment_;
-    std::string version_;
+private:
+    bool active_{true};
+    double correction_{0.0};
+    double maxStep_{100.0};
+    double perturbation_{0.1};
+    double scale_{1.0};
+    double tolerance_{1e-6};
+    double totalCorrection_{0.0};
 };
 
 AST_NAMESPACE_END

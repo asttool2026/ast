@@ -1,5 +1,5 @@
 ///
-/// @file      ShooterResult.hpp
+/// @file      SegmentLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,26 +21,24 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstUtil/Object.hpp"
-#include "AstUtil/ObjectNamed.hpp"
-#include <string>
 
 AST_NAMESPACE_BEGIN
 
-/// @brief 结果变量，用于定义微分修正中的结果变量
-class AST_CORE_API ShooterResult : public ObjectNamed
-{
-public:
+/*!
+    @addtogroup 
+    @{
+*/
 
-    ShooterResult() = default;
-    ~ShooterResult() override = default;
-    
-private:
-    double desired_{0.0};
-    double scale_{1.0};
-    double tolerance_{0.0};
-    bool valid_{true};
-    double weight_{1.0};
-};
+class Segment;
+
+/// @brief 加载段的公共属性
+/// @param dict 段字典
+/// @param segment 段
+/// @return 错误码
+errc_t aLoadSegment(const Value& dict, Segment& segment);
+
+
+
+/*! @} */
 
 AST_NAMESPACE_END

@@ -41,8 +41,13 @@ public:
     TargeterSequence() = default;
     ~TargeterSequence() = default;
 
+    /// @brief 设置目标序列段的目标配置
+    /// @param profiles 目标配置列表
+    void setProfiles(const std::vector<HTargeterProfile>& profiles){profiles_ = profiles;}
+private:
     std::vector<HTargeterProfile> profiles_;
 };
+
 
 
 

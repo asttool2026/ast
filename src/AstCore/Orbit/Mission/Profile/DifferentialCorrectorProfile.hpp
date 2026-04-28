@@ -34,14 +34,16 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 微分修正器配置文件
+/// @brief 微分修正器配置器，用于求解非线性方程，可以用于修正轨道参数以满足约束条件要求
 class AST_CORE_API DifferentialCorrectorProfile : public TargeterProfile
 {
 public:
+    static DifferentialCorrectorProfile* New();
 
     DifferentialCorrectorProfile() = default;
     ~DifferentialCorrectorProfile() override = default;
 
+private:
     bool addBPlanePointsForNominals_ = false;
     bool addBPlanePointsForPerturbations_ = false;
     bool clearCorrectionsBeforeRun_ = true;

@@ -22,7 +22,10 @@
 
 AST_NAMESPACE_BEGIN
 
-
+DifferentialCorrectorProfile* DifferentialCorrectorProfile::New()
+{
+    return new DifferentialCorrectorProfile();
+}
 
 AST_NAMESPACE_END
 

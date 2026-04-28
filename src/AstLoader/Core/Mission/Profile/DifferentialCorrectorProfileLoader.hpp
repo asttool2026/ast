@@ -1,5 +1,5 @@
 ///
-/// @file      ShooterResult.hpp
+/// @file      DifferentialCorrectorLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,26 +21,25 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstUtil/Object.hpp"
-#include "AstUtil/ObjectNamed.hpp"
-#include <string>
 
 AST_NAMESPACE_BEGIN
 
-/// @brief 结果变量，用于定义微分修正中的结果变量
-class AST_CORE_API ShooterResult : public ObjectNamed
-{
-public:
+/*!
+    @addtogroup 
+    @{
+*/
 
-    ShooterResult() = default;
-    ~ShooterResult() override = default;
-    
-private:
-    double desired_{0.0};
-    double scale_{1.0};
-    double tolerance_{0.0};
-    bool valid_{true};
-    double weight_{1.0};
-};
+
+class DifferentialCorrectorProfile;
+class Value;
+
+/// @brief 加载DifferentialCorrector配置
+/// @details value 值
+/// @param profile 输出载入的DifferentialCorrector对象
+/// @return errc_t 加载结果
+errc_t aLoadDifferentialCorrectorProfile(const Value& value, DifferentialCorrectorProfile& profile);
+
+
+/*! @} */
 
 AST_NAMESPACE_END

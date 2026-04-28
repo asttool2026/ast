@@ -1,5 +1,5 @@
 ///
-/// @file      ShooterResult.hpp
+/// @file      TargeterProfileLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,26 +21,26 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstUtil/Object.hpp"
-#include "AstUtil/ObjectNamed.hpp"
-#include <string>
+#include "AstUtil/SharedPtr.hpp"
 
 AST_NAMESPACE_BEGIN
 
-/// @brief 结果变量，用于定义微分修正中的结果变量
-class AST_CORE_API ShooterResult : public ObjectNamed
-{
-public:
+/*!
+    @addtogroup 
+    @{
+*/
 
-    ShooterResult() = default;
-    ~ShooterResult() override = default;
-    
-private:
-    double desired_{0.0};
-    double scale_{1.0};
-    double tolerance_{0.0};
-    bool valid_{true};
-    double weight_{1.0};
-};
+class TargeterProfile;
+
+
+
+/// @brief 加载目标器配置
+/// @param value 值
+/// @param profile 目标器配置
+/// @return 错误码
+errc_t aLoadTargeterProfile(const Value& value, SharedPtr<TargeterProfile>& profile);
+
+
+/*! @} */
 
 AST_NAMESPACE_END

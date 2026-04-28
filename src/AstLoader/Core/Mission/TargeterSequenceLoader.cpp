@@ -19,13 +19,15 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "TargeterSequenceLoader.hpp"
+#include "AstLoader/TargeterProfileLoader.hpp"
+#include "AstLoader/ValXMLLoader.hpp"
+#include "AstLoader/SequenceLoader.hpp"
+#include "AstLoader/MissionCommandLoader.hpp"
 #include "AstUtil/StringView.hpp"
-#include "AstScript/Value.hpp"
-#include "ValXMLLoader.hpp"
 #include "AstUtil/Logger.hpp"
 #include "AstCore/TargeterSequence.hpp"
-#include "SequenceLoader.hpp"
-#include "MissionCommandLoader.hpp"
+#include "AstScript/Value.hpp"
+
 
 AST_NAMESPACE_BEGIN
 
@@ -37,25 +39,27 @@ errc_t aLoadTargeterSequence(const Value& dictRoot, TargeterSequence& sequence)
         aError("invalid type, expect 'TargeterSequence'");
         return eErrorInvalidParam;
     }
-    auto& dictSegmentList = dictRoot["SegmentList"];
-    auto& items = dictSegmentList.items();
-    std::vector<HMissionCommand> commands;
-    commands.reserve(items.size());
+    errc_t rc = aLoadSequence(dictRoot, sequence);
+    if(rc) return rc;
+    auto& dictProfiles = dictRoot["Profiles"];
+    auto& items = dictProfiles.items();
+    std::vector<HTargeterProfile> profiles;
+    profiles.reserve(items.size());
     for(auto& item: items)
     {
         auto& name = item.first;
-        const auto& dictSegment = *item.second;
-        HMissionCommand command;
-        errc_t rc = aLoadMissionCommand(dictSegment, command);
-        if(!rc && command != nullptr)
+        const auto& dictProfile = *item.second;
+        HTargeterProfile profile;
+        errc_t rc = aLoadTargeterProfile(dictProfile, profile);
+        if(!rc && profile != nullptr)
         {
-            commands.push_back(command);
+            profiles.push_back(profile);
         }else
         {
-            aError("failed to load mission command '%s'", name.c_str());
+            aError("failed to load targeter profile '%s'", name.c_str());
         }
     }
-    sequence.setCommands(commands);
+    sequence.setProfiles(profiles);
     return eNoError;
 }
 
