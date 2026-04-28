@@ -40,16 +40,34 @@ AST_USING_NAMESPACE
 
 const bool testAI = aIsCI();
 
-
 TEST(AIDesignTest, MissionDesign)
 {
     if(testAI)
         GTEST_SKIP();
     aRemoveAllObjects();
-    const char* message = u8"帮我用Astrogator创建一个霍曼转移场景";
+    const char* message = u8"帮我创建一个霍曼转移任务序列";
     AgentSession session;
     std::string response = session.sendMessage(message);
 }
+
+TEST(AIDesignTest, ClassAnalysis)
+{
+    if(testAI)
+        GTEST_SKIP();
+    aRemoveAllObjects();
+    {
+        const char* message = u8"软件支持哪些移动对象？";
+        AgentSession session;
+        session.sendMessage(message);
+    }
+    {
+        const char* message = u8"软件能支持什么场景的建模分析？";
+        AgentSession session;
+        session.sendMessage(message);
+    }
+
+}
+
 
 
 TEST(AIDesignTest, RKF78)

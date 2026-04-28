@@ -35,7 +35,7 @@ ClassRegistry *ClassRegistry::Instance()
 
 Class *ClassRegistry::getClass(StringView name) const
 {
-    std::string nameStr = aAsciiStrToLower(name);
+    std::string nameStr(name); // = aAsciiStrToLower(name);
     auto it = classMap_.find(nameStr);
     if(it != classMap_.end())
         return it->second;

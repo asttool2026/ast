@@ -34,9 +34,11 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+/// @brief 预报段，用于建模任务序列(MissionCommand)中的轨道预报
 class AST_CORE_API Propagate: public Segment
 {
 public:
+    AST_OBJECT(Propagate)
     Propagate() = default;
     ~Propagate() = default;
 public:

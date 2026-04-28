@@ -32,13 +32,16 @@ AST_NAMESPACE_BEGIN
 */
 
 
-/// @brief 任务段
-/// @details 任务段负责执行任务序列中的任务
+/// @brief 轨道段（虚基类），用于描述任务序列中的轨道段，例如初始状态段、轨道机动段、轨道预报段等
+/// @details 轨道段描述任务序列中的轨道任务段
 /// 参考了GMAT-Architectural-Specification.pdf第26章的Mission Control Sequence Commands
 /// 参考了STK的轨道段MCSSegment
 class AST_CORE_API Segment: public MissionCommand
 {
 public:
+    AST_OBJECT(Segment)
+    AST_PROPERT(InitialState)
+    AST_PROPERT(FinalState)
     Segment();
     ~Segment() override = default;
 public:
@@ -49,7 +52,7 @@ public:
     /// @brief 设置初始状态
     /// @param initialState 初始状态
     void setInitialState(SpacecraftState* initialState){initialState_ = initialState;}
-
+PROPERTIES:
     /// @brief 获取初始状态
     /// @return 初始状态
     SpacecraftState* getInitialState() const{return initialState_.get();}

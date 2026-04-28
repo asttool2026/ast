@@ -32,11 +32,12 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 初始状态任务
+/// @brief 初始轨道段，用于建模任务序列(MissionCommand)中的初始状态任务
 /// @details 初始状态任务负责设置初始状态参数，确保任务序列的执行从正确的状态开始
 class AST_CORE_API InitialState: public Segment
 {
 public:
+    AST_OBJECT(InitialState)
     InitialState();
     ~InitialState() = default;
 public:

@@ -36,9 +36,12 @@ AST_NAMESPACE_BEGIN
     MCS 的全程是 Mission Command Sequence (任务命令序列) 或者 Mission Control Sequence (任务控制序列)
 */
 
+
+/// @brief 任务序列段，内部包含多个任务命令或轨道段，并会按顺序执行
 class AST_CORE_API Sequence: public Segment
 {
 public:
+    AST_OBJECT(Sequence)
     Sequence() = default;
     ~Sequence() = default;
 public:
