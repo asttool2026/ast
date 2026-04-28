@@ -278,16 +278,13 @@ A_ALWAYS_INLINE Property* aNewPropertyMem()
 // ----------------------------------------------------------------------------
 // 2. 只读 getter 版本
 // ----------------------------------------------------------------------------
-template<typename T, typename GetterType>
-A_ALWAYS_INLINE Property* aNewPropertyReadOnly(GetterType T::*getter)
+template<typename T, typename Ret, Ret (T::*Getter)() const>
+A_ALWAYS_INLINE Property* aNewPropertyReadOnly()
 {
-    // 仅当 GetterType 为 Ret (T::*)() const 形式时有效
-    using ValueType = typename std::remove_cv<
-        typename std::remove_reference<GetterType>::type
-    >::type;
+    using ValueType = typename std::decay<Ret>::type;
     using Builder = detail::PropertyBuilder<T, ValueType, detail::GetterOnlyTag>;
     return _aNewProperty<ValueType>(
-        Builder::template makeGetter<getter>(),
+        Builder::template makeGetter<Getter>(),
         nullptr
     );
 }
@@ -461,13 +458,13 @@ A_ALWAYS_INLINE Property* aNewPropertyQuantityMem(Dimension dim) {
 
 // ---- 只读 getter 旧接口 ----
 template<typename T, bool (T::*Getter)() const>
-A_ALWAYS_INLINE Property* aNewPropertyBool()      { return aNewPropertyReadOnly<T>(Getter); }
+A_ALWAYS_INLINE Property* aNewPropertyBool()      { return aNewPropertyReadOnly<T, bool, Getter>(); }
 template<typename T, int (T::*Getter)() const>
-A_ALWAYS_INLINE Property* aNewPropertyInt()       { return aNewPropertyReadOnly<T>(Getter); }
+A_ALWAYS_INLINE Property* aNewPropertyInt()       { return aNewPropertyReadOnly<T, int, Getter>(); }
 template<typename T, double (T::*Getter)() const>
-A_ALWAYS_INLINE Property* aNewPropertyDouble()    { return aNewPropertyReadOnly<T>(Getter); }
+A_ALWAYS_INLINE Property* aNewPropertyDouble()    { return aNewPropertyReadOnly<T, double, Getter>(); }
 template<typename T, std::string (T::*Getter)() const>
-A_ALWAYS_INLINE Property* aNewPropertyString()    { return aNewPropertyReadOnly<T>(Getter); }
+A_ALWAYS_INLINE Property* aNewPropertyString()    { return aNewPropertyReadOnly<T, std::string, Getter>(); }
 
 
 

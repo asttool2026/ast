@@ -60,7 +60,7 @@ std::string ChatSession::makeChatCompletion()
         // ast_printf("res: %s\n", res.toJsonString().c_str());
         JsonValue& message = res["choices"][0]["message"];
         std::string response = message["content"].toString();
-        ast_printf("ai: \n%s\n", response.c_str());
+        ast_printf("ai: %s\n", response.c_str());
         JsonValue& toolCalls = message["tool_calls"];
         auto msg = ChatMessage::Assistant(response, toolCalls);
         if(!message["reasoning_content"].isNull())

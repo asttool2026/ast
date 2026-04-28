@@ -75,6 +75,7 @@ void aInitAgentTools(ChatTools& tools)
         tool->setDescription(u8"设置指定对象的属性值");
         tool->setParameters(aSetObjectAttributeParamSchema());
     }
+    if(0)
     {
         auto tool = tools.addTool(aShowEditDialog);
         tool->setName("show_edit_dialog");
