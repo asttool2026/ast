@@ -1,9 +1,9 @@
 ///
-/// @file      MissionCommandLoader.hpp
+/// @file      ScriptingTool.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-15
+/// @date      2026-04-28
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,12 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "InitialStateLoader.hpp"
-#include "ManeuverLoader.hpp"
-#include "PropagateLoader.hpp"
-#include "SequenceLoader.hpp"
-#include "TargeterSequenceLoader.hpp"
-#include "AstUtil/SharedPtr.hpp"
+#include "TargeterProfile.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -35,18 +30,21 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-class MissionCommand;
+/// @brief 脚本工具配置文件
+class AST_CORE_API ScriptingTool : public TargeterProfile
+{
+public:
 
-/// @brief 从值加载任务命令
-/// @param value 值
-/// @param missionCommand 任务命令对象
-AST_LOADER_API errc_t aLoadMissionCommand(const Value& value, SharedPtr<MissionCommand>& missionCommand);
+    ScriptingTool() = default;
+    ~ScriptingTool() override = default;
 
-/// @brief 从文件加载任务命令
-/// @param filepath 文件路径
-/// @param missionCommand 任务命令对象
-AST_LOADER_API errc_t aLoadMissionCommand(StringView filepath, SharedPtr<MissionCommand>& missionCommand);
+    std::string language_;
+    bool preIterate_ = false;
+    std::string scriptStatements_;
+};
 
 /*! @} */
 
 AST_NAMESPACE_END
+
+

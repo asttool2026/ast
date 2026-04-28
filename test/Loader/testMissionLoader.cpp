@@ -32,6 +32,19 @@
 AST_USING_NAMESPACE;
 
 
+TEST(MissionLoaderTest, LoadHohmannTransfer)
+{
+    std::string file = aTestGetConfigValue("STK_HOHMANNTRANSFER_FILE").toString();
+    {
+        printf("loading file: %s\n", file.c_str());
+        SharedPtr<MissionCommand> missionCommand;
+        errc_t rc = aLoadMissionCommand(file, missionCommand);
+        EXPECT_EQ(rc, eNoError);
+        printf("loaded file: %s\n", file.c_str());
+    }
+}
+
+
 TEST(MissionLoaderTest, LoadValue)
 {
     SharedPtr<Value> value;

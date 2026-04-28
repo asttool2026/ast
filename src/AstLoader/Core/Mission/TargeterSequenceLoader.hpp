@@ -1,9 +1,9 @@
 ///
-/// @file      MissionCommandLoader.hpp
+/// @file      TargeterSequenceLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-15
+/// @date      2026-04-28
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,12 +21,6 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "InitialStateLoader.hpp"
-#include "ManeuverLoader.hpp"
-#include "PropagateLoader.hpp"
-#include "SequenceLoader.hpp"
-#include "TargeterSequenceLoader.hpp"
-#include "AstUtil/SharedPtr.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -35,17 +29,22 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-class MissionCommand;
+class TargeterSequence;
+class Value;
 
-/// @brief 从值加载任务命令
+/// @brief 从值加载序列
 /// @param value 值
-/// @param missionCommand 任务命令对象
-AST_LOADER_API errc_t aLoadMissionCommand(const Value& value, SharedPtr<MissionCommand>& missionCommand);
+/// @param sequence 序列对象
+/// @return errc_t 错误码，0表示成功
+AST_LOADER_API errc_t aLoadTargeterSequence(const Value& value, TargeterSequence& sequence);
 
-/// @brief 从文件加载任务命令
+
+/// @brief 从文件加载序列
 /// @param filepath 文件路径
-/// @param missionCommand 任务命令对象
-AST_LOADER_API errc_t aLoadMissionCommand(StringView filepath, SharedPtr<MissionCommand>& missionCommand);
+/// @param sequence 序列对象
+/// @return errc_t 错误码，0表示成功
+AST_LOADER_API errc_t aLoadTargeterSequence(StringView filepath, TargeterSequence& sequence);
+
 
 /*! @} */
 

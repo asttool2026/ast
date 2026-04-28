@@ -1,9 +1,9 @@
 ///
-/// @file      SequenceLoader.cpp
+/// @file      TargeterSequenceLoader.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-15
+/// @date      2026-04-28
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,22 +18,23 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "SequenceLoader.hpp"
-#include "AstCore/Sequence.hpp"
-#include "AstScript/Value.hpp"
+#include "TargeterSequenceLoader.hpp"
 #include "AstUtil/StringView.hpp"
-#include "AstUtil/Logger.hpp"
+#include "AstScript/Value.hpp"
 #include "ValXMLLoader.hpp"
+#include "AstUtil/Logger.hpp"
+#include "AstCore/TargeterSequence.hpp"
+#include "SequenceLoader.hpp"
 #include "MissionCommandLoader.hpp"
 
 AST_NAMESPACE_BEGIN
 
-errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
+errc_t aLoadTargeterSequence(const Value& dictRoot, TargeterSequence& sequence)
 {
-    std::string type = dictRoot["Type"].toString();
-    if(type != "Sequence" && type != "TargeterSequence")
+    std::string type = dictRoot["Type"];
+    if(type != "TargeterSequence")
     {
-        aError("invalid type, expect 'Sequence' or 'TargeterSequence'");
+        aError("invalid type, expect 'TargeterSequence'");
         return eErrorInvalidParam;
     }
     auto& dictSegmentList = dictRoot["SegmentList"];
@@ -55,19 +56,17 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
         }
     }
     sequence.setCommands(commands);
-    return 0;
+    return eNoError;
 }
 
-
-errc_t aLoadSequence(StringView filepath, Sequence& sequence)
+errc_t aLoadTargeterSequence(StringView filepath, TargeterSequence& sequence)
 {
     errc_t rc;
     SharedPtr<Value> value;
     rc = aLoadValue(filepath, value);
     if(rc)  return rc;
     if(!value) return eErrorNullPtr;
-    return aLoadSequence(*value, sequence);
+    return aLoadTargeterSequence(*value, sequence);
 }
-
 
 AST_NAMESPACE_END
