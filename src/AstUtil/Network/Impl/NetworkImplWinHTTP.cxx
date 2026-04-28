@@ -65,6 +65,7 @@ AST_NAMESPACE_END
 #include "AstUtil/Encode.hpp"
 #include "AstUtil/Logger.hpp"
 #include "AstUtil/StringUtil.hpp"
+#include "AstUtil/ParseFormat.hpp"
 
 #include <windows.h>
 #include <winhttp.h>
@@ -223,7 +224,7 @@ errc_t NetworkImplWinHTTP::request(const NetworkRequest& request, NetworkRespons
         host = host.substr(0, portPos);
     }
     // 简单验证端口
-    int port = std::atoi(portStr.c_str());
+    int port = aParseInt(portStr.c_str());
     if (port <= 0 || port > 65535) {
         port = (protocol == "https") ? 443 : 80;
     }

@@ -19,7 +19,6 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "JsonDomSax.hpp"
-#include "JsonDomSax.hpp"
 #include "AstUtil/Logger.hpp"
 #include <cassert>
 #include <utility>
