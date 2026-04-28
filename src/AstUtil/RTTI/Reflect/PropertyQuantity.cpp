@@ -51,7 +51,7 @@ errc_t PropertyQuantity::accept(PropertyVisitor &visitor, const void *container)
 errc_t PropertyQuantity::getValueString(const void *container, std::string &value)
 {
     // 通过量纲获取国际制单位
-    Unit* siUnit = aUnitSIGet(dimension_);
+    Unit* siUnit = aUnitGetSI(dimension_);
     if(siUnit)
     {
         double d = 0;

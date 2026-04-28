@@ -153,6 +153,13 @@ public: // 获取属性
     /// @return errc_t 错误码
     errc_t getAttrString(StringView path, std::string& value) const;
 
+
+    /// @brief 获取属性值，属性路径格式为 "attr1.attr2.attr3"
+    /// @param path 属性路径
+    /// @param value 属性值引用
+    /// @return errc_t 错误码
+    errc_t getAttrObject(StringView path, Object*& value) const;
+
 public: // 获取属性值
     /// @brief 获取属性值，属性路径格式为 "attr1.attr2.attr3"
     /// @param path 属性路径
@@ -173,6 +180,12 @@ public: // 获取属性值
     /// @param path 属性路径
     /// @return std::string 属性值
     std::string getAttrString(StringView path) const;
+
+
+    /// @brief 获取属性值，属性路径格式为 "attr1.attr2.attr3"
+    /// @param path 属性路径
+    /// @return Object* 属性值
+    Object* getAttrObject(StringView path) const;
 
 public: // 设置属性值
     /// @param path 属性路径
@@ -198,6 +211,13 @@ public: // 设置属性值
     /// @return errc_t 错误码
     errc_t setAttrString(StringView path, StringView value);
 
+
+    /// @brief 设置属性值，属性路径格式为 "attr1.attr2.attr3"
+    /// @param path 属性路径
+    /// @param value 属性值
+    /// @return errc_t 错误码
+    errc_t setAttrObject(StringView path, Object* value);
+
 public: // 类型与字段属性
     /// @brief 获取对象类型
     /// @return Class* 类型元信息
@@ -210,8 +230,8 @@ public: // 类型与字段属性
 public: // 对象ID
 
     /// @brief 获取对象ID
-    /// @return uint32_t 对象ID
-    uint32_t getID() const;
+    /// @return ObjectId 对象ID
+    ObjectId getID() const;
 
     /// @brief 设置对象的父作用域
     /// @param parentScope 父作用域指针

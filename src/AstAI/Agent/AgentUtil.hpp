@@ -44,6 +44,12 @@ AST_AI_API JsonValue aObjectToBriefJson(Object* obj);
 AST_AI_API JsonValue aObjectToJson(Object* object);
 
 
+/// @brief 获取类的JSON Schema
+/// @return 类的JSON Schema
+AST_AI_API JsonValue aClassJsonSchema(Class* cls);
+
+
+
 //--------------
 // 智能体工具函数
 //--------------

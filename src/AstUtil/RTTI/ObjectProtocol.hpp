@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstUtil/StringView.hpp"
 #include <string>
 
 AST_NAMESPACE_BEGIN
@@ -37,6 +38,7 @@ using ObjectId = uint32_t;
 /// @brief 对象协议
 class AST_UTIL_API ObjectProtocol
 {
+public:
     /// @brief 设置对象属性字符串值
     /// @details id 对象索引/对象ID
     /// @param name 属性名

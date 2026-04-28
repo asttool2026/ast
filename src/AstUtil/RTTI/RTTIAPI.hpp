@@ -144,6 +144,12 @@ AST_UTIL_CAPI uint32_t aGetObjectID(Object* obj);
 AST_UTIL_CAPI uint32_t aAddObject(Object* object);
 
 
+/// @brief 移除对象
+/// @details 从对象管理器中移除对象，包括子对象
+/// @param object 对象指针
+/// @return 错误码
+AST_UTIL_CAPI errc_t aRemoveObject(Object* object);
+
 /// @brief 移除所有对象
 /// @details 从对象管理器中移除所有对象，包括子对象
 /// @return 无

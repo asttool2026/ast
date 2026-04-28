@@ -128,7 +128,7 @@ Unit* UnitManager::getSiUnit(Dimension dim)
                 Unit* basicUnit = _getSiUnitCache(basicDim);
                 if(basicUnit)
                 {
-                    composedUnit = composedUnit * (*basicUnit);
+                    composedUnit = composedUnit * basicUnit->pow(exponent);
                 }
                 else
                 {
@@ -186,7 +186,7 @@ Unit* aUnitGet(StringView name)
     return UnitManager::Instance().getUnit(name);
 }
 
-Unit* aUnitSIGet(Dimension dim)
+Unit* aUnitGetSI(Dimension dim)
 {
     return UnitManager::Instance().getSiUnit(dim);
 }
