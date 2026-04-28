@@ -265,6 +265,7 @@ public:
         context.class_ = std::string(element);
         if(element == "QUANTITY")
         {
+            // 针对QUANTITY元素，需要特殊处理
             context.name_ = attributes.get("Unit").toString();
         }
     }

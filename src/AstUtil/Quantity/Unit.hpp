@@ -403,6 +403,10 @@ public:
     /// @brief 默认无单位
     Unit(): Unit{units::none}{}
 
+    /// @brief 根据单位名称创建单位
+    AST_UTIL_API
+    Unit(StringView name);
+
     /// @brief 新建单位
     Unit(StringView name, double scale, Dimension dimension)
         : rep_{std::make_shared<UnitRep>(name, scale, dimension, SubUnitListConst{})} 

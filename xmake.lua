@@ -109,6 +109,7 @@ add_requires("cspice", {optional = true})                                       
 -- add_requires("libintl", {optional = true})                                      -- 可选的libintl库，用于国际化
 -- add_requires("nlohmann_json", {optional = true})                                -- 可选的nlohmann_json库，用于JSON解析
 -- add_requires("jsoncpp", {optional = true})                                      -- 可选的jsoncpp库，用于JSON解析
+-- add_requires("curl", {optional = true})                                         -- 可选的curl库，用于HTTP请求
 -- add_requires("nodeeditor", {optional = true})                                   -- 可选的nodeeditor库，用于节点编辑器
 
 -- 使用llvm工具链编译（可选）
@@ -172,6 +173,7 @@ end
 --     add_defines("AST_NO_NLOHMANN_JSON")
 -- end
 
+
 -- 添加jsoncpp库依赖（可选）
 -- if has_package("jsoncpp") then
 --     add_packages("jsoncpp")
@@ -180,6 +182,13 @@ end
 --     add_defines("AST_NO_JSONCPP")
 -- end
 
+-- -- 添加curl库依赖（可选）
+-- if has_package("curl") then
+--     add_packages("curl")
+--     add_defines("AST_WITH_CURL")
+-- else
+--     add_defines("AST_NO_CURL")
+-- end
 
 -- 添加nodeeditor库依赖（可选）
 -- if has_package("nodeeditor") then

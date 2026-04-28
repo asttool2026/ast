@@ -228,6 +228,7 @@ public: // 引用计数
 
     /// @brief 析构对象，仅当强引用计数为0时才会被调用
     /// @details 析构对象时，会先将弱引用计数减1，若弱引用计数为0，则会调用析构函数
+    /// @warning 对于栈上的对象，不要调用该函数，避免对栈内存调用 delete 导致崩溃
     void     destruct()
     {
         #ifndef NDEBUG
@@ -276,11 +277,11 @@ public: // 引用计数
     }
 private:
     /// @brief 析构对象，仅当强引用计数为0时才会被调用
+    /// @warning 对于栈上的对象，不要调用该函数，避免对栈内存调用 delete 导致崩溃
     /// @details 析构对象时，会先将弱引用计数减1，若弱引用计数为0，则会调用析构函数
     void    _destruct()
     {
         this->~Object();
-        this->refcnt_ = static_cast<uint32_t>(-1); // 标识对象是否被析构. bit mask indicate whether object is destructed.
         this->decWeakRef();
     }
 protected: // 延迟链接
@@ -298,12 +299,10 @@ protected:
     friend class ObjectManager;
     virtual ~Object();
     Object(const Object& obj)
-        : refcnt_(0)
-        , weakrefcnt_(1)
+        : Object()
     {}
-    Object& operator=(const Object& obj)
+    Object& operator=(const Object&)
     {
-        A_UNUSED(obj);
         return *this;
     }
 public: // 实参依赖查找（ADL）

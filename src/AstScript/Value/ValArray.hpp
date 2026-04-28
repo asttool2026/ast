@@ -92,18 +92,22 @@ template<typename T, size_t NDIM>
 void ValArray<T, NDIM>::resize(size_t size)
 {
     size_t old_size = this->size();
-    T* old_data = data_;
+    // 判断是否需要扩充数组大小
+    if(old_size >= size)
+    {
+        T* old_data = data_;
+        data_ = new T[size];
+        if(old_data)
+        {
+            size_t copy_size = old_size < size ? old_size : size;
+            for(size_t i = 0; i < copy_size; ++i)
+                data_[i] = old_data[i];
+            delete[] old_data;
+        }
+    }
     dims_[0] = size;
     for(size_t i = 1; i < NDIM; ++i)
         dims_[i] = 1;
-    data_ = new T[size];
-    if(old_data)
-    {
-        size_t copy_size = old_size < size ? old_size : size;
-        for(size_t i = 0; i < copy_size; ++i)
-            data_[i] = old_data[i];
-        delete[] old_data;
-    }
 }
 
 template <typename T, size_t NDIM>

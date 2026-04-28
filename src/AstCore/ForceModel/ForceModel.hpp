@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstUtil/Object.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -48,7 +49,7 @@ enum class EGMSource
 
 /// @brief 力模型
 /// @details 力模型用于表示动力学系统中的摄动力，例如重力、大气阻力、太阳光压、三体摄动等
-class AST_CORE_API ForceModel
+class AST_CORE_API ForceModel: public Object
 {
 public:
     ForceModel() = default;

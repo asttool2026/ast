@@ -26,6 +26,10 @@
 #include "AstCore/StateKeplerian.hpp"
 #include "AstCore/BodyEphemerisDE.hpp"
 #include "AstCore/BodyEphemerisSPK.hpp"
+#include "AstCore/GravityForce.hpp"
+#include "AstCore/DragForce.hpp"
+#include "AstCore/SolarRadiationPressure.hpp"
+#include "AstCore/ThirdBodyForce.hpp"
 #include "AstSim/MotionTwoBody.hpp"
 
 #include "AstGUI/UiStateCartesian.hpp"
@@ -33,6 +37,10 @@
 #include "AstGUI/UiMotionTwoBody.hpp"
 #include "AstGUI/UiBodyEphemerisDE.hpp"
 #include "AstGUI/UiBodyEphemerisSPK.hpp"
+#include "AstGUI/UiGravityForce.hpp"
+#include "AstGUI/UiDragForce.hpp"
+#include "AstGUI/UiSolarRadiationPressure.hpp"
+#include "AstGUI/UiThirdBodyForce.hpp"
 #include "AstGUI/AstGUIAPI.hpp"
 
 AST_NAMESPACE_BEGIN
@@ -52,6 +60,10 @@ ObjectEditRegistry::ObjectEditRegistry(bool shouldRegistEditWidget)
         registerEditWidget(MotionTwoBody::getStaticType(), [](Object *object) -> QWidget* { return new UiMotionTwoBody(object); });
         registerEditWidget(BodyEphemerisDE::getStaticType(), [](Object *object) -> QWidget* { return new UiBodyEphemerisDE(object); });
         registerEditWidget(BodyEphemerisSPK::getStaticType(), [](Object *object) -> QWidget* { return new UiBodyEphemerisSPK(object); });
+        registerEditWidget(GravityForce::getStaticType(), [](Object *object) -> QWidget* { return new UiGravityForce(object); });
+        registerEditWidget(DragForce::getStaticType(), [](Object *object) -> QWidget* { return new UiDragForce(object); });
+        registerEditWidget(SolarRadiationPressure::getStaticType(), [](Object *object) -> QWidget* { return new UiSolarRadiationPressure(object); });
+        registerEditWidget(ThirdBodyForce::getStaticType(), [](Object *object) -> QWidget* { return new UiThirdBodyForce(object); });
     }
 }
 

@@ -1,0 +1,6 @@
+target("AstAI")
+    set_kind("static")
+    add_files("**.cpp")
+    add_includedirs(".")
+    add_deps("AstCore", "AstUtil")
+    add_defines("AST_BUILD_LIB_AI")

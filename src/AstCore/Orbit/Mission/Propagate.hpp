@@ -23,6 +23,8 @@
 #include "AstGlobal.h"
 #include "MissionCommand.hpp"
 #include "Segment.hpp"
+#include "AstCore/HPOP.hpp"
+#include "AstCore/EventDetector.hpp"
 
 
 AST_NAMESPACE_BEGIN
@@ -39,6 +41,11 @@ public:
     ~Propagate() = default;
 public:
     errc_t execute() override;
+public:
+    HPOP* getPropagator() const { return propagator_.get(); }
+private:
+    WeakPtr<HPOP> propagator_;                                    ///< 轨道预报器
+    std::vector<SharedPtr<EventDetector>> eventDetectors_;        ///< 事件检测器
 };
 
 
