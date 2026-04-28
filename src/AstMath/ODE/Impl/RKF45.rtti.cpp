@@ -13,6 +13,7 @@ void RKF45::ClassInit(Class* cls)
 {
 
     cls->setName("RKF45");
+    cls->setDesc(u8R"(Runge-Kutta-Fehlberg 4(5) 积分器)");
     cls->addToRegistry();
     cls->setParent<ODEVarStepIntegrator>();
     cls->setConstructor<RKF45>();

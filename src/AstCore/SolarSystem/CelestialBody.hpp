@@ -52,6 +52,10 @@ class AST_CORE_API CelestialBody : public Point
 {
 public:
     AST_OBJECT(CelestialBody)
+    AST_PROPERT(Shape)
+    AST_PROPERT(GravityField)
+    AST_PROPERT(Ephemeris)
+    AST_PROPERT(Orientation)
     CelestialBody();
     CelestialBody(SolarSystem* solarSystem);
     CelestialBody(StringView name, SolarSystem* solarSystem = nullptr);

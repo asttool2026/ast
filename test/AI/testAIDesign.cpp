@@ -32,11 +32,39 @@
 #include "AstUtil/IO.hpp"
 #include "AstUtil/RTTIAPI.hpp"
 #include "AstUtil/Literals.hpp"
+#include "AstMath/ODEIntegrator.hpp"
+#include "AstMath/RKF78.hpp"
 #include "AstTest/Test.h"
 
 AST_USING_NAMESPACE
 
 const bool testAI = aIsCI();
+
+
+TEST(AIDesignTest, MissionDesign)
+{
+    if(testAI)
+        GTEST_SKIP();
+    aRemoveAllObjects();
+    const char* message = u8"帮我用Astrogator创建一个霍曼转移场景";
+    AgentSession session;
+    std::string response = session.sendMessage(message);
+}
+
+
+TEST(AIDesignTest, RKF78)
+{
+    if(testAI)
+        GTEST_SKIP();
+    aRemoveAllObjects();
+    const char* message = u8"帮我新建一个积分器, RKF78吧";
+    AgentSession session;
+    std::string response = session.sendMessage(message);
+    ODEIntegrator* integrator = dynamic_cast<ODEIntegrator*>(aFindObject(ODEIntegrator::StaticType()));
+    ASSERT_TRUE(integrator != nullptr);
+    RKF78* rkf78 = dynamic_cast<RKF78*>(integrator);
+    ASSERT_TRUE(rkf78 != nullptr);
+}
 
 
 TEST(AIDesignTest, ShowEditDialog)

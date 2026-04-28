@@ -13,6 +13,7 @@ void RKCK::ClassInit(Class* cls)
 {
 
     cls->setName("RKCK");
+    cls->setDesc(u8R"(Runge-Kutta Cash-Karp 方法)");
     cls->addToRegistry();
     cls->setParent<ODEVarStepIntegrator>();
     cls->setConstructor<RKCK>();

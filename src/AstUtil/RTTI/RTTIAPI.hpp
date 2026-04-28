@@ -23,6 +23,8 @@
 #include "AstGlobal.h"
 #include "AstUtil/SharedPtr.hpp"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/StringView.hpp"
+#include <map>
 
 AST_NAMESPACE_BEGIN
 
@@ -41,6 +43,11 @@ AST_NAMESPACE_BEGIN
 /// @return 无
 AST_UTIL_CAPI void aGetAllClassNames(std::vector<std::string>& names);
 
+/// @brief 获取所有已注册的类
+/// @details 返回所有已注册的类的指针
+/// @return 所有已注册的类的指针
+AST_UTIL_CAPI const std::unordered_map<std::string, Class*>& aGetAllClasses();
+
 /// @brief 获取类的元数据
 /// @details 根据类名获取类的元数据
 /// @param name 类名
@@ -56,7 +63,7 @@ AST_UTIL_CAPI bool aIsVirtualClass(StringView name);
 /// @details 注册类的元数据，用于后续的反射操作
 /// @param cls 类指针
 /// @return 类的元数据指针
-AST_UTIL_CAPI void aRegisterClass(Class* cls);
+AST_UTIL_CAPI void aRegisterClass(Class* cls, StringView name=StringView());
 
 /// @brief 根据类名获取类的默认对象(CDO)
 /// @details CDO是类的默认构造函数创建的对象，用于存储类的默认属性值等信息，参考了Unreal Engine的设计

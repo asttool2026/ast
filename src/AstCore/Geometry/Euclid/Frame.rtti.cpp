@@ -13,6 +13,7 @@ void Frame::ClassInit(Class* cls)
 {
 
     cls->setName("Frame");
+    cls->setDesc(u8R"(坐标系类)");
     cls->addToRegistry();
     cls->setParent<ObjectNamed>();
     cls->setConstructor<Frame>();

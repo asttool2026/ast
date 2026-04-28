@@ -13,6 +13,7 @@ void RKF56::ClassInit(Class* cls)
 {
 
     cls->setName("RKF56");
+    cls->setDesc(u8R"(Runge-Kutta-Fehlberg 5(6) 积分器)");
     cls->addToRegistry();
     cls->setParent<ODEVarStepIntegrator>();
     cls->setConstructor<RKF56>();

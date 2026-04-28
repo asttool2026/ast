@@ -13,6 +13,7 @@ void EventTime::ClassInit(Class* cls)
 {
 
     cls->setName("EventTime");
+    cls->setDesc(u8R"(事件时间)");
     cls->addToRegistry();
     cls->setParent<ObjectNamed>();
     cls->setConstructor<EventTime>();

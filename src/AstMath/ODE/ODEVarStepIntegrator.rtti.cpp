@@ -13,6 +13,7 @@ void ODEVarStepIntegrator::ClassInit(Class* cls)
 {
 
     cls->setName("ODEVarStepIntegrator");
+    cls->setDesc(u8R"(可变步长积分器)");
     cls->addToRegistry();
     cls->setParent<ODEFixedStepIntegrator>();
     cls->setConstructor<ODEVarStepIntegrator>();

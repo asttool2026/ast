@@ -52,6 +52,7 @@ class ClassInfo:
         self.file_path:Optional[str] = file_path
         self.parent: Optional[str] = None  # 父类名称
         self.properties: Dict[str, PropertyInfo] = {}
+        self.desc: Optional[str] = None  # 类的描述（从@brief提取）
 
     def add_property(self, prop: PropertyInfo):
         """添加属性"""
@@ -235,6 +236,8 @@ class BaseHeaderAnalyzer:
         
         lines.append("")  # 空行
         lines.append(f"    cls->setName(\"{class_info.name}\");")
+        if class_info.desc:
+            lines.append(f'    cls->setDesc(u8R"({class_info.desc})");')
         lines.append(f"    cls->addToRegistry();")
         if class_info.parent:
             lines.append(f"    cls->setParent<{class_info.parent}>();")
@@ -407,6 +410,9 @@ class ClangHeaderAnalyzer(BaseHeaderAnalyzer):
                 else:
                     class_info = ClassInfo(name=class_name, file_path=file_path)
                     self.classes[class_name] = class_info
+                
+                # 提取类的描述（从Doxygen注释的@brief中提取）
+                class_info.desc = self._extract_class_brief(cursor)
                 
                 # 提取父类信息
                 for child in cursor.get_children():
@@ -625,6 +631,18 @@ class ClangHeaderAnalyzer(BaseHeaderAnalyzer):
         
         return setter_name
     
+    def _extract_class_brief(self, cursor: Cursor) -> Optional[str]:
+        """从类的Doxygen注释中提取@brief内容"""
+        try:
+            # 获取cursor的注释
+            brief = cursor.brief_comment
+            if brief == "@{":
+                return None
+            return brief
+        except Exception as e:
+            print(f"提取类描述时出错: {e}")
+            return None
+    
     def analyze(self) -> bool:
         """执行完整分析"""
         if not self.parse_files():
@@ -663,6 +681,7 @@ def parse_args():
   %(prog)s headers/test.h
   %(prog)s headers/*.h -c Test,AnotherClass
   %(prog)s headers/ -r -c Test -o output.cpp
+  %(prog)s src/ -r --ast-object -o output.cpp
         """
     )
     
@@ -673,10 +692,35 @@ def parse_args():
     parser.add_argument('--simple', action='store_true', help='使用简化版本（即使libclang可用）')
     parser.add_argument('--add-typedefs', action='store_true', 
                        help='在输出中添加typedef映射（用于调试）')
-    
+    parser.add_argument('--ast-object', action='store_true', default=True,
+                       help='自动检测并解析带有AST_OBJECT宏的类，无需指定类名')
+    parser.add_argument('--no-ast-object', action='store_false', dest='ast_object',
+                    help='禁用自动解析')
     return parser.parse_args()
 
-def collect_header_files(input_paths, recursive):
+def has_ast_object_macro(file_path: Path) -> bool:
+    """检查头文件中是否包含AST_OBJECT宏"""
+    try:
+        content = file_path.read_text(encoding='utf-8')
+        return 'AST_OBJECT(' in content
+    except Exception as e:
+        print(f"读取文件 {file_path} 时出错: {e}")
+        return False
+
+def extract_classes_with_ast_object(file_path: Path) -> List[str]:
+    """从文件中提取所有带有AST_OBJECT宏的类名"""
+    classes = []
+    try:
+        content = file_path.read_text(encoding='utf-8')
+        # 匹配 AST_OBJECT(ClassName) 模式
+        pattern = r'AST_OBJECT\(\s*(\w+)\s*\)'
+        matches = re.findall(pattern, content)
+        classes.extend(matches)
+    except Exception as e:
+        print(f"读取文件 {file_path} 时出错: {e}")
+    return classes
+
+def collect_header_files(input_paths, recursive, require_ast_object=False):
     """收集头文件"""
     header_files = []
     for input_path in input_paths:
@@ -684,6 +728,9 @@ def collect_header_files(input_paths, recursive):
         
         if path.is_file():
             if path.suffix in ['.h', '.hpp', '.hh', '.hxx']:
+                # 如果要求必须包含AST_OBJECT宏
+                if require_ast_object and not has_ast_object_macro(path):
+                    continue
                 header_files.append(path)
         elif path.is_dir():
             if recursive:
@@ -693,6 +740,9 @@ def collect_header_files(input_paths, recursive):
             
             for header in path.glob(pattern):
                 if header.is_file():
+                    # 如果要求必须包含AST_OBJECT宏
+                    if require_ast_object and not has_ast_object_macro(header):
+                        continue
                     header_files.append(header)
     
     if not header_files:
@@ -762,7 +812,7 @@ def output_results(code, output_file, header_files):
         print("=" * 80)
 
 
-def run(input_paths, classes=None, output=None, recursive=False, add_typedefs=False):
+def run(input_paths, classes=None, output=None, recursive=False, add_typedefs=False, ast_object=False):
     """调试运行函数
     
     直接调用此函数进行调试，而不需要通过命令行参数
@@ -773,12 +823,24 @@ def run(input_paths, classes=None, output=None, recursive=False, add_typedefs=Fa
         output: 输出文件路径
         recursive: 是否递归查找头文件
         add_typedefs: 是否添加typedef映射（用于调试）
+        ast_object: 是否自动检测带有AST_OBJECT宏的类
     """
-    # 收集头文件
-    header_files = collect_header_files(input_paths, recursive)
+    # 收集头文件（如果指定了ast_object，则只收集包含AST_OBJECT宏的文件）
+    header_files = collect_header_files(input_paths, recursive, require_ast_object=ast_object)
     
-    # 解析目标类名
-    target_classes = parse_target_classes(classes)
+    # 如果指定了ast_object，自动从文件中提取类名
+    target_classes = None
+    if ast_object:
+        target_classes = []
+        for header_file in header_files:
+            classes_in_file = extract_classes_with_ast_object(header_file)
+            target_classes.extend(classes_in_file)
+        if target_classes:
+            print(f"自动检测到带有AST_OBJECT宏的类: {target_classes}")
+        else:
+            print("警告: 未找到带有AST_OBJECT宏的类")
+    else:
+        target_classes = parse_target_classes(classes)
     
     # 执行分析
     analyzer = run_analysis(header_files, target_classes)
@@ -786,19 +848,56 @@ def run(input_paths, classes=None, output=None, recursive=False, add_typedefs=Fa
     # 为类添加AST_PROPERT宏
     analyzer.add_ast_properties_macros()
     
-    # 生成代码
-    code = generate_code(analyzer, add_typedefs)
-    
-    # 如果没有指定输出文件，自动生成
-    if not output and header_files:
-        # 为每个头文件生成对应的 .rtti.cpp 文件
+    # 如果指定了输出文件，所有类生成到一个文件
+    if output:
+        code = generate_code(analyzer, add_typedefs)
+        output_results(code, output, header_files)
+    else:
+        # 没有指定输出文件，为每个头文件生成单独的 .rtti.cpp 文件
         for header_file in header_files:
             header_path = Path(header_file)
-            output_file = header_path.with_suffix('.rtti.cpp')
-            output_results(code, str(output_file), header_files)
-    else:
-        # 输出结果
-        output_results(code, output, header_files)
+            # 找出这个头文件中定义的类
+            classes_in_file = extract_classes_with_ast_object(header_file) if ast_object else None
+            
+            # 如果知道哪些类在这个文件中，只生成这些类的代码
+            if classes_in_file:
+                # 创建一个临时的分析器结果，只包含当前文件中的类
+                temp_classes = {cls_name: analyzer.classes[cls_name] 
+                               for cls_name in classes_in_file 
+                               if cls_name in analyzer.classes}
+                
+                # 生成单个文件的代码
+                code = []
+                for class_name, class_info in temp_classes.items():
+                    class_code = analyzer._generate_class_init(class_info)
+                    code.append(class_code)
+                
+                code_str = "\n\n".join(code)
+                # 添加typedef映射（调试用）
+                if add_typedefs and hasattr(analyzer, 'typedefs'):
+                    typedef_code = "\n\n// typedef映射:\n"
+                    for typedef, actual in analyzer.typedefs.items():
+                        typedef_code += f"//   {typedef} -> {actual}\n"
+                    code_str = typedef_code + code_str
+                
+                output_file = header_path.with_suffix('.rtti.cpp')
+                # 输出结果，使用当前头文件作为包含文件
+                output_path = Path(output_file)
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                header_file_name = header_path.name
+                
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    f.write(f"#include \"{header_file_name}\"\n\n")
+                    f.write("// 自动生成的属性初始化代码\n")
+                    f.write("// 警告: 不要手动修改此文件\n\n")
+                    f.write(code_str)
+                
+                print(f"\n代码已生成到: {output_file}")
+            else:
+                # 如果不知道哪些类在这个文件中，生成所有类的代码（旧行为）
+                code = generate_code(analyzer, add_typedefs)
+                output_file = header_path.with_suffix('.rtti.cpp')
+                output_results(code, str(output_file), [header_file])
 
 def main():
     """主函数"""
@@ -811,7 +910,8 @@ def main():
         classes=args.classes,
         output=args.output,
         recursive=args.recursive,
-        add_typedefs=args.add_typedefs
+        add_typedefs=args.add_typedefs,
+        ast_object=args.ast_object
     )
 
 

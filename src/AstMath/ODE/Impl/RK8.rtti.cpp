@@ -13,6 +13,7 @@ void RK8::ClassInit(Class* cls)
 {
 
     cls->setName("RK8");
+    cls->setDesc(u8R"(RK8 积分器)");
     cls->addToRegistry();
     cls->setParent<ODEFixedStepIntegrator>();
     cls->setConstructor<RK8>();

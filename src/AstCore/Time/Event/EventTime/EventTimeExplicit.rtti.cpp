@@ -13,6 +13,7 @@ void EventTimeExplicit::ClassInit(Class* cls)
 {
 
     cls->setName("EventTimeExplicit");
+    cls->setDesc(u8R"(显式事件时间)");
     cls->addToRegistry();
     cls->setParent<EventTime>();
     cls->setConstructor<EventTimeExplicit>();

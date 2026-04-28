@@ -35,6 +35,11 @@ void aGetAllClassNames(std::vector<std::string> &names)
     ClassRegistry::Instance()->getAllClassNames(names);
 }
 
+const std::unordered_map<std::string, Class*>& aGetAllClasses()
+{
+    return ClassRegistry::Instance()->getAllClasses();
+}
+
 Class *aGetClass(StringView name)
 {
     return ClassRegistry::Instance()->getClass(name);
@@ -46,9 +51,11 @@ bool aIsVirtualClass(StringView name)
     return cls && cls->isVirtual();
 }
 
-void aRegisterClass(Class *cls)
+void aRegisterClass(Class *cls, StringView name)
 {
-    ClassRegistry::Instance()->registerClass(cls);
+    if(name.empty())
+        return ClassRegistry::Instance()->registerClass(cls);
+    return ClassRegistry::Instance()->registerClass(cls, name);
 }
 
 Object *aGetClassDefaultObject(StringView name)

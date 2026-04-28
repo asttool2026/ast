@@ -13,6 +13,7 @@ void Facility::ClassInit(Class* cls)
 {
 
     cls->setName("Facility");
+    cls->setDesc(u8R"(设施对象)");
     cls->addToRegistry();
     cls->setParent<Point>();
     cls->setConstructor<Facility>();

@@ -13,6 +13,7 @@ void State::ClassInit(Class* cls)
 {
 
     cls->setName("State");
+    cls->setDesc(u8R"(航天器状态)");
     cls->addToRegistry();
     cls->setParent<ObjectNamed>();
     cls->setConstructor<State>();

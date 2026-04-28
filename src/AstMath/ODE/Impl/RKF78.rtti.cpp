@@ -13,6 +13,7 @@ void RKF78::ClassInit(Class* cls)
 {
 
     cls->setName("RKF78");
+    cls->setDesc(u8R"(RKF78 积分器)");
     cls->addToRegistry();
     cls->setParent<ODEVarStepIntegrator>();
     cls->setConstructor<RKF78>();

@@ -146,20 +146,36 @@ JsonValue aObjectToJson(Object* obj)
 // 智能体工具函数
 //--------------
 
+// 初始化类别名
+bool aInitClassAliases()
+{
+    aRegisterClass(aGetClass("MotionMissionCommand"), "MotionAstrogator");
+    return true;
+}
 
 JsonValue aFindClassesParamSchema()
 {
+    // static bool initialized = aInitClassAliases();
     return JsonValue();
 }
 
 std::string aFindClasses(const JsonValue& arguments)
 {
-    std::vector<std::string> classes;
-    aGetAllClassNames(classes);
+    auto& classMap = aGetAllClasses();
     JsonValue json;
-    for(auto& cls : classes)
+    for(auto& item : classMap)
     {
-        json.append(cls);
+        auto& name = item.first;
+        Class* cls = item.second;
+        JsonValue classJson;
+        classJson["$name"] = cls->name();
+        classJson["$description"] = cls->desc();
+        classJson["$is_virtual"] = cls->isVirtual();
+        if(name != cls->name())
+            classJson["$alias"] = name;
+        if(auto parent = cls->getParent())
+            classJson["$parent_class"] = parent->name();
+        json.append(classJson);
     }
     return json.toJsonString();
 }
@@ -332,6 +348,12 @@ std::string aSetObjectAttribute(const JsonValue& arguments)
     Property* prop = obj->getProperty(attr);
     if(!prop)
     {
+        // 特殊处理名称属性
+        if(attr == "name")
+        {
+            obj->setName(arguments["value"].toString());
+            return u8"设置对象名称成功";
+        }
         aError("property '%s' not found", attr.c_str());
         return u8"未找到属性" + attr;
     }
@@ -360,12 +382,7 @@ std::string aSetObjectAttribute(const JsonValue& arguments)
             rc = prop->setValueInt(obj, valueJson.toInt());
         }
     }
-    // 特殊处理名称属性
-    if(rc && attr == "name")
-    {
-        obj->setName(valueJson.toString());
-        rc = 0;
-    }
+    
     if(rc != 0)
     {
         aError("failed to set object attribute '%s' to '%s'", attr.c_str(), valueJson.toString().c_str());

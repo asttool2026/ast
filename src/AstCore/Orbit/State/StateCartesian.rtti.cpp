@@ -13,6 +13,7 @@ void StateCartesian::ClassInit(Class* cls)
 {
 
     cls->setName("StateCartesian");
+    cls->setDesc(u8R"(笛卡尔状态(直角坐标))");
     cls->addToRegistry();
     cls->setParent<State>();
     cls->setConstructor<StateCartesian>();
