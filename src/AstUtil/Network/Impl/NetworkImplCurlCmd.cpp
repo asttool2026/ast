@@ -39,6 +39,7 @@
 #define pclose _pclose
 #define NULL_DEVICE "nul"
 #else
+#include <unistd.h>
 #define NULL_DEVICE "/dev/null"
 #endif
 
@@ -68,6 +69,15 @@ namespace
     // 转义单引号，以便在单引号字符串中安全使用
     std::string escapeForShell(const std::string& s)
     {
+        /*!
+        @todo 
+        escapeForShell 函数的实现存在安全风险。它仅转义了双引号，但在 Shell 环境下，
+        双引号内的 $, `, \ 等字符仍具有特殊含义。
+        如果 request.url() 或请求头包含恶意构造的字符串（例如 $(命令)），
+        可能会导致命令注入攻击。考虑使用更完备的转义逻辑，
+        或者考虑使用不经过 Shell 的进程启动方式（如 Windows 的 CreateProcess 或 Unix 的 execvp）
+        */
+
         std::string escaped;
         escaped.reserve(s.size() + 2);
         escaped = "\"";
@@ -166,7 +176,7 @@ errc_t NetworkImplCurlCmd::request(const NetworkRequest& request, NetworkRespons
     // 读取全部输出
     std::vector<char> buffer(4096);
     std::string rawResponse;
-    while (std::fgets(buffer.data(), static_cast<int>(buffer.size()), pipe) != nullptr)
+    while (std::fread(buffer.data(), sizeof(char), buffer.size(), pipe) > 0)
     {
         rawResponse.append(buffer.data());
     }
