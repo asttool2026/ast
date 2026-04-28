@@ -18,34 +18,20 @@ void ODEVarStepIntegrator::ClassInit(Class* cls)
     cls->setParent<ODEFixedStepIntegrator>();
     cls->setConstructor<ODEVarStepIntegrator>();
 
-    constexpr auto member_useMinStep = &ODEVarStepIntegrator::useMinStep_;
-    cls->addProperty("useMinStep", aNewPropertyBool<ODEVarStepIntegrator, member_useMinStep>());
-    constexpr auto member_useMaxStep = &ODEVarStepIntegrator::useMaxStep_;
-    cls->addProperty("useMaxStep", aNewPropertyBool<ODEVarStepIntegrator, member_useMaxStep>());
-    constexpr auto member_warnOnMinStep = &ODEVarStepIntegrator::warnOnMinStep_;
-    cls->addProperty("warnOnMinStep", aNewPropertyBool<ODEVarStepIntegrator, member_warnOnMinStep>());
-    constexpr auto member_maxStepAttempts = &ODEVarStepIntegrator::maxStepAttempts_;
-    cls->addProperty("maxStepAttempts", aNewPropertyInt<ODEVarStepIntegrator, member_maxStepAttempts>());
-    constexpr auto member_minStepSize = &ODEVarStepIntegrator::minStepSize_;
-    cls->addProperty("minStepSize", aNewPropertyDouble<ODEVarStepIntegrator, member_minStepSize>());
-    constexpr auto member_maxStepSize = &ODEVarStepIntegrator::maxStepSize_;
-    cls->addProperty("maxStepSize", aNewPropertyDouble<ODEVarStepIntegrator, member_maxStepSize>());
-    constexpr auto member_maxAbsErr = &ODEVarStepIntegrator::maxAbsErr_;
-    cls->addProperty("maxAbsErr", aNewPropertyDouble<ODEVarStepIntegrator, member_maxAbsErr>());
-    constexpr auto member_maxRelErr = &ODEVarStepIntegrator::maxRelErr_;
-    cls->addProperty("maxRelErr", aNewPropertyDouble<ODEVarStepIntegrator, member_maxRelErr>());
-    constexpr auto member_minStepScaleFactor = &ODEVarStepIntegrator::minStepScaleFactor_;
-    cls->addProperty("minStepScaleFactor", aNewPropertyDouble<ODEVarStepIntegrator, member_minStepScaleFactor>());
-    constexpr auto member_maxStepScaleFactor = &ODEVarStepIntegrator::maxStepScaleFactor_;
-    cls->addProperty("maxStepScaleFactor", aNewPropertyDouble<ODEVarStepIntegrator, member_maxStepScaleFactor>());
-    constexpr auto member_safetyCoeffLow = &ODEVarStepIntegrator::safetyCoeffLow_;
-    cls->addProperty("safetyCoeffLow", aNewPropertyDouble<ODEVarStepIntegrator, member_safetyCoeffLow>());
-    constexpr auto member_safetyCoeffHigh = &ODEVarStepIntegrator::safetyCoeffHigh_;
-    cls->addProperty("safetyCoeffHigh", aNewPropertyDouble<ODEVarStepIntegrator, member_safetyCoeffHigh>());
-    constexpr auto member_errCtrPowthLow = &ODEVarStepIntegrator::errCtrPowthLow_;
-    cls->addProperty("errCtrPowthLow", aNewPropertyDouble<ODEVarStepIntegrator, member_errCtrPowthLow>());
-    constexpr auto member_errCtrPowthHigh = &ODEVarStepIntegrator::errCtrPowthHigh_;
-    cls->addProperty("errCtrPowthHigh", aNewPropertyDouble<ODEVarStepIntegrator, member_errCtrPowthHigh>());
+    cls->addProperty("useMinStep", aNewPropertyBoolMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::useMinStep_>());
+    cls->addProperty("useMaxStep", aNewPropertyBoolMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::useMaxStep_>());
+    cls->addProperty("warnOnMinStep", aNewPropertyBoolMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::warnOnMinStep_>());
+    cls->addProperty("maxStepAttempts", aNewPropertyIntMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::maxStepAttempts_>());
+    cls->addProperty("minStepSize", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::minStepSize_>());
+    cls->addProperty("maxStepSize", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::maxStepSize_>());
+    cls->addProperty("maxAbsErr", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::maxAbsErr_>());
+    cls->addProperty("maxRelErr", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::maxRelErr_>());
+    cls->addProperty("minStepScaleFactor", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::minStepScaleFactor_>());
+    cls->addProperty("maxStepScaleFactor", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::maxStepScaleFactor_>());
+    cls->addProperty("safetyCoeffLow", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::safetyCoeffLow_>());
+    cls->addProperty("safetyCoeffHigh", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::safetyCoeffHigh_>());
+    cls->addProperty("errCtrPowthLow", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::errCtrPowthLow_>());
+    cls->addProperty("errCtrPowthHigh", aNewPropertyDoubleMem<ODEVarStepIntegrator, &ODEVarStepIntegrator::errCtrPowthHigh_>());
 }
 
 AST_NAMESPACE_END

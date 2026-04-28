@@ -46,7 +46,7 @@ AST_UTIL_CAPI void aGetAllClassNames(std::vector<std::string>& names);
 /// @brief 获取所有已注册的类
 /// @details 返回所有已注册的类的指针
 /// @return 所有已注册的类的指针
-AST_UTIL_CAPI const std::unordered_map<std::string, Class*>& aGetAllClasses();
+AST_UTIL_API const std::unordered_map<std::string, Class*>& aGetAllClasses();
 
 /// @brief 获取类的元数据
 /// @details 根据类名获取类的元数据

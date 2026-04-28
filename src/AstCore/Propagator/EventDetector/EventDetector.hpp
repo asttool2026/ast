@@ -53,6 +53,20 @@ public:
     /// @param t 时间（相对于预报器参考时间的秒数）
     /// @return 事件检测开关函数的值
     virtual double getValue(const SpacecraftState& state, double t) const = 0;
+
+PROPERTIES:
+    int getRepeatCount() const {return repeatCount_;}
+    void setRepeatCount(int count) {repeatCount_ = count;}
+
+    EDirection getDirection() const {return direction_;}
+    void setDirection(EDirection dir) {direction_ = dir;}
+
+    double getThreshold() const {return threshold_;}
+    void setThreshold(double threshold) {threshold_ = threshold;}
+
+    double getGoal() const {return goal_;}
+    void setGoal(double goal) {goal_ = goal;}
+
 private:
     int         repeatCount_{1};                ///< 事件触发后的重复次数
     EDirection  direction_{EDirection::eBoth};  ///< 事件检测开关函数的方向

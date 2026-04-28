@@ -39,7 +39,7 @@ protected:
     
 };
 
-template<> class AST_SCRIPT_API ValVector<SharedPtr<Value>>;
+// template<> class AST_SCRIPT_API ValVector<SharedPtr<Value>>;
 
 typedef ValVector<bool> ValVectorBool;
 typedef ValVector<int> ValVectorInt;

@@ -48,7 +48,7 @@ public:
 
 public:
     /// @brief 设置名称
-    void setName(StringView name) { name_ = std::string(name); }
+    void setName(StringView name) override { name_ = std::string(name); }
 
     /// @brief 获取名称
     const std::string& getName() const override { return name_; }
