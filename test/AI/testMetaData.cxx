@@ -31,7 +31,7 @@ TEST(MetaDataTest, TestClassSchema)
 {
     Class* cls = MotionTwoBody::StaticType();
     ASSERT_TRUE(cls != nullptr);
-    JsonValue schema = aClassSchema(cls);
+    JsonValue schema = aClassJsonSchema(cls);
     ast_printf("%s\n", schema.toJsonString(2).c_str());
 }
 

@@ -245,7 +245,7 @@ public: // 对象ID
     /// @brief 判断对象是否为指定类型的实例
     /// @param type 类型元信息
     /// @return bool 是否为指定类型的实例
-    bool isOfType(Class* type) const;
+    bool isOfType(const Class* type) const;
 
     /// @brief 判断对象是否为指定类型的实例
     /// @param typeName 类型名
@@ -388,7 +388,22 @@ private:
     // uint32_t                 flags_{0};                                 ///< 对象标志位，用于存储对象的额外信息
 };
 
+// 主模板：默认 false
+template <typename T, typename = void>
+struct has_own_getType : std::false_type {};
 
+// 特化：仅当 &T::getType 的类型严格为 Class* (T::*)()const 时匹配
+template <typename T>
+struct has_own_getType<T, typename std::enable_if<
+    std::is_same<decltype(&T::getType), Class* (T::*)()const>::value>::type> : std::true_type {};
+
+template<typename T>
+T aobject_cast(Object* obj)
+{
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aobject_cast requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(ObjectType::StaticType()->cast(obj));
+}
 
 /*! @} */
 

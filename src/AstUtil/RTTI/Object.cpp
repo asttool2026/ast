@@ -223,7 +223,7 @@ Object *Object::getParentScope() const
     return aGetParentScope(const_cast<Object*>(this));
 }
 
-bool Object::isOfType(Class* type) const
+bool Object::isOfType(const Class* type) const
 {
     auto t = getType();
     while(t)
