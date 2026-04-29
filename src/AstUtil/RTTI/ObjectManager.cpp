@@ -72,6 +72,20 @@ uint32_t ObjectManager::addObject(Object *object)
     return index;
 }
 
+errc_t ObjectManager::removeObject(Object *object)
+{
+    SharedPtr<Object> objectPtr = object;
+    if(objectPtr){
+        auto objNode = this->getObjectNode(object);
+        if(!objNode)
+            return eErrorInvalidParam;
+        objNode->clear();
+        return 0;
+    }
+    return eErrorNullPtr;
+}
+
+
 void ObjectManager::removeAllObjects()
 {
     for(auto objNode : objects_)

@@ -55,6 +55,11 @@ public:
     /// @return 对象的索引/对象ID
     uint32_t addObject(Object* object);
 
+    /// @brief 移除对象
+    /// @details 从对象管理器中移除对象，包括子对象
+    /// @param object 对象指针
+    /// @return 错误码
+    errc_t removeObject(Object* object);
 
     /// @brief 移除所有对象
     /// @details 从对象管理器中移除所有对象，包括子对象

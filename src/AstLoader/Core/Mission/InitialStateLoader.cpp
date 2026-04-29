@@ -45,6 +45,7 @@ AST_NAMESPACE_BEGIN
 XMLNode似乎不太合适用于这个场景
 */
 
+#if 0
 namespace{
 // 方案1废弃
 class InitialStateArchive: public Archive
@@ -72,6 +73,7 @@ private:
     InitialState& initialState_;
 };
 }
+#endif
 
 errc_t aLoadInitialState(const Value& dictRoot, InitialState& initialState)
 {

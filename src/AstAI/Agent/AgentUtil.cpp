@@ -33,80 +33,182 @@ AST_NAMESPACE_BEGIN
 JsonValue aObjectToJson(Object* obj);
 
 namespace{
-    class PropertyVisitorImplForJson : public PropertyVisitor 
+    class PropertyVisitorImplForObjectJson : public PropertyVisitor 
     {
-    public:
-    PropertyVisitorImplForJson()
-        : internalJson_()
-        , json_(internalJson_)
-    {
-    }
-    PropertyVisitorImplForJson(JsonValue& json)
-        : json_(json)
-    {
-    }
-    ~PropertyVisitorImplForJson() override = default;
-    errc_t visit(Property& property, const void* container) override
-    {
+        public:
+        PropertyVisitorImplForObjectJson()
+            : internalJson_()
+            , json_(internalJson_)
+        {
+        }
+        PropertyVisitorImplForObjectJson(JsonValue& json)
+            : json_(json)
+        {
+        }
+        ~PropertyVisitorImplForObjectJson() override = default;
+        errc_t visit(Property& property, const void* container) override
+        {
 
-        json()[property.name()] = property.getValue<std::string>(container);
-        return 0;
-    }
-    errc_t visit(PropertyBool& property, const void* container) override
-    {
-        json()[property.name()] = property.getValue<bool>(container);
-        return 0;
-    }
-    errc_t visit(PropertyDouble& property, const void* container) override
-    {
-        json()[property.name()] = property.getValue<double>(container);
-        return 0;
-    }
-    errc_t visit(PropertyInt& property, const void* container) override
-    {
-        json()[property.name()] = property.getValue<int>(container);
-        return 0;
-    }
-    errc_t visit(PropertyString& property, const void* container) override
-    {
-        json()[property.name()] = property.getValue<std::string>(container);
-        return 0;
-    }
+            json()[property.name()] = property.getValue<std::string>(container);
+            return 0;
+        }
+        errc_t visit(PropertyBool& property, const void* container) override
+        {
+            json()[property.name()] = property.getValue<bool>(container);
+            return 0;
+        }
+        errc_t visit(PropertyDouble& property, const void* container) override
+        {
+            json()[property.name()] = property.getValue<double>(container);
+            return 0;
+        }
+        errc_t visit(PropertyInt& property, const void* container) override
+        {
+            json()[property.name()] = property.getValue<int>(container);
+            return 0;
+        }
+        errc_t visit(PropertyString& property, const void* container) override
+        {
+            json()[property.name()] = property.getValue<std::string>(container);
+            return 0;
+        }
 
-    errc_t visit(PropertyObject& property, const void* container) override
+        errc_t visit(PropertyObject& property, const void* container) override
+        {
+            Object* obj = nullptr;
+            property.getValue(container, &obj);
+            json()[property.name()] = aObjectToJson(obj);
+            return 0;
+        }
+        errc_t visit(PropertyStruct& property, const void* container) override
+        {
+            // @todo
+            aWarning("PropertyStruct is not supported in JsonVisitorImplForJson");
+            return 0;
+        }
+        errc_t visit(PropertyQuantity& property, const void* container) override
+        {
+            json()[property.name()] = property.getValue<std::string>(container);
+            return 0;
+        }
+        errc_t visit(PropertyPOD& property, const void* container) override
+        {
+            // @todo
+            aWarning("PropertyPOD is not supported in JsonVisitorImplForJson");
+            return 0;
+        }
+        errc_t visit(PropertyTimePoint& property, const void* container) override
+        {
+            json()[property.name()] = property.getValue<std::string>(container);
+            return 0;
+        }
+        JsonValue& json() { return json_; }
+    private:
+        JsonValue internalJson_;
+        JsonValue& json_;
+    };
+    
+    class PropertyVisitorImplForClassJson : public PropertyVisitor 
     {
-        Object* obj = nullptr;
-        property.getValue(container, &obj);
-        json()[property.name()] = aObjectToJson(obj);
-        return 0;
-    }
-    errc_t visit(PropertyStruct& property, const void* container) override
-    {
-        // @todo
-        aWarning("PropertyStruct is not supported in JsonVisitorImplForJson");
-        return 0;
-    }
-    errc_t visit(PropertyQuantity& property, const void* container) override
-    {
-        json()[property.name()] = property.getValue<std::string>(container);
-        return 0;
-    }
-    errc_t visit(PropertyPOD& property, const void* container) override
-    {
-        // @todo
-        aWarning("PropertyPOD is not supported in JsonVisitorImplForJson");
-        return 0;
-    }
-    errc_t visit(PropertyTimePoint& property, const void* container) override
-    {
-        json()[property.name()] = property.getValue<std::string>(container);
-        return 0;
-    }
-    JsonValue& json() { return json_; }
-private:
-    JsonValue internalJson_;
-    JsonValue& json_;
-};
+        public:
+        PropertyVisitorImplForClassJson()
+            : internalJson_()
+            , json_(internalJson_)
+        {
+        }
+        PropertyVisitorImplForClassJson(JsonValue& json)
+            : json_(json)
+        {
+        }
+        ~PropertyVisitorImplForClassJson() override = default;
+        errc_t visitAny(Property& property) 
+        {
+            auto& propJson = json()[property.name()];
+            if(!property.desc().empty())
+                propJson["description"] = property.desc();
+            if(property.readOnly())
+                propJson["readOnly"] = true;
+            if(property.writeOnly())
+                propJson["writeOnly"] = true;
+            return 0;
+        }
+        errc_t visit(Property& property, const void* container) override
+        {
+            aWarning("Property is not supported in JsonVisitorImplForClassJson");
+            return 0;
+        }
+        errc_t visit(PropertyBool& property, const void* container) override
+        {
+            auto& propJson = json()[property.name()];
+            propJson["type"] = "boolean";
+            this->visitAny(property);
+            return 0;
+        }
+        errc_t visit(PropertyDouble& property, const void* container) override
+        {
+            auto& propJson = json()[property.name()];
+            propJson["type"] = "number";
+            this->visitAny(property);
+            return 0;
+        }
+        errc_t visit(PropertyInt& property, const void* container) override
+        {
+            auto& propJson = json()[property.name()];
+            propJson["type"] = "integer";
+            this->visitAny(property);
+            return 0;
+        }
+        errc_t visit(PropertyString& property, const void* container) override
+        {
+            auto& propJson = json()[property.name()];
+            propJson["type"] = "string";
+            this->visitAny(property);
+            return 0;
+        }
+
+        errc_t visit(PropertyObject& property, const void* container) override
+        {
+            auto cls = property.getClass();
+            auto& propJson = json()[property.name()];
+            if(cls)
+                propJson = aClassJsonSchema(cls);
+            else
+                propJson["type"] = "object";
+            this->visitAny(property);
+            return 0;
+        }
+        errc_t visit(PropertyStruct& property, const void* container) override
+        {
+            // @todo
+            aWarning("PropertyStruct is not supported in JsonVisitorImplForJson");
+            return 0;
+        }
+        errc_t visit(PropertyQuantity& property, const void* container) override
+        {
+            auto& propJson = json()[property.name()];
+            propJson["type"] = "string";
+            this->visitAny(property);
+            return 0;
+        }
+        errc_t visit(PropertyPOD& property, const void* container) override
+        {
+            // @todo
+            aWarning("PropertyPOD is not supported in JsonVisitorImplForJson");
+            return 0;
+        }
+        errc_t visit(PropertyTimePoint& property, const void* container) override
+        {
+            auto& propJson = json()[property.name()];
+            propJson["type"] = "string";
+            propJson["format"] = "date-time";
+            this->visitAny(property);
+            return 0;
+        }
+        JsonValue& json() { return json_; }
+    private:
+        JsonValue internalJson_;
+        JsonValue& json_;
+    };
 }
 
 
@@ -116,10 +218,10 @@ JsonValue aObjectToBriefJson(Object* obj)
 {
     JsonValue json;
     json["name"] = obj->getName();
-    json["$type"] = obj->getType()->name();
-    json["$id"] = static_cast<int>(obj->getID());
+    json["_type"] = obj->getType()->name();
+    json["_id"] = static_cast<int>(obj->getID());
     if(auto parent = obj->getParentScope())
-        json["$parent_id"] = static_cast<int>(parent->getID());
+        json["_parent_id"] = static_cast<int>(parent->getID());
     return json;
 }
 
@@ -128,7 +230,7 @@ JsonValue aObjectToJson(Object* obj)
     if(!obj){return JsonValue();}
     JsonValue json = aObjectToBriefJson(obj);
     auto clazz = obj->getType();
-    PropertyVisitorImplForJson visitor(json);
+    PropertyVisitorImplForObjectJson visitor(json);
     while(clazz)
     {
         auto& properties = clazz->getProperties();
@@ -141,6 +243,26 @@ JsonValue aObjectToJson(Object* obj)
     return visitor.json();
 }
 
+
+JsonValue aClassJsonSchema(Class* cls)
+{
+    if(!cls)
+        return JsonValue();
+    JsonValue json;
+    json["type"] = "object";
+    json["description"] = cls->desc();
+    PropertyVisitorImplForClassJson visitor(json["properties"]);
+    while(cls)
+    {
+        auto& properties = cls->getProperties();
+        for (auto property : properties) {
+            if (!property) continue;
+            property->accept(visitor, nullptr);
+        }
+        cls = cls->getParent();
+    }
+    return json;
+}
 
 //--------------
 // 智能体工具函数
@@ -168,13 +290,14 @@ std::string aFindClasses(const JsonValue& arguments)
         auto& name = item.first;
         Class* cls = item.second;
         JsonValue classJson;
-        classJson["$name"] = cls->name();
-        classJson["$description"] = cls->desc();
-        classJson["$is_virtual"] = cls->isVirtual();
+        classJson["name"] = cls->name();
+        classJson["description"] = cls->desc();
+        classJson["is_virtual"] = cls->isVirtual();
+        classJson["schema"] = aClassJsonSchema(cls);
         if(name != cls->name())
-            classJson["$alias"] = name;
+            classJson["alias"] = name;
         if(auto parent = cls->getParent())
-            classJson["$parent_class"] = parent->name();
+            classJson["parent_class"] = parent->name();
         json.append(classJson);
     }
     return json.toJsonString();

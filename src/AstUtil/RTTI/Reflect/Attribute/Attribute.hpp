@@ -179,7 +179,7 @@ inline void* AttributeBasic<ObjectPtrType, PropertyType>::getObject() const
     return object_;
 }
 
-typedef AttributeBasic<> Attribute;
+// typedef AttributeBasic<> Attribute;
 
 /*! @} */
 

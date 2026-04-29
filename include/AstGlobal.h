@@ -312,6 +312,7 @@ typedef int errc_t;           ///< 错误码类型(error code type)
 typedef double ImpreciseJD;  ///< 儒略日(注意单个double的数值精度不够)
 typedef double ImpreciseMJD; ///< 简约儒略日(注意单个double的数值精度不够)
 typedef uint32_t color_t;    ///< 颜色值
+typedef uint32_t ObjectId;   ///< 对象ID
 typedef double real_t;       ///< 实数类型
 typedef void* ptr_t;         ///< 指针类型
 

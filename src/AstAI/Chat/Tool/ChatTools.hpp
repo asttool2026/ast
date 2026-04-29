@@ -39,6 +39,7 @@ class ChatTools
 {
 public:
     ChatTools() = default;
+    ChatTools(bool initAsDefault);
     ~ChatTools() = default;
 public:
     /// @brief 处理工具调用

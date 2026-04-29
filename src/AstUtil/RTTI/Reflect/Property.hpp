@@ -141,6 +141,17 @@ public:
     /// @return bool 是否为对象类型
     bool isObject() const;
 
+    /// @brief 设置属性值（对象类型）
+    errc_t setValueObject(void* container, Object* value);
+
+    /// @brief 获取属性值（对象类型）
+    errc_t getValueObject(const void* container, Object*& value);
+
+public:
+    /// @brief 检查属性是否为只读属性
+    bool readOnly() const { return setter_ == nullptr && getter_ != nullptr; }
+    /// @brief 检查属性是否为只写属性
+    bool writeOnly() const { return setter_ != nullptr && getter_ == nullptr; }
 protected:
     /// @brief 获取属性值
     /// @param container 容器对象指针

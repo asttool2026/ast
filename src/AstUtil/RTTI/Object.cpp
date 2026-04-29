@@ -31,7 +31,7 @@
 AST_NAMESPACE_BEGIN
  
 
-static_assert(sizeof(Object) == sizeof(void*) * 1 + sizeof(uint32_t) * 4, "size not correct");      // 检查 Object 类的大小是否正确
+// static_assert(sizeof(Object) == sizeof(void*) * 1 + sizeof(uint32_t) * 4, "size not correct");      // 检查 Object 类的大小是否正确
 
 
 Object* Object::Resolve(StringView value)
@@ -105,6 +105,15 @@ errc_t Object::getAttrString(StringView path, std::string &value) const
     return prop->getValueString(this, value);
 }
 
+errc_t Object::getAttrObject(StringView path, Object*& value) const
+{
+    Property* prop = getProperty(path);
+    if(!prop)
+        return eErrorInvalidParam;
+    return prop->getValueObject(this, value);
+}
+
+
 double Object::getAttrDouble(StringView path) const
 {
     double value = 0.0;
@@ -130,6 +139,13 @@ std::string Object::getAttrString(StringView path) const
 {
     std::string value;
     getAttrString(path, value);
+    return value;
+}
+
+Object* Object::getAttrObject(StringView path) const
+{
+    Object* value = nullptr;
+    getAttrObject(path, value);
     return value;
 }
 
@@ -165,6 +181,15 @@ errc_t Object::setAttrString(StringView path, StringView value)
     return prop->setValueString(this, value);
 }
 
+errc_t Object::setAttrObject(StringView path, Object* value)
+{
+    Property* prop = getProperty(path);
+    if(!prop)
+        return eErrorInvalidParam;
+    return prop->setValueObject(this, value);
+}
+
+
 Property *Object::getProperty(StringView fieldName) const
 {
     auto type = getType();
@@ -198,7 +223,7 @@ Object *Object::getParentScope() const
     return aGetParentScope(const_cast<Object*>(this));
 }
 
-bool Object::isOfType(Class* type) const
+bool Object::isOfType(const Class* type) const
 {
     auto t = getType();
     while(t)

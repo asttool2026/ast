@@ -52,10 +52,6 @@ class AST_CORE_API CelestialBody : public Point
 {
 public:
     AST_OBJECT(CelestialBody)
-    AST_PROPERT(Shape)
-    AST_PROPERT(GravityField)
-    AST_PROPERT(Ephemeris)
-    AST_PROPERT(Orientation)
     CelestialBody();
     CelestialBody(SolarSystem* solarSystem);
     CelestialBody(StringView name, SolarSystem* solarSystem = nullptr);
@@ -64,7 +60,7 @@ public:
     /// @brief 获取天体名称
     const std::string& getName() const override { return name_; }
     const std::string& name() const { return name_; }
-    void setName(StringView name) { name_ = std::string(name); }
+    void setName(StringView name) override { name_ = std::string(name); }
     
     /// @brief 获取JPL SPICE ID
     int getJplSpiceId() const { return jplSpiceId_; }
@@ -142,7 +138,7 @@ public: // 从Point继承重写的函数
     errc_t getPos(const TimePoint& tp, Vector3d& pos) const final;
     errc_t getPosVel(const TimePoint& tp, Vector3d& pos, Vector3d& vel) const final;
 
-PROPERTIES: // 天体的形状、重力场、星历、姿态
+public: // 天体的形状、重力场、星历、姿态
 
     /// @brief 获取天体形状
     BodyShape* getShape() const { return shape_.get(); }

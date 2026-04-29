@@ -46,7 +46,7 @@ AST_UTIL_CAPI void aGetAllClassNames(std::vector<std::string>& names);
 /// @brief 获取所有已注册的类
 /// @details 返回所有已注册的类的指针
 /// @return 所有已注册的类的指针
-AST_UTIL_CAPI const std::unordered_map<std::string, Class*>& aGetAllClasses();
+AST_UTIL_API const std::unordered_map<std::string, Class*>& aGetAllClasses();
 
 /// @brief 获取类的元数据
 /// @details 根据类名获取类的元数据
@@ -143,6 +143,12 @@ AST_UTIL_CAPI uint32_t aGetObjectID(Object* obj);
 /// @return 对象的索引/对象ID
 AST_UTIL_CAPI uint32_t aAddObject(Object* object);
 
+
+/// @brief 移除对象
+/// @details 从对象管理器中移除对象，包括子对象
+/// @param object 对象指针
+/// @return 错误码
+AST_UTIL_CAPI errc_t aRemoveObject(Object* object);
 
 /// @brief 移除所有对象
 /// @details 从对象管理器中移除所有对象，包括子对象

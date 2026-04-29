@@ -33,6 +33,13 @@ Class::~Class()
 {
 }
 
+Object* Class::cast(Object* obj) const
+{
+    if(obj && obj->isOfType(this))
+        return obj;
+    return nullptr;
+}
+
 void Class::addToRegistry() const
 {
     aRegisterClass(const_cast<Class*>(this));

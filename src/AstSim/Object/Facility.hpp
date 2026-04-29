@@ -51,7 +51,7 @@ public: // 从Point继承重写的函数
     errc_t getPosVel(const TimePoint& tp, Vector3d& pos, Vector3d& vel) const final;
 public:
     const std::string& getName() const override {return name_;}
-    void setName(StringView name){name_ = std::string(name);}
+    void setName(StringView name) override {name_ = std::string(name);}
 public:
     void setPosition(const CentroidPosition& position){position_ = position;}
     const CentroidPosition& getPosition() const{return position_;}

@@ -87,5 +87,34 @@ bool Property::isObject() const
     return dynamic_cast<const PropertyObject*>(this) != nullptr;
 }
 
+errc_t Property::setValueObject(void* container, Object* value)
+{
+    if(auto prop = dynamic_cast<PropertyObject*>(this))
+    {
+        return prop->setValue(container, value);
+    }
+    else
+    {
+        aError("property is not object type");
+    }
+    return eNoError;
+}
+
+errc_t Property::getValueObject(const void* container, Object*& value)
+{
+    if(auto prop = dynamic_cast<PropertyObject*>(this))
+    {
+        return prop->getValue(container, &value);
+    }
+    else
+    {
+        value = nullptr;
+        aError("property is not object type");
+    }
+    return eNoError;
+}
+
+
+
 AST_NAMESPACE_END
 

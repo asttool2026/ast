@@ -50,6 +50,7 @@ class MotionSGP4;
 class AST_SIM_API MotionProfile: public ObjectNamed
 {
 public:
+    AST_OBJECT(MotionProfile)
     MotionProfile() = default;
     virtual ~MotionProfile() = default;
 public:

@@ -23,6 +23,9 @@
 
 AST_NAMESPACE_BEGIN
 
-
+Satellite* Satellite::New()
+{
+    return new Satellite();
+}
 
 AST_NAMESPACE_END

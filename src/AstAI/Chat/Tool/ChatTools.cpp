@@ -21,8 +21,18 @@
 #include "ChatTools.hpp"
 #include "AstUtil/JsonValue.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstAI/AgentInit.hpp"
 
 AST_NAMESPACE_BEGIN
+
+
+ChatTools::ChatTools(bool initAsDefault)
+{
+    if(initAsDefault)
+    {
+        aInitAgentTools(*this);
+    }
+}
 
 std::string ChatTools::handleToolCall(const JsonValue& toolCall)
 {
