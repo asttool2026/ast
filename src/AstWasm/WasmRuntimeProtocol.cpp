@@ -22,6 +22,7 @@
 #include "AstUtil/RTTIAPI.hpp"
 #include "AstUtil/JsonValue.hpp"
 #include "AstAI/AgentUtil.hpp"
+#include "AstAI/AgentInit.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -135,6 +136,65 @@ std::optional<ObjectId> WasmRuntimeProtocol::getAttrObject(ObjectId id, const st
     return valueObj->getID();
 }
 
+std::optional<std::string> WasmRuntimeProtocol::objectType(ObjectId id)
+{
+    Object* obj = aGetObject(id);
+    if (obj == nullptr)
+        return std::nullopt;
+    return obj->getType()->name();
+}
+
+static WasmObjectInfo aObjectInfo(Object& obj)
+{
+    WasmObjectInfo info{};
+    info.id = obj.getID();
+    info.type = obj.getType()->name();
+    info.name = obj.getName();
+    if(auto parent = obj.getParentScope())
+        info.parent = parent->getID();
+    std::vector<Object*> children = aFindChildren(&obj);
+    for(auto child: children)
+    {
+        if(child)
+            info.children.push_back(child->getID());
+    }
+    return info;
+}
+
+std::optional<WasmObjectInfo>  WasmRuntimeProtocol::objectInfo(ObjectId id)
+{
+    Object* obj = aGetObject(id);
+    if (obj == nullptr)
+        return std::nullopt;
+    return aObjectInfo(*obj);
+}
+
+
+std::vector<ObjectId> WasmRuntimeProtocol::allObjects()
+{
+    std::vector<ObjectId> ids;
+    std::vector<Object*> objects = aGetAllObjects();
+    for(auto object: objects)
+    {
+        if(object)
+            ids.push_back(object->getID());
+    }
+    return ids;
+}
+
+std::vector<WasmObjectInfo> WasmRuntimeProtocol::allObjectInfoList()
+{
+    std::vector<WasmObjectInfo> infoList;
+    std::vector<Object*> objects = aGetAllObjects();
+    for(auto object: objects)
+    {
+        if(object)
+            infoList.push_back( aObjectInfo(*object));
+    }
+    return infoList;
+}
+
+
 
 std::optional<ObjectId> WasmRuntimeProtocol::newObject(const std::string& typeName, std::optional<ObjectId> parentId)
 {
@@ -146,6 +206,7 @@ std::optional<ObjectId> WasmRuntimeProtocol::newObject(const std::string& typeNa
         return std::nullopt;
     return obj->getID();
 }
+
 
 errc_t WasmRuntimeProtocol::removeObject(ObjectId id)
 {
@@ -182,6 +243,11 @@ std::vector<std::string> WasmRuntimeProtocol::getAllClassNames()
     return classNames;
 }
 
+
+std::string WasmRuntimeProtocol::handleToolCall(const std::string& toolCallJsonStr)
+{
+    return aAgentToolsHandleToolCall(toolCallJsonStr);
+}
 
 
 

@@ -95,4 +95,35 @@ const char* aAgentSystemPrompt()
     return defaultSystemPrompt;
 }
 
+
+ChatTools& aAgentTools()
+{
+    static ChatTools tools(true);
+    return tools;
+}
+
+JsonValue aAgentToolsJson()
+{
+    return aAgentTools().toJson();
+}
+
+
+std::string aAgentToolsJsonStr()
+{
+    return aAgentToolsJson().toJsonString();
+}
+
+
+std::string aAgentToolsHandleToolCall(const JsonValue& toolCall)
+{
+    return aAgentTools().handleToolCall(toolCall);
+}
+
+std::string aAgentToolsHandleToolCall(const std::string& toolCallStr)
+{
+    return aAgentTools().handleToolCall(JsonValue::FromString(toolCallStr));
+}
+
+
+
 AST_NAMESPACE_END

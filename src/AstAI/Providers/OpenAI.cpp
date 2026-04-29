@@ -165,7 +165,8 @@ errc_t OpenAI::chat(const JsonValue &request, JsonValue &response)
 
     // 设置请求头
     networkRequest.addHeader("Content-Type", "application/json");
-    networkRequest.addHeader("Authorization", "Bearer " + apiKey());
+    if(!apiKey().empty())
+        networkRequest.addHeader("Authorization", "Bearer " + apiKey());
     
     // 发送请求
     NetworkResponse networkResponse;

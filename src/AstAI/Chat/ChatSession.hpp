@@ -62,6 +62,9 @@ public:
     /// @brief 获取工具集合
     /// @return 工具集合
     ChatTools& tools(){return tools_;}
+
+    /// @brief 获取当前使用的AI接口
+    OpenAI& client();
 private:
     std::string makeChatCompletion();
 
@@ -75,7 +78,6 @@ private:
 
     /// @brief 获取当前使用的AI接口
     /// @note 目前还不支持指定或者切换client，只能使用对象内部默认的AI接口
-    OpenAI& client();
 private:
     OpenAI* client_{nullptr};               ///< 当前使用的AI接口
     OpenAI internalClient_;                 ///< 内部默认的AI接口

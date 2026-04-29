@@ -32,11 +32,20 @@ static std::vector<std::string> testVector()
     return {"ClassA", "ClassB"};
 }
 
+
+std::string aAgentSystemPrompt_wrap()
+{
+    AST_USING_NAMESPACE
+    return aAgentSystemPrompt();
+}
+
 EMSCRIPTEN_BINDINGS(ObjectProtocol) {
     using namespace emscripten;
     AST_USING_NAMESPACE
 
     register_vector<std::string>("vector<string>");
+    register_vector<WasmObjectInfo>("vector<WasmObjectInfo>");
+    register_vector<ObjectId>("vector<ObjectId>");
 
     register_optional<std::string>();
     register_optional<double>();
@@ -47,6 +56,14 @@ EMSCRIPTEN_BINDINGS(ObjectProtocol) {
     function("add", &add);
     function("testVector", &testVector);
 
+    class_<WasmObjectInfo>("WasmObjectInfo")
+        .constructor()
+        .property("id", &WasmObjectInfo::id)
+        .property("parent", &WasmObjectInfo::parent)
+        .property("type", &WasmObjectInfo::type)
+        .property("name", &WasmObjectInfo::name)
+        .property("children", &WasmObjectInfo::children)
+        ;
 
     class_<WasmRuntimeProtocol>("WasmRuntimeProtocol")
         .constructor()
@@ -62,6 +79,11 @@ EMSCRIPTEN_BINDINGS(ObjectProtocol) {
         .class_function("getAttrBool", &WasmRuntimeProtocol::getAttrBool)
         .class_function("getAttrObject", &WasmRuntimeProtocol::getAttrObject)
 
+        .class_function("objectType", &WasmRuntimeProtocol::objectType)
+        .class_function("objectInfo", &WasmRuntimeProtocol::objectInfo)
+        .class_function("allObjects", &WasmRuntimeProtocol::allObjects)
+        .class_function("allObjectInfoList", &WasmRuntimeProtocol::allObjectInfoList)
+
 
         .class_function("newObject", &WasmRuntimeProtocol::newObject)  
         .class_function("removeObject", &WasmRuntimeProtocol::removeObject)
@@ -69,6 +91,10 @@ EMSCRIPTEN_BINDINGS(ObjectProtocol) {
         .class_function("classJsonSchemaStr", &WasmRuntimeProtocol::classJsonSchemaStr)
 
         .class_function("getAllClassNames", &WasmRuntimeProtocol::getAllClassNames)
+
+        .class_function("handleToolCall", &WasmRuntimeProtocol::handleToolCall)
         ;
+    function("aAgentSystemPrompt", &aAgentSystemPrompt_wrap);
+    function("aAgentToolsJsonStr", &aAgentToolsJsonStr);
     
 }

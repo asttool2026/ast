@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/StringView.hpp"
+#include "AstAI/AgentInit.hpp"
 #include <string>
 #include <string_view>
 #include <optional>
@@ -36,8 +37,25 @@ AST_NAMESPACE_BEGIN
 
 #define _WASM_OBJ_CALL static
 
+/// @brief WASM模块对象信息
+struct WasmObjectInfo
+{
+    ObjectId id;                        ///< 对象ID
+    std::optional<ObjectId> parent;     ///< 父对象ID
+    std::string type;                   ///< 类型
+    std::string name;                   ///< 名称
+    std::vector<ObjectId> children;     ///< 子对象ID列表
+};
 
-/// @brief WASM模块运行时协议
+/// @brief WASM模块类信息
+struct WasmClassInfo
+{
+    std::string name;                   ///< 类名
+    std::string parent;                 ///< 父类名
+};
+
+
+/// @brief WASM模块运行时协议，与对象管理相关的接口集合
 class WasmRuntimeProtocol
 {
 public:
@@ -62,6 +80,27 @@ public:
     _WASM_OBJ_CALL std::optional<bool> getAttrBool(ObjectId id, const std::string& name);
     _WASM_OBJ_CALL std::optional<ObjectId> getAttrObject(ObjectId id, const std::string& name);
 
+    /// @brief 获取对象类型
+    /// @details id 对象索引/对象ID
+    /// @return 对象类型名
+    _WASM_OBJ_CALL std::optional<std::string> objectType(ObjectId id);
+
+    /// @brief 获取对象信息
+    /// @details id 对象索引/对象ID
+    /// @return 对象信息
+    _WASM_OBJ_CALL std::optional<WasmObjectInfo> objectInfo(ObjectId id);
+
+    
+    /// @brief 获取所有对象ID
+    /// @details 所有对象ID
+    /// @return 所有对象ID
+    _WASM_OBJ_CALL std::vector<ObjectId> allObjects();
+
+    /// @brief 获取所有对象信息
+    /// @details 所有对象信息
+    /// @return 所有对象信息
+    _WASM_OBJ_CALL std::vector<WasmObjectInfo> allObjectInfoList();
+
     /// @brief 创建新对象
     /// @details typeName 对象类型名
     /// @param parentId 父对象ID
@@ -84,17 +123,16 @@ public:
     /// @details typeName 类名
     /// @return JSON模式
     _WASM_OBJ_CALL std::optional<std::string> classJsonSchemaStr(const std::string& typeName);
-    
 
-    /// @brief 处理工具调用
-    /// @details 处理工具调用，返回结果
-    /// @return 结果
-    _WASM_OBJ_CALL std::string handleToolCalls();
 
     /// @brief 获取所有类名
     /// @details 所有类名
     /// @return 所有类名
     _WASM_OBJ_CALL std::vector<std::string> getAllClassNames();
+
+
+    /// @brief 处理单次智能体工具调用
+    _WASM_OBJ_CALL std::string handleToolCall(const std::string& toolCallJsonStr);
 };
 
 /*! @} */
