@@ -24,7 +24,7 @@
 #include "TargeterProfile.hpp"
 #include "AstCore/ShooterControl.hpp"
 #include "AstCore/ShooterResult.hpp"
-#include "AstCore/ScriptingTool.hpp"
+#include "AstCore/ScriptingToolProfile.hpp"
 #include "AstCore/TargeterGraph.hpp"
 
 AST_NAMESPACE_BEGIN
@@ -34,45 +34,120 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 微分修正器配置器，用于求解非线性方程，可以用于修正轨道参数以满足约束条件要求
+/// @brief 有限差分方法
+enum class EFiniteDifferenceMethod
+{
+    eForwardDifference,     ///< 前向差分
+    eCentralDifference,     ///< 中心差分
+    eBackwardDifference,    ///< 后向差分
+};
+
+/// @brief 根求解算法
+enum class ERootFindingAlgorithm
+{
+    eSecantMethod,     
+};
+
+/// @brief 收敛准则
+enum class EConvergenceCriteria
+{
+    eEqualityConstraintsWithinTolerance, ///< 等式约束在容差范围内
+};
+
+/// @brief 控制变量缩放方式
+enum class EScaleControls
+{
+    eByInitialValue, ///< 由初始值缩放
+};
+
+/// @brief 控制变量缩放目标
+enum class EScaleGoals
+{
+    eByDesiredValue, ///< 由期望值缩放
+};
+
+
+
+/// @brief 微分修正器配置，用于求解非线性方程，可以用于修正轨道参数以满足约束条件要求
 class AST_CORE_API DifferentialCorrectorProfile : public TargeterProfile
 {
 public:
+    AST_OBJECT(DifferentialCorrectorProfile)
+    using ControlVector = std::vector<SharedPtr<ShooterControl>>;
+    using ResultVector = std::vector<SharedPtr<ShooterResult>>;
+    using TargeterGraphVector = std::vector<SharedPtr<TargeterGraph>>;
+
     static DifferentialCorrectorProfile* New();
 
     DifferentialCorrectorProfile() = default;
     ~DifferentialCorrectorProfile() override = default;
 
+
+    bool useHomotopy() const{return useHomotopy_;}
+    void setUseHomotopy(bool useHomotopy){useHomotopy_ = useHomotopy;}
+    
+    int numHomotopySteps() const{return numHomotopySteps_;}
+    void setNumHomotopySteps(int numHomotopySteps){numHomotopySteps_ = numHomotopySteps;}
+
+
+    bool useLineSearch() const{return useLineSearch_;}
+    void setUseLineSearch(bool useLineSearch){useLineSearch_ = useLineSearch;}
+
+    double lineSearchTolerance() const{return lineSearchTolerance_;}
+    void setLineSearchTolerance(double tolerance){lineSearchTolerance_ = tolerance;}
+
+    int lineSearchMaxNumCalls() const{return lineSearchMaxNumCalls_;}
+    void setLineSearchMaxNumCalls(int maxNumCalls){lineSearchMaxNumCalls_ = maxNumCalls;}
+
+    double lineSearchLowerBound() const{return lineSearchLowerBound_;}
+    void setLineSearchLowerBound(double lowerBound){lineSearchLowerBound_ = lowerBound;}
+
+    double lineSearchUpperBound() const{return lineSearchUpperBound_;}
+    void setLineSearchUpperBound(double upperBound){lineSearchUpperBound_ = upperBound;}
+    
+    int maxIterations() const{return maxIterations_;}
+    void setMaxIterations(int maxIterations){maxIterations_ = maxIterations;}
+
+    ERootFindingAlgorithm rootFindingAlgorithm() const{return rootFindingAlgorithm_;}
+    void setRootFindingAlgorithm(ERootFindingAlgorithm algorithm){rootFindingAlgorithm_ = algorithm;}
+
+    EFiniteDifferenceMethod finiteDifferenceMethod() const{return finiteDifferenceMethod_;}
+    void setFiniteDifferenceMethod(EFiniteDifferenceMethod method){finiteDifferenceMethod_ = method;}
+
+    EConvergenceCriteria convergenceCriteria() const{return convergenceCriteria_;}
+    void setConvergenceCriteria(EConvergenceCriteria criteria){convergenceCriteria_ = criteria;}
+
+    EScaleControls scaleControls() const{return scaleControls_;}
+    void setScaleControls(EScaleControls controls){scaleControls_ = controls;}
+
+    EScaleGoals scaleGoals() const{return scaleGoals_;}
+    void setScaleGoals(EScaleGoals goals){scaleGoals_ = goals;}
+    
+    const ControlVector& controls() const{return controls_;}
+    void setControls(const ControlVector& controls){controls_ = controls;}
+
+    const ResultVector& results() const{return results_;}
+    void setResults(const ResultVector& results){results_ = results;}
 private:
-    bool addBPlanePointsForNominals_ = false;
-    bool addBPlanePointsForPerturbations_ = false;
-    bool clearCorrectionsBeforeRun_ = true;
-    std::string convergenceCriteria_;
-    bool displayPopup_ = true;
-    std::string finiteDifferenceMethod_;
-    bool hideInactiveControls_ = false;
-    bool hideInactiveResults_ = false;
+    EConvergenceCriteria convergenceCriteria_{EConvergenceCriteria::eEqualityConstraintsWithinTolerance};
+    EFiniteDifferenceMethod finiteDifferenceMethod_{EFiniteDifferenceMethod::eForwardDifference};
     double lineSearchLowerBound_ = 1e-6;
-    int lineSearchMaxNumCalls_ = 10;
-    double lineSearchTolerance_ = 1e-6;
     double lineSearchUpperBound_ = 10.0;
+    double lineSearchTolerance_ = 1e-6;
+    int lineSearchMaxNumCalls_ = 10;
     int maximumRunsToLog_ = 25;
     int maxIterations_ = 50;
     int numHomotopySteps_ = 1;
-    int numIterations_ = 1;
-    std::string perturbationColor_;
-    std::string rootFindingAlgorithm_;
-    std::string scaleControls_;
-    std::string scaleGoals_;
-    std::string status_;
-    bool stopOnLimitCycleDetection_ = true;
+    ERootFindingAlgorithm rootFindingAlgorithm_{ERootFindingAlgorithm::eSecantMethod};
+    EScaleControls scaleControls_{EScaleControls::eByInitialValue};
+    EScaleGoals scaleGoals_{EScaleGoals::eByDesiredValue};
     bool useHomotopy_ = false;
     bool useLineSearch_ = false;
 
-    std::vector<SharedPtr<ShooterControl>> controls_;
-    std::vector<SharedPtr<ShooterResult>> results_;
-    std::vector<SharedPtr<TargeterGraph>> graphs_;
-    SharedPtr<ScriptingTool> scriptingTool_;
+    ControlVector controls_;
+    ResultVector results_;
+    TargeterGraphVector graphs_;
+    SharedPtr<ScriptingToolProfile> scriptingTool_;
 };
 
 /*! @} */

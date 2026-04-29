@@ -38,6 +38,8 @@ using PTargeterProfile = TargeterProfile*;
 class AST_CORE_API TargeterProfile : public ObjectNamed
 {
 public:
+    AST_OBJECT(TargeterProfile)
+    
     TargeterProfile() = default;
     ~TargeterProfile() override = default;
 };

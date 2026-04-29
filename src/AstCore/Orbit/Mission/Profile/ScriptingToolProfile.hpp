@@ -30,13 +30,14 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 脚本工具配置文件
-class AST_CORE_API ScriptingTool : public TargeterProfile
+/// @brief 脚本工具配置
+class AST_CORE_API ScriptingToolProfile : public TargeterProfile
 {
 public:
+    AST_OBJECT(ScriptingToolProfile)
 
-    ScriptingTool() = default;
-    ~ScriptingTool() override = default;
+    ScriptingToolProfile() = default;
+    ~ScriptingToolProfile() override = default;
 
     std::string language_;
     bool preIterate_ = false;

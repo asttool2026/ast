@@ -22,5 +22,12 @@
 
 AST_NAMESPACE_BEGIN
 
+ShooterControl* ShooterControl::New()
+{
+    return new ShooterControl();
+}
+
+
+
 
 AST_NAMESPACE_END

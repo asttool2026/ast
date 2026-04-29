@@ -31,15 +31,36 @@ AST_NAMESPACE_BEGIN
 class AST_CORE_API ShooterResult : public ObjectNamed
 {
 public:
+    AST_OBJECT(ShooterResult)
+    static ShooterResult* New();
 
     ShooterResult() = default;
     ~ShooterResult() override = default;
+
+    bool active() const { return active_; }
+    void setActive(bool active) { active_ = active; }
+
+    double desired() const { return desired_; }
+    void setDesired(double desired) { desired_ = desired; }
+    
+    double scale() const { return scale_; }
+    void setScale(double scale) { scale_ = scale; }
+    
+    double tolerance() const { return tolerance_; }
+    void setTolerance(double tolerance) { tolerance_ = tolerance; }
+    
+    bool valid() const { return valid_; }
+    void setValid(bool valid) { valid_ = valid; }
+    
+    double weight() const { return weight_; }
+    void setWeight(double weight) { weight_ = weight; }
     
 private:
+    bool active_{false};
+    bool valid_{true};
     double desired_{0.0};
     double scale_{1.0};
     double tolerance_{0.0};
-    bool valid_{true};
     double weight_{1.0};
 };
 

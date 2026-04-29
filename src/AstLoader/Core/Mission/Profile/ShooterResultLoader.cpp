@@ -19,11 +19,28 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ShooterResultLoader.hpp"
+#include "AstCore/ShooterResult.hpp"
+#include "AstUtil/Logger.hpp"
+#include "AstScript/Value.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t aLoadShooterResult(const Value& value, ShooterResult& result)
 {
+    std::string type = value["Type"];
+    if(type != "ShooterResult")
+    {
+        aError("unsupported type: '%s', expected 'ShooterResult'", type.c_str());
+        return -1;
+    }
+
+    result.setActive(value["Active"]);
+    result.setDesired(value["Desired"]);
+    result.setScale(value["Scale"]);
+    result.setTolerance(value["Tolerance"]);
+    result.setWeight(value["Weight"]);
+    result.setValid(value["Valid"]);
+
     return 0;
 }
 

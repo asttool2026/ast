@@ -19,11 +19,29 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ShooterControlLoader.hpp"
+#include "AstCore/ShooterControl.hpp"
+#include "AstScript/Value.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t aLoadShooterControl(const Value& value, ShooterControl& control)
 {
+    std::string type = value["Type"];
+    if(type != "ShooterControl")
+    {
+        aError("unsupported type: '%s', expected 'ShooterControl'", type.c_str());
+        return -1;
+    }
+
+    control.setActive(value["Active"]);
+    control.setCorrection(value["Correction"]);
+    control.setMaxStep(value["MaxStep"]);
+    control.setPerturbation(value["Perturbation"]);
+    control.setScale(value["Scale"]);
+    control.setTolerance(value["Tolerance"]);
+    control.setTotalCorrection(value["TotalCorrection"]);
+
     return 0;
 }
 

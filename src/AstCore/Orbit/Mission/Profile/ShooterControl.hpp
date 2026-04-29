@@ -31,8 +31,33 @@ AST_NAMESPACE_BEGIN
 class AST_CORE_API ShooterControl : public ObjectNamed
 {
 public:
+    AST_OBJECT(ShooterControl)
+    static ShooterControl* New();
+    
     ShooterControl() = default;
     ~ShooterControl() override = default;
+
+    bool active() const { return active_; }
+    void setActive(bool active) { active_ = active; }
+
+    double correction() const { return correction_; }
+    void setCorrection(double correction) { correction_ = correction; }
+
+    double maxStep() const { return maxStep_; }
+    void setMaxStep(double maxStep) { maxStep_ = maxStep; }
+
+    double perturbation() const { return perturbation_; }
+    void setPerturbation(double perturbation) { perturbation_ = perturbation; }
+
+    double scale() const { return scale_; }
+    void setScale(double scale) { scale_ = scale; }
+
+    double tolerance() const { return tolerance_; }
+    void setTolerance(double tolerance) { tolerance_ = tolerance; }
+
+    double totalCorrection() const { return totalCorrection_; }
+    void setTotalCorrection(double totalCorrection) { totalCorrection_ = totalCorrection; }
+
 private:
     bool active_{true};
     double correction_{0.0};

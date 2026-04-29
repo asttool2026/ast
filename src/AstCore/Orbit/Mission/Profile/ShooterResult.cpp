@@ -22,5 +22,10 @@
 
 AST_NAMESPACE_BEGIN
 
+ShooterResult* ShooterResult::New()
+{
+    return new ShooterResult();
+}
+
 
 AST_NAMESPACE_END
