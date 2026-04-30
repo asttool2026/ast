@@ -1,9 +1,9 @@
 ///
-/// @file      ScriptingTool.cpp
+/// @file      VariableList.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-28
+/// @date      2026-04-30
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,13 +18,31 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "ScriptingToolProfile.hpp"
+#pragma once
+
+#include "AstGlobal.h"
+#include "AstScript/Variable.hpp"
+#include <vector>
 
 AST_NAMESPACE_BEGIN
 
-ScriptingToolProfile* ScriptingToolProfile::New()
+/*!
+    @addtogroup 
+    @{
+*/
+
+
+class AST_CORE_API VariableList
 {
-    return new ScriptingToolProfile();
-}
+public:
+    VariableList() = default;
+    ~VariableList() = default;
+private:
+    std::vector<SharedPtr<Variable>> variables_;
+};
+
+
+
+/*! @} */
 
 AST_NAMESPACE_END

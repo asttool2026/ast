@@ -29,6 +29,7 @@ AST_NAMESPACE_BEGIN
 
 class SpacecraftState;
 
+class ODEEventDetector;
 
 /// @brief 事件检测基类
 /// 事件检测基类，用于检测事件是否发生。
@@ -53,6 +54,12 @@ public:
     /// @param t 时间（相对于预报器参考时间的秒数）
     /// @return 事件检测开关函数的值
     virtual double getValue(const SpacecraftState& state, double t) const = 0;
+public:
+    
+    /// @brief 创建ODE事件检测器实例
+    /// @return ODE事件检测器实例指针
+    /// @note ODE事件检测器实例的生命周期由调用方负责管理，调用方需要在使用完成后调用析构函数释放资源
+    ODEEventDetector* newODEEventDetector() const;
 
 PROPERTIES:
     int getRepeatCount() const {return repeatCount_;}

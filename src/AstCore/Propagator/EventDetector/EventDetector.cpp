@@ -19,9 +19,43 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "EventDetector.hpp"
+#include "AstMath/ODEEventDetector.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
+namespace{
 
+/// @brief 事件检测器包装类
+/// 该类用于包装事件检测器实例，将其转换为ODE事件检测器包装类
+class ODEEventDetectorWrap: public ODEEventDetector
+{
+public:
+    ODEEventDetectorWrap(EventDetector* eventDetector)
+        : eventDetector_(eventDetector)
+    {
+    }
+    ~ODEEventDetectorWrap() override = default;
+    double getValue(const double* y, double x) const override
+    {
+        aError("not implemented");
+        return 0;
+    }
+private:
+    SharedPtr<EventDetector> eventDetector_;        ///< 事件检测器实例指针
+};
+
+}
+
+
+ODEEventDetector* EventDetector::newODEEventDetector() const
+{
+    auto odeEventDetector = new ODEEventDetectorWrap(const_cast<EventDetector*>(this));
+    odeEventDetector->setRepeatCount(repeatCount_);
+    odeEventDetector->setGoal(goal_);
+    odeEventDetector->setDirection(direction_);
+    odeEventDetector->setThreshold(threshold_);
+    return odeEventDetector;
+}
 
 AST_NAMESPACE_END

@@ -1,9 +1,9 @@
 ///
-/// @file      ScriptingTool.cpp
+/// @file      VariableList.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-28
+/// @date      2026-04-30
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,13 +18,10 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "ScriptingToolProfile.hpp"
+#include "VariableList.hpp"
 
 AST_NAMESPACE_BEGIN
 
-ScriptingToolProfile* ScriptingToolProfile::New()
-{
-    return new ScriptingToolProfile();
-}
+
 
 AST_NAMESPACE_END

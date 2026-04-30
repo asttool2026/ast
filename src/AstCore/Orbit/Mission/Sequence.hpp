@@ -23,6 +23,7 @@
 #include "AstGlobal.h"
 #include "MissionCommand.hpp"
 #include "Segment.hpp"
+#include "AstCore/ScriptingToolProfile.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -49,9 +50,14 @@ public:
     void setCommands(const std::vector<HMissionCommand>& commands);
     void setCommands(std::vector<HMissionCommand>&& commands);
     const std::vector<HMissionCommand>& getCommands() const;
+
+    ScriptingToolProfile* scriptingTool() const{return scriptingTool_.get();}
+    void setScriptingTool(ScriptingToolProfile* tool){scriptingTool_ = tool;}
 private:
-    std::vector<HMissionCommand> commands_;     ///< 任务命令序列
+    std::vector<HMissionCommand> commands_;                 ///< 任务命令序列
+    SharedPtr<ScriptingToolProfile> scriptingTool_;         ///< 脚本工具
 };
+
 
 /*! @} */
 

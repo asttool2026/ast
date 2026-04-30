@@ -32,7 +32,7 @@ AST_NAMESPACE_BEGIN
 
 
 /// @brief 脚本类型
-enum class EScriptType
+enum class EScriptLanguage
 {
     ePython,            ///< Python 脚本
     eMATLAB,            ///< MATLAB 脚本
@@ -50,7 +50,7 @@ class ScriptExecutor;
 /// @param type 脚本类型
 /// @return 脚本执行器实例指针
 /// @note 脚本执行器实例的生命周期由调用方负责管理，调用方需要在使用完成后调用析构函数释放资源
-ScriptExecutor* aNewScriptExecutor(EScriptType type);
+ScriptExecutor* aNewScriptExecutor(EScriptLanguage type);
 
 
 

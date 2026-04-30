@@ -22,6 +22,10 @@
 
 #include "AstGlobal.h"
 #include "TargeterProfile.hpp"
+#include "AstScript/ScriptExecutor.hpp"
+#include "AstScript/Variable.hpp"
+#include "AstUtil/StringView.hpp"
+#include "AstCore/VariableList.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,18 +34,41 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+
+
 /// @brief 脚本工具配置
 class AST_CORE_API ScriptingToolProfile : public TargeterProfile
 {
 public:
     AST_OBJECT(ScriptingToolProfile)
 
+    static ScriptingToolProfile* New();
+
     ScriptingToolProfile() = default;
     ~ScriptingToolProfile() override = default;
 
-    std::string language_;
-    bool preIterate_ = false;
-    std::string scriptStatements_;
+public:
+    EScriptLanguage language() const { return language_; }
+    void setLanguage(EScriptLanguage language) { language_ = language; }
+
+    const std::string& scriptStatements() const { return scriptStatements_; }
+    void setScriptStatements(StringView scriptStatements) { scriptStatements_ = std::string(scriptStatements); }
+
+    const VariableList& attributes() const { return attributes_; }
+    VariableList& attributes() { return attributes_; }
+
+    const VariableList& parameters() const { return parameters_; }
+    VariableList& parameters() { return parameters_; }
+
+    const VariableList& calcObjects() const { return calcObjects_; }
+    VariableList& calcObjects() { return calcObjects_; }
+
+private:
+    EScriptLanguage language_;              ///< 脚本语言
+    std::string scriptStatements_;          ///< 脚本语句
+    VariableList attributes_;               ///< 属性变量列表
+    VariableList parameters_;               ///< 参数变量列表
+    VariableList calcObjects_;              ///< 计算对象变量列表
 };
 
 /*! @} */

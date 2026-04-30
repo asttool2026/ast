@@ -19,12 +19,18 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "SegmentLoader.hpp"
+#include "AstCore/Segment.hpp"
+#include "SpacecraftStateLoader.hpp"
+#include "AstScript/Value.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t aLoadSegment(const Value& dict, Segment& segment)
 {
-    // @todo 实现加载段的公共属性
+    if(auto finalStatePtr = segment.getFinalState())
+    {
+        aLoadSpacecraftState(dict["FinalState"], *finalStatePtr);
+    }
     return eNoError;
 }
 

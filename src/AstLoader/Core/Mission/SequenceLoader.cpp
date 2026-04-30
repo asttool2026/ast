@@ -19,6 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "SequenceLoader.hpp"
+#include "AstLoader/ScriptingToolProfileLoader.hpp"
 #include "AstCore/Sequence.hpp"
 #include "AstScript/Value.hpp"
 #include "AstUtil/StringView.hpp"
@@ -36,25 +37,40 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
         aError("invalid type, expect 'Sequence' or 'TargeterSequence'");
         return eErrorInvalidParam;
     }
-    auto& dictSegmentList = dictRoot["SegmentList"];
-    auto& items = dictSegmentList.items();
-    std::vector<HMissionCommand> commands;
-    commands.reserve(items.size());
-    for(auto& item: items)
+    // 加载序列命令
     {
-        auto& name = item.first;
-        const auto& dictSegment = *item.second;
-        HMissionCommand command;
-        errc_t rc = aLoadMissionCommand(dictSegment, command);
-        if(!rc && command != nullptr)
+        auto& dictSegmentList = dictRoot["SegmentList"];
+        auto& items = dictSegmentList.items();
+        std::vector<HMissionCommand> commands;
+        commands.reserve(items.size());
+        for(auto& item: items)
         {
-            commands.push_back(command);
-        }else
+            auto& name = item.first;
+            const auto& dictSegment = *item.second;
+            HMissionCommand command;
+            errc_t rc = aLoadMissionCommand(dictSegment, command);
+            if(!rc && command != nullptr)
+            {
+                commands.push_back(command);
+            }else
+            {
+                aError("failed to load mission command '%s'", name.c_str());
+            }
+        }
+        sequence.setCommands(commands);
+    }
+    // 加载脚本工具配置
+    {
+        auto& dictScriptingTool = dictRoot["ScriptingTool"];
+        ScriptingToolProfile* tool = ScriptingToolProfile::New();
+        sequence.setScriptingTool(tool);
+        errc_t rc = aLoadScriptingToolProfile(dictScriptingTool, *tool);
+        if(rc)
         {
-            aError("failed to load mission command '%s'", name.c_str());
+            aError("failed to load scripting tool profile");
+            return rc;
         }
     }
-    sequence.setCommands(commands);
     return 0;
 }
 

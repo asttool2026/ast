@@ -20,7 +20,9 @@
 
 #include "TargeterProfileLoader.hpp"
 #include "AstLoader/DifferentialCorrectorProfileLoader.hpp"
+#include "AstLoader/ScriptingToolProfileLoader.hpp"
 #include "AstCore/DifferentialCorrectorProfile.hpp"
+#include "AstCore/ScriptingToolProfile.hpp"
 #include "AstScript/Value.hpp"
 #include "AstUtil/Logger.hpp"
 #include <string>
@@ -38,7 +40,10 @@ errc_t aLoadTargeterProfile(const Value& value, SharedPtr<TargeterProfile>& prof
     }
     else if(type == "ScriptingTool")
     {
-        aWarning("ScriptingTool profile is not supported");
+
+        auto scriptingTool = ScriptingToolProfile::New();
+        profile = scriptingTool;
+        return aLoadScriptingToolProfile(value, *scriptingTool);
     }
     else
     {

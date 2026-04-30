@@ -26,14 +26,14 @@
 AST_NAMESPACE_BEGIN
 
 
-ScriptExecutor* aNewScriptExecutor(EScriptType type)
+ScriptExecutor* aNewScriptExecutor(EScriptLanguage type)
 {
     switch(type)
     {
-#ifdef _WIN32
-    case EScriptType::eVBScript:
+#ifdef _WIN32  // JScript 和 VBScript 只在 Windows 上支持
+    case EScriptLanguage::eVBScript:
         return new VBScriptExecutor();
-    case EScriptType::eJScript:
+    case EScriptLanguage::eJScript:
         return new JScriptExecutor();
 #endif
     default:
