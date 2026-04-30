@@ -120,6 +120,57 @@ TEST(ActiveScriptExecutorTest, JScript)
     }
 }
 
+
+TEST(ActiveScriptExecutorTest, ErrorHandling)
+{
+    JScriptExecutor executor;
+    errc_t rc = executor.initialize();
+    EXPECT_EQ(rc, 0);
+    
+
+    // 执行运行时错误的脚本：没有定义的变量
+    // for(int i=0;i<3;i++)
+    {
+        const char* script = u8R"(
+            if (FinalRMag > CurrentApoapsisMag)
+            {
+                StopOnPeriapsisCoast = true;
+                StopOnApoapsisCoast = false;
+                StopOnPeriapsisTransfer = false;
+                StopOnApoapsisTransfer = true;
+                startTrueAnomA = 0.0;
+                startTrueAnomB = 360.0;
+            }
+        )";
+        std::string errorOut;
+        rc = executor.execute(script, &errorOut);
+        EXPECT_NE(rc, 0);
+        EXPECT_TRUE(!errorOut.empty());
+    }
+
+    // 测试执行错误的脚本后，是否能继续执行正常的脚本
+    {
+        std::string errorOut;
+        rc = executor.execute("var a = 1", &errorOut);
+        EXPECT_EQ(rc, 0);
+        EXPECT_TRUE(errorOut.empty());
+        
+        int a = 1;
+        rc = executor.getVariable("a", a);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(a, 1);
+    }
+
+    // 执行语法的脚本
+    // for(int i=0;i<3;i++)
+    {
+        std::string errorOut;
+        rc = executor.execute("....=@# ! abcx9279$%323", &errorOut);
+        EXPECT_NE(rc, 0);
+        EXPECT_TRUE(!errorOut.empty());
+    }
+}
+
 #endif
 
 

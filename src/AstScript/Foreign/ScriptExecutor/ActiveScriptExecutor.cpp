@@ -75,13 +75,11 @@ bool setScriptVariable(IDispatch* pDisp, const std::wstring& name, const VARIANT
 bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, const VARIANT& value);
     
 // 站点实现（简化版，完整版需包含 IActiveScriptSite 所有方法）
+
+#define _AST_ACTIVE_SCRIPT_NOT_INITIALIZED "script executor is not initialized."
 class ScriptSite : public IActiveScriptSite
 {
 public:
-    ~ScriptSite()
-    {
-        aError("ScriptSite destroyed");
-    }
     STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override
     {
         if (riid == IID_IUnknown || riid == IID_IActiveScriptSite)
@@ -134,12 +132,15 @@ public:
         {
             lastError_ = "Script error occurred.";
         }
+        aError("%s", lastError_.c_str());
         return S_OK;
     }
     STDMETHODIMP OnEnterScript() override { return S_OK; }
     STDMETHODIMP OnLeaveScript() override { return S_OK; }
 
     const std::string& lastError() const {return lastError_;}
+    void clearLastError() {lastError_.clear();}
+    bool hasError() const {return !lastError_.empty();}
 private:
     LONG ref_ = 1;
     std::string lastError_;
@@ -202,7 +203,7 @@ public:
 
         // 3. 创建并设置站点
         pSite = new ScriptSite();
-        pSite->AddRef(); // 保证生命周期
+        // pSite->AddRef(); // 创建时已经在构造函数里将引用计数设置为 1，这里不需要再增加
         hr = pScript->SetScriptSite(pSite);
         if (FAILED(hr)) return ERR_FAIL;
 
@@ -210,7 +211,20 @@ public:
         hr = pParse->InitNew();
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 5. 获取全局 IDispatch（此时为空，但可用于预先设置变量）
+        // 5. 连接到执行状态（第一次需要调用，后续保持在 CONNECTED 即可）
+        SCRIPTSTATE state;
+        pScript->GetScriptState(&state);
+        if (state != SCRIPTSTATE_CONNECTED)
+        {
+            hr = pScript->SetScriptState(SCRIPTSTATE_CONNECTED);
+            if (FAILED(hr)) 
+            {
+                aError("Failed to set script state to connected.");
+                return ERR_FAIL;
+            }
+        }
+
+        // 6. 获取全局 IDispatch（此时为空，但可用于预先设置变量）
         hr = pScript->GetScriptDispatch(nullptr, &pGlobal);
         if (FAILED(hr)) pGlobal = nullptr; // 非致命
         return ERR_OK;
@@ -227,10 +241,8 @@ public:
     std::string getLastError() const
     {
         if(pSite)
-        {
             return pSite->lastError();
-        }
-        return "script is not initialized.";
+        return _AST_ACTIVE_SCRIPT_NOT_INITIALIZED;
     }
 
     Impl() = default;
@@ -276,46 +288,44 @@ void ActiveScriptExecutor::finalize()
 
 errc_t ActiveScriptExecutor::execute(StringView script, std::string* errorOut)
 {
-    if (!impl_ || !impl_->pParse) return ERR_FAIL;
+    // 伪循环用于执行正常逻辑，如果中途有失败则break跳出循环，在末尾进行错误处理
+    do{
+        if (!impl_ || !impl_->pParse || !impl_->pSite)
+            break;
+        // 清除上一次的错误信息
+        impl_->pSite->clearLastError();
 
-    // 注意：若想每次执行前重新初始化全局变量环境，需额外处理。
-    // 此处假设脚本可累积执行，即引擎状态保持。
-    std::wstring wscript = aUtf8ToWide(script);
+        // 注意：若想每次执行前重新初始化全局变量环境，需额外处理。
+        // 此处假设脚本可累积执行，即引擎状态保持。
+        std::wstring wscript = aUtf8ToWide(script);
 
-    EXCEPINFO ei = {};
-    HRESULT hr = impl_->pParse->ParseScriptText(
-        wscript.c_str(),
-        nullptr,               // 项名
-        nullptr,               // 宿主对象
-        nullptr,               // 分隔符
-        0,                     // 行号
-        0,                     // 偏移
-        SCRIPTTEXT_ISVISIBLE,
-        nullptr,               // 返回结果
-        &ei);
+        EXCEPINFO ei = {};
+        HRESULT hr = impl_->pParse->ParseScriptText(
+            wscript.c_str(),
+            nullptr,               // 项名
+            nullptr,               // 宿主对象
+            nullptr,               // 分隔符
+            0,                     // 行号
+            0,                     // 偏移
+            SCRIPTTEXT_ISVISIBLE,
+            nullptr,               // 返回结果
+            &ei);
 
-    if (FAILED(hr)) return ERR_FAIL;
-
-    // 连接到执行状态（第一次需要调用，后续保持在 CONNECTED 即可）
-    SCRIPTSTATE state;
-    impl_->pScript->GetScriptState(&state);
-    if (state != SCRIPTSTATE_CONNECTED)
-    {
-        hr = impl_->pScript->SetScriptState(SCRIPTSTATE_CONNECTED);
-        if (FAILED(hr)) return ERR_FAIL;
-    }
+        if (FAILED(hr))  break;
+        
+        if (impl_->pSite->hasError())
+            break;
+        return ERR_OK;
+    }while(false);
     if(errorOut)
-    {
         *errorOut = impl_->getLastError();
-    }
-    // 脚本已在 ParseScriptText 时立即执行？实际上 JScript 的全局代码在 Connected 时执行，
-    // 所以不需要再单独触发执行。但为了兼容，可保持此逻辑。
-    return ERR_OK;
+    return ERR_FAIL;
 }
 
 std::string ActiveScriptExecutor::getLastError() const
 {
-    if (!impl_) return "script is not initialized.";
+    if (!impl_ || !impl_->pParse) 
+        return _AST_ACTIVE_SCRIPT_NOT_INITIALIZED;
     return impl_->getLastError();
 }
 
