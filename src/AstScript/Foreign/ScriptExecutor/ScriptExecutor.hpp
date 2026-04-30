@@ -44,6 +44,17 @@ enum class EScriptType
 };
 
 
+class ScriptExecutor;
+
+/// @brief 创建脚本执行器实例
+/// @param type 脚本类型
+/// @return 脚本执行器实例指针
+/// @note 脚本执行器实例的生命周期由调用方负责管理，调用方需要在使用完成后调用析构函数释放资源
+ScriptExecutor* aNewScriptExecutor(EScriptType type);
+
+
+
+
 /// @brief 脚本执行器，用于执行外部脚本
 /// @note 该类是一个抽象类，需要通过继承来实现具体的脚本执行器
 /// @details 用于执行外部脚本，如Python、MATLAB、JavaScript、JScript、VBScript、Julia、Lua 等

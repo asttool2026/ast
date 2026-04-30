@@ -61,6 +61,11 @@ AST_NAMESPACE_END
 #include <string>
 #include <vector>
 
+// #pragma comment(lib, "oleaut32.lib")
+// #pragma comment(lib, "ole32.lib")
+// #pragma comment(lib, "uuid.lib")
+
+
 #define ERR_FAIL -1
 #define ERR_OK 0
 
@@ -75,11 +80,15 @@ bool getScriptVariable(IDispatch* pDisp, const std::wstring& name, VARIANT& resu
 bool setScriptVariable(IDispatch* pDisp, const std::wstring& name, const VARIANT& value);
 // 使用 IDispatchEx 设置全局变量，若不存在会自动创建
 bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, const VARIANT& value);
-    
-// 站点实现（简化版，完整版需包含 IActiveScriptSite 所有方法）
+
+}
 
 #define _AST_ACTIVE_SCRIPT_NOT_INITIALIZED "script executor is not initialized."
-class ScriptSite : public IActiveScriptSite
+
+
+// 站点实现（简化版，完整版需包含 IActiveScriptSite 所有方法）
+
+class SimpleActiveScriptSite final: public IActiveScriptSite
 {
 public:
     STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override
@@ -149,7 +158,6 @@ private:
 };
 
 
-}
 
 AST_NAMESPACE_BEGIN
 
@@ -175,11 +183,11 @@ HRESULT aEnsureCoInitialized()
 class ActiveScriptExecutor::Impl
 {
 public:
-    IActiveScript*      pScript = nullptr;          ///< 脚本引擎接口
-    IActiveScriptParse* pParse = nullptr;           ///< 解析器接口
-    IDispatch*          pGlobal = nullptr;          ///< 脚本全局对象的 IDispatch
-    ScriptSite*         pSite = nullptr;            ///< 脚本站点
-    std::wstring        progId = L"JScript";        ///< 默认脚本引擎
+    IActiveScript*              pScript = nullptr;          ///< 脚本引擎接口
+    IActiveScriptParse*         pParse = nullptr;           ///< 解析器接口
+    IDispatch*                  pGlobal = nullptr;          ///< 脚本全局对象的 IDispatch
+    SimpleActiveScriptSite*     pSite = nullptr;            ///< 脚本站点
+    std::wstring                progId = L"JScript";        ///< 默认脚本引擎
     
     errc_t initialize()
     {
@@ -204,7 +212,7 @@ public:
         if (FAILED(hr)) return ERR_FAIL;
 
         // 3. 创建并设置站点
-        pSite = new ScriptSite();
+        pSite = new SimpleActiveScriptSite();
         // pSite->AddRef(); // 创建时已经在构造函数里将引用计数设置为 1，这里不需要再增加
         hr = pScript->SetScriptSite(pSite);
         if (FAILED(hr)) return ERR_FAIL;
@@ -257,12 +265,12 @@ public:
 // ---------- ActiveScriptExecutor 公共接口实现 ----------
 
 ActiveScriptExecutor::ActiveScriptExecutor()
-    : impl_(std::make_unique<Impl>())
+    : impl_(new Impl())
 {
 }
 
 ActiveScriptExecutor::ActiveScriptExecutor(const wchar_t* progId)
-    : impl_(std::make_unique<Impl>())
+    : impl_(new Impl())
 {
     if (progId)
         impl_->progId = progId;
