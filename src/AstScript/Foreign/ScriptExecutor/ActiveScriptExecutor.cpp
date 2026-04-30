@@ -21,6 +21,8 @@
 #include "ActiveScriptExecutor.hpp"
 #include "AstUtil/StringView.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/ParseFormat.hpp"
+#include "VBScriptExecutor.hpp"
 
 #if  !defined _WIN32
 
@@ -374,6 +376,55 @@ errc_t ActiveScriptExecutor::setVariable(StringView name, bool value)
     v.boolVal = value ? VARIANT_TRUE : VARIANT_FALSE;
     bool ok = setScriptVariableByEx(impl_->pGlobal, wname, v);
     return ok ? ERR_OK : ERR_FAIL;
+}
+
+static errc_t setVBVariableByLiteral(VBScriptExecutor& exec, StringView name, StringView literal)
+{
+    std::string varname = std::string(name);
+    std::string cmd = "Dim " + varname + "\n" + varname + " = " + std::string(literal) + "\n";
+    return exec.execute(cmd);
+}
+
+
+errc_t VBScriptExecutor::setVariable(StringView name, StringView value)
+{
+    errc_t rc = execute("Dim " + std::string(name) + "\n");
+    if(rc != ERR_OK)
+        return rc;
+    // 字符串在使用Dim声明后，使用setScriptVariable设置值，避免字符串转义等复杂问题
+    std::wstring wname = aUtf8ToWide(name);
+    std::wstring wval  = aUtf8ToWide(value);
+    VARIANT v; VariantInit(&v);
+    v.vt = VT_BSTR;
+    v.bstrVal = SysAllocString(wval.c_str());
+    bool ok = setScriptVariable(impl_->pGlobal, wname, v);
+    VariantClear(&v);
+    return ok ? ERR_OK : ERR_FAIL;
+}
+
+
+errc_t VBScriptExecutor::setVariable(StringView name, double value)
+{
+    errc_t rc = execute("Dim " + std::string(name) + "\n");
+    if(rc != ERR_OK)
+        return rc;
+    // 浮点数在使用Dim声明后，使用setScriptVariable设置值，避免nan、inf等边界问题
+    std::wstring wname = aUtf8ToWide(name);
+    VARIANT v; VariantInit(&v);
+    v.vt = VT_R8;
+    v.dblVal = value;
+    bool ok = setScriptVariable(impl_->pGlobal, wname, v);
+    return ok ? ERR_OK : ERR_FAIL;    
+}
+
+errc_t VBScriptExecutor::setVariable(StringView name, int value)
+{
+    return setVBVariableByLiteral(*this, name, aFormatInt(value));
+}
+errc_t VBScriptExecutor::setVariable(StringView name, bool value)
+{
+    const char* boolLiteral = value ? "True" : "False";
+    return setVBVariableByLiteral(*this, name, boolLiteral);
 }
 
 // ---------- getVariable 重载 ----------

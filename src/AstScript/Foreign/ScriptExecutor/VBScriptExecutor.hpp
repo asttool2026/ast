@@ -35,6 +35,12 @@ class AST_SCRIPT_API VBScriptExecutor : public ActiveScriptExecutor
 {
 public:
     VBScriptExecutor();
+    #ifdef _WIN32
+    errc_t setVariable(StringView name, StringView value) override;
+    errc_t setVariable(StringView name, double value) override;
+    errc_t setVariable(StringView name, int value) override;
+    errc_t setVariable(StringView name, bool value) override;
+    #endif
 };
 
 

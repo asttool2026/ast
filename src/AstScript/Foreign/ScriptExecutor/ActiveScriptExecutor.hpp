@@ -66,7 +66,7 @@ protected:
     /// 设置脚本引擎 ProgID（通常由子类如 JScriptExecutor 在构造时调用）
     void setProgID(const wchar_t* progId);
 
-private:
+protected:
     std::unique_ptr<Impl> impl_; // 隐藏 COM 对象与状态
 };
 

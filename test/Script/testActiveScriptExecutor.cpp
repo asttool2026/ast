@@ -47,6 +47,22 @@ TEST(ActiveScriptExecutorTest, JScript)
     rc = executor.setVariable("DesiredRMagScript", 0); EXPECT_EQ(rc, 0);
     rc = executor.setVariable("DesiredRMagDC", 0); EXPECT_EQ(rc, 0);
 
+    // 检测是否成功设置变量
+    {
+        double finalRMag, currentApoapsisMag, currentEccentricity, currentTrueAnomaly;
+        rc = executor.getVariable("FinalRMag", finalRMag);
+        EXPECT_EQ(rc, 0);
+        rc = executor.getVariable("CurrentApoapsisMag", currentApoapsisMag);
+        EXPECT_EQ(rc, 0);
+        rc = executor.getVariable("CurrentEccentricity", currentEccentricity);
+        EXPECT_EQ(rc, 0);
+        rc = executor.getVariable("CurrentTrueAnomaly", currentTrueAnomaly);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(finalRMag, 7000.0);
+        EXPECT_EQ(currentApoapsisMag, 6800.0);
+        EXPECT_EQ(currentEccentricity, 0.2);
+        EXPECT_EQ(currentTrueAnomaly, 2.1);
+    }
 
     // 这是用户提供的脚本
     const char* userScript = u8R"script(
@@ -121,6 +137,83 @@ TEST(ActiveScriptExecutorTest, JScript)
 }
 
 
+TEST(ActiveScriptExecutorTest, VBScript)
+{
+    VBScriptExecutor executor;
+    errc_t rc = executor.initialize();
+    EXPECT_EQ(rc, 0);
+
+    // 输入变量
+    rc = executor.setVariable("a", 10.); EXPECT_EQ(rc, 0);
+    rc = executor.setVariable("b", 3.); EXPECT_EQ(rc, 0);
+
+    // 检测是否成功设置变量
+    {
+        double a, b;
+        rc = executor.getVariable("a", a);
+        EXPECT_EQ(rc, 0);
+        rc = executor.getVariable("b", b);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(a, 10.0);
+        EXPECT_EQ(b, 3.0);
+    }
+
+    const char* script = u8R"(
+Option Explicit
+
+' 定义两个操作数
+'Dim a, b
+'a = 10
+'b = 3
+
+' 进行简单数学运算
+Dim sum, diff, prod, quot, power
+sum = a + b          ' 加法
+diff = a - b         ' 减法
+prod = a * b         ' 乘法
+quot = a / b         ' 除法
+power = a ^ b        ' 幂运算
+)";
+    // 执行脚本
+    rc = executor.execute(script);
+    EXPECT_EQ(rc, 0);
+
+    // 输出变量
+    double sum, diff, prod, quot, power;
+    rc = executor.getVariable("sum", sum);
+    EXPECT_EQ(rc, 0);
+    EXPECT_EQ(sum, 13.0);
+    rc = executor.getVariable("diff", diff);
+    EXPECT_EQ(rc, 0);
+    EXPECT_EQ(diff, 7.0);
+    rc = executor.getVariable("prod", prod);
+    EXPECT_EQ(rc, 0);
+    EXPECT_EQ(prod, 30.0);
+    rc = executor.getVariable("quot", quot);
+    EXPECT_EQ(rc, 0);
+    EXPECT_DOUBLE_EQ(quot, 3.333333333333333333333333333);
+    rc = executor.getVariable("power", power);
+    EXPECT_EQ(rc, 0);
+    EXPECT_EQ(power, 1000.0);
+
+    {
+        rc = executor.setVariable("value_bool", true);
+        EXPECT_EQ(rc, 0);
+        bool value_bool = false;
+        rc = executor.getVariable("value_bool", value_bool);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_bool, true);
+    }
+    {
+        rc = executor.setVariable("value_int", 123);
+        EXPECT_EQ(rc, 0);
+        int value_int = 0;
+        rc = executor.getVariable("value_int", value_int);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_int, 123);
+    }
+}
+
 TEST(ActiveScriptExecutorTest, ErrorHandling)
 {
     JScriptExecutor executor;
@@ -161,7 +254,7 @@ TEST(ActiveScriptExecutorTest, ErrorHandling)
         EXPECT_EQ(a, 1);
     }
 
-    // 执行语法的脚本
+    // 执行语法错误的脚本
     // for(int i=0;i<3;i++)
     {
         std::string errorOut;
@@ -169,6 +262,135 @@ TEST(ActiveScriptExecutorTest, ErrorHandling)
         EXPECT_NE(rc, 0);
         EXPECT_TRUE(!errorOut.empty());
     }
+}
+
+
+TEST(ActiveScriptExecutor, GetVariable_TypeConversion)
+{
+    JScriptExecutor executor;
+    errc_t rc = executor.initialize();
+    EXPECT_EQ(rc, 0);
+    const char* script = u8R"(
+        var value_int = 123;
+        var value_double = 1.34;
+        var value_string_true = "true";
+        var value_string_false = "false";
+        var value_bool_true = true;
+        var value_bool_false = false;
+        var value_null = null;
+    )";
+    rc = executor.execute(script);
+
+    // 测试获取整数变量
+    {
+        int value_int = 0;
+        rc = executor.getVariable("value_int", value_int);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_int, 123);
+
+        // 测试类型转换
+        rc = executor.getVariable("value_double", value_int);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_int, 1);
+
+        // 类型不匹配
+        rc = executor.getVariable("value_string_true", value_int);
+        EXPECT_NE(rc, 0);
+
+        rc = executor.getVariable("value_string_false", value_int);
+        EXPECT_NE(rc, 0);
+
+        rc = executor.getVariable("value_bool_true", value_int);
+        EXPECT_EQ(rc, 0);
+        EXPECT_NE(value_int, 0);
+
+        rc = executor.getVariable("value_bool_false", value_int);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_int, 0);
+        
+        rc = executor.getVariable("value_null", value_int);
+        EXPECT_NE(rc, 0);
+    }
+    // 测试获取浮点数变量
+    {
+        double value_double = 0.0;
+        rc = executor.getVariable("value_double", value_double);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_double, 1.34);
+
+        rc = executor.getVariable("value_int", value_double);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_double, 123);
+    }
+    // 测试获取布尔变量
+    {
+        bool value_bool = false;
+        rc = executor.getVariable("value_bool_true", value_bool);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_bool, true);
+
+        rc = executor.getVariable("value_bool_false", value_bool);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_bool, false);
+    }
+    // 测试获取字符串变量
+    {
+        std::string value_string;
+        rc = executor.getVariable("value_string_true", value_string);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_string, "true");
+
+        rc = executor.getVariable("value_string_false", value_string);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_string, "false");
+    }
+    
+}
+
+TEST(ActiveScriptExecutorTest, SetVariable_EdgeCases)
+{
+    {
+        JScriptExecutor executor;
+        errc_t rc = executor.initialize();
+        EXPECT_EQ(rc, 0);
+
+        rc = executor.setVariable("value_nan", std::numeric_limits<double>::quiet_NaN());
+        EXPECT_EQ(rc, 0);
+        double value_nan = 0.0;
+        rc = executor.getVariable("value_nan", value_nan);
+        EXPECT_EQ(rc, 0);
+        EXPECT_TRUE(std::isnan(value_nan));
+
+        rc = executor.setVariable("value_inf", std::numeric_limits<double>::infinity());
+        EXPECT_EQ(rc, 0);
+        double value_inf = 0.0;
+        rc = executor.getVariable("value_inf", value_inf);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_inf, std::numeric_limits<double>::infinity());
+
+    }
+    {
+        VBScriptExecutor executor;
+        errc_t rc = executor.initialize();
+        EXPECT_EQ(rc, 0);
+
+        rc = executor.setVariable("value_nan", std::numeric_limits<double>::quiet_NaN());
+        EXPECT_EQ(rc, 0);
+        
+        double value_nan = 0.0;
+        rc = executor.getVariable("value_nan", value_nan);
+        EXPECT_EQ(rc, 0);
+        EXPECT_TRUE(std::isnan(value_nan));
+
+        rc = executor.setVariable("value_inf", std::numeric_limits<double>::infinity());
+        EXPECT_EQ(rc, 0);
+        double value_inf = 0.0;
+        rc = executor.getVariable("value_inf", value_inf);
+        EXPECT_EQ(rc, 0);
+        EXPECT_EQ(value_inf, std::numeric_limits<double>::infinity());
+    }
+
+
 }
 
 #endif
