@@ -1,9 +1,9 @@
 ///
-/// @file      VariableList.hpp
+/// @file      VariableLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-30
+/// @date      2026-05-01
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,8 +21,6 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstScript/Variable.hpp"
-#include <vector>
 
 AST_NAMESPACE_BEGIN
 
@@ -32,20 +30,27 @@ AST_NAMESPACE_BEGIN
 */
 
 
-/// @brief 变量列表
-/// @details 用于存储脚本中的变量
-class AST_CORE_API VariableList
-{
-public:
-    VariableList() = default;
-    ~VariableList() = default;
-    void clear() { variables_.clear(); }
-    void append(Variable* var) { variables_.push_back(var); }
-    
-private:
-    std::vector<SharedPtr<Variable>> variables_;        ///< 变量列表
-};
+/// @brief 加载参数
+/// @param value 值
+/// @param var 参数变量
+/// @return 错误码
+errc_t aLoadParameter(const Value& value, Variable& var);
 
+
+/// @brief 加载计算对象
+/// @param value 值
+/// @param var 计算对象变量
+/// @param scope 作用域
+/// @return 错误码
+errc_t aLoadCalcObject(const Value& value, Variable& var, Object* scope);
+
+
+/// @brief 加载属性
+/// @param value 值
+/// @param var 属性变量
+/// @param scope 作用域
+/// @return 错误码
+errc_t aLoadAttribute(const Value& value, Variable& var, Object* scope);
 
 
 /*! @} */

@@ -62,13 +62,16 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
     // 加载脚本工具配置
     {
         auto& dictScriptingTool = dictRoot["ScriptingTool"];
-        ScriptingToolProfile* tool = ScriptingToolProfile::New();
-        sequence.setScriptingTool(tool);
-        errc_t rc = aLoadScriptingToolProfile(dictScriptingTool, *tool);
-        if(rc)
+        if(!dictScriptingTool.isNull())
         {
-            aError("failed to load scripting tool profile");
-            return rc;
+            ScriptingToolProfile* tool = ScriptingToolProfile::New();
+            sequence.setScriptingTool(tool);
+            errc_t rc = aLoadScriptingToolProfile(dictScriptingTool, *tool);
+            if(rc)
+            {
+                aError("failed to load scripting tool profile");
+                return rc;
+            }
         }
     }
     return 0;

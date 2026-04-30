@@ -403,7 +403,11 @@ void aUnitFactorize(Unit &unit, double &scale)
 
 Unit::Unit(StringView name)
 {
-    *this = aUnitParse(name);
+    errc_t err = aUnitParse(name, *this);
+    if(err != 0)
+    {
+        aError("failed to parse unit: %.*s", name.size(), name.data());
+    }
 }
 
 Unit Unit::Scale(double scale)

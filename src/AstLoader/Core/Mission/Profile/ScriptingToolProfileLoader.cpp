@@ -19,12 +19,44 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ScriptingToolProfileLoader.hpp"
+#include "VariableListLoader.hpp"
 #include "AstCore/ScriptingToolProfile.hpp"
+#include "AstScript/Value.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t aLoadScriptingToolProfile(const Value& value, ScriptingToolProfile& profile)
 {
+    // 检查类型
+    {
+        std::string type = value["Type"];
+        if(type != "ScriptingTool")
+        {
+            aError("invalid type: %s", type.c_str());
+            return -1;
+        }
+    }
+
+    // 读取脚本内容
+    profile.setScriptStatements(value["ScriptStatements"].toString());
+    errc_t rc;
+
+    // @todo 处理加载时的作用域的问题
+    Object* scope = nullptr;
+
+    // 读取属性列表
+    rc = aLoadAttributes(value["Attributes"], profile.attributes(), scope);
+    if(rc != 0) aWarning("failed to load attributes");
+
+    // 读取参数列表
+    rc = aLoadParameters(value["Parameters"], profile.parameters());
+    if(rc != 0) aWarning("failed to load parameters");
+    
+    // 读取计算对象列表
+    rc = aLoadCalcObjects(value["CalcObjects"], profile.calcObjects(), scope);
+    if(rc != 0) aWarning("failed to load calc objects");
+    
     return 0;
 }
 

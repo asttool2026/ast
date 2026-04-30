@@ -38,6 +38,8 @@ class AST_SCRIPT_API Variable: public Expr
 {
 public:
     AST_EXPR(Variable)
+
+    static Variable* New();
     
     Variable(StringView name, Expr* expr=nullptr, bool bind = false);
     Variable(Expr* expr=nullptr, bool bind = false);

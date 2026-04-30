@@ -24,6 +24,12 @@
 AST_NAMESPACE_BEGIN
 
 
+Variable* Variable::New()
+{
+    return new Variable();
+}
+
+
 Variable::Variable(StringView name, Expr *expr, bool bind)
     : name_(name), expr_(expr), bind_(bind)
 {};
