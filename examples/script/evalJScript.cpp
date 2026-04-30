@@ -123,7 +123,7 @@ bool SetScriptVariable(IDispatch* pScriptDisp, const wchar_t* name, const VARIAN
     // 2. 构造参数：调用 PROPERTYPUT 需要将值放在第一个参数，并指定命名参数 DISPID_PROPERTYPUT
     VARIANT v;           // 复制一份，避免 const 问题
     VariantInit(&v);
-    hr = VariantCopyInd(&v, &value);  // 安全拷贝（若 value 包含指针，会正确复制）
+    hr = VariantCopyInd(&v, const_cast<VARIANT*>(&value));  // 安全拷贝（若 value 包含指针，会正确复制）
     if (FAILED(hr))
         return false;
 
@@ -220,10 +220,18 @@ int main()
             break;
         }
 
+        // 8. 获取全局脚本对象的 IDispatch，读取输出变量
+        hr = pScript->GetScriptDispatch(NULL, &pScriptDisp);
+        if (FAILED(hr) || !pScriptDisp)
+        {
+            std::cerr << "GetScriptDispatch failed." << std::endl;
+            break;
+        }
+
         // 5. 输入变量（根据实际需求修改）
         const wchar_t *inputVars = LR"script(
-            var FinalRMag = 7000;
-            var CurrentApoapsisMag = 6800;
+            var FinalRMag = 7000.1;
+            var CurrentApoapsisMag = 6800.1;
             var CurrentEccentricity = 0.2;
             var CurrentTrueAnomaly = 2.1;
             var StopOnPeriapsisCoast = false;
@@ -306,13 +314,7 @@ int main()
             break;
         }
 
-        // 8. 获取全局脚本对象的 IDispatch，读取输出变量
-        hr = pScript->GetScriptDispatch(NULL, &pScriptDisp);
-        if (FAILED(hr) || !pScriptDisp)
-        {
-            std::cerr << "GetScriptDispatch failed." << std::endl;
-            break;
-        }
+        
 
         // 示例：读取几个关键结果
         VARIANT var;
