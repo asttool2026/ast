@@ -76,6 +76,10 @@ errc_t aLoadParameter(const Value& value, Variable& var)
         aWarning("date type is not supported yet, use string instead");
         var.setExpr(value["ParamValue"].toString());
     }
+    else if(paramType == "String")
+    {
+        var.setExpr(value["ParamValue"].toString());
+    }
     else
     {
         Value* paramValue = const_cast<Value*>(&value["ParamValue"]);
