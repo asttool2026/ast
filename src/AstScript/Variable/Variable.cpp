@@ -68,6 +68,41 @@ errc_t Variable::setExpr(Expr *expr)
     return eNoError;
 }
 
+errc_t Variable::setExpr(Value* value)
+{
+    return setValue(const_cast<Value*>(value));
+}
+
+errc_t Variable::setExpr(StringView value)
+{
+    return setExpr(aNewValue(value));
+}
+
+errc_t Variable::setExpr(const std::string& value)
+{
+    return setExpr(aNewValue(value));
+}
+
+errc_t Variable::setExpr(const Quantity& quantity)
+{
+    return setExpr(aNewValue(quantity));
+}
+
+errc_t Variable::setExpr(double value)
+{
+    return setExpr(aNewValue(value));
+}
+
+errc_t Variable::setExpr(int value)
+{
+    return setExpr(aNewValue(value));
+}
+
+errc_t Variable::setExpr(bool value)
+{
+    return setExpr(aNewValue(value));
+}
+
 errc_t Variable::bind(Expr *expr)
 {
     expr_ = expr;

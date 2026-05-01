@@ -21,12 +21,67 @@
 #include "VariableLoader.hpp"
 #include "AstScript/Variable.hpp"
 #include "AstScript/Value.hpp"
+#include "AstScript/ScriptAPI.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/Quantity.hpp"
+#include "AstUtil/ParseFormat.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t aLoadParameter(const Value& value, Variable& var)
 {
+    // 检查类型
+    {
+        std::string type = value["Type"];
+        if(type != "AgScriptingToolParameter")
+        {
+            aError("invalid type: '%s', expected 'AgScriptingToolParameter'", type.c_str());
+            return -1;
+        }
+    }
+    // 加载参数
+    std::string paramType = value["ParamType"];
+    // 加载数量参数
+    if(paramType == "Quantity")
+    {
+        const Value& valueQuantity = value["ParamValue"];
+        var.setExpr(valueQuantity.toQuantity());
+    }
+    else if(paramType == "Double")
+    {
+        var.setExpr(value["ParamValue"].toDouble());
+    }
+    else if(paramType == "Boolean")
+    {
+        auto& valueParam = const_cast<Value&>(value["ParamValue"]);
+        // 如果是string类型，则需要解析为bool
+        if(aValueIsString(&valueParam)){
+            var.setExpr(aParseBool(valueParam.toString()));
+        }
+        else{
+            var.setExpr(valueParam.toBool());
+        }
+    }
+    else if(paramType == "Enumeration")
+    {
+        aWarning("enumeration type is not supported yet, use string instead");
+        var.setExpr(value["ParamValue"].toString());
+    }
+    else if(paramType == "Integer")
+    {
+        var.setExpr(value["ParamValue"].toInt());
+    }
+    else if(paramType == "Date")
+    {
+        aWarning("date type is not supported yet, use string instead");
+        var.setExpr(value["ParamValue"].toString());
+    }
+    else
+    {
+        Value* paramValue = const_cast<Value*>(&value["ParamValue"]);
+        var.setExpr(paramValue);
+        aWarning("unsupported parameter type: '%s'", paramType.c_str());
+    }
     return 0;
 }
 

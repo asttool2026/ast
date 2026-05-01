@@ -28,6 +28,8 @@
 
 AST_NAMESPACE_BEGIN
 
+class Value;
+
 /// @brief 变量
 /// @details
 /// 变量是脚本语言中的基本元素，表示存储数据的命名位置
@@ -58,6 +60,45 @@ public:
     /// @return 错误码
     errc_t setExpr(Expr* expr);
 
+    /// @brief 设置变量的表达式
+    /// @param value 要设置的值
+    /// @return 错误码
+    errc_t setExpr(Value* value);
+
+    /// @brief 设置变量的表达式
+    /// @param value 要设置的字符串
+    /// @return 错误码
+    errc_t setExpr(StringView value);
+
+    /// @brief 设置变量的表达式
+    /// @param value 要设置的字符串
+    /// @return 错误码
+    errc_t setExpr(const std::string& value);
+
+    /// @brief 设置变量的表达式
+    /// @param quantity 要设置的数量
+    /// @return 错误码
+    errc_t setExpr(const Quantity& quantity);
+
+    /// @brief 设置变量的表达式
+    /// @param value 要设置的浮点数
+    /// @return 错误码
+    errc_t setExpr(double value);
+
+    /// @brief 设置变量的表达式
+    /// @param value 要设置的整数
+    /// @return 错误码
+    errc_t setExpr(int value);
+
+    /// @brief 设置变量的表达式
+    /// @param value 要设置的布尔值
+    /// @return 错误码
+    errc_t setExpr(bool value);
+
+    // 通过模板捕获所有其他类型并删除，防止隐式转换为 `bool` 类型
+    template<typename T>
+    errc_t setExpr(T value) = delete;
+    
     /// @brief 绑定变量到表达式
     /// @param expr 要绑定的表达式
     /// @return 错误码

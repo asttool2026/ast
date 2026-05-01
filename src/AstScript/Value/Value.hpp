@@ -63,10 +63,12 @@ public:
     const Value& operator[](size_t index) const;
     bool isNull() const;
     std::string toString() const;
+    Quantity toQuantity() const;
     double toDouble() const;
     int toInt() const;
     bool toBool() const;
     operator std::string() const;
+    operator Quantity() const;
     operator double() const;
     operator int() const;
     operator bool() const;

@@ -125,6 +125,16 @@ std::string Value::toString() const
     return getExpression();
 }
 
+
+Quantity Value::toQuantity() const
+{
+    auto value = const_cast<Value*>(this);
+    if(aValueIsQuantity(value)){
+        return static_cast<ValQuantity*>(value)->quantity();
+    }
+    return Quantity(toDouble());
+}
+
 double Value::toDouble() const
 {
     auto value = const_cast<Value*>(this);
@@ -204,6 +214,10 @@ bool Value::toBool() const
 Value::operator std::string() const
 {
     return toString();
+}
+Value::operator Quantity() const
+{
+    return toQuantity();
 }
 Value::operator double() const
 {
