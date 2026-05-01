@@ -1,9 +1,9 @@
 ///
-/// @file      ObjectCalculation.cpp
+/// @file      ExprAttribute.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-20
+/// @date      2026-05-01
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,30 +18,39 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "ObjectCalculation.hpp"
+#include "ExprAttribute.hpp"
 #include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
-
-bool ObjectCalculation::isExpectedType(const Object* obj) const
+ExprAttribute* ExprAttribute::New(const Attribute& attribute)
 {
-    Class* expectedType = getExpectedType();
-    return expectedType->cast(const_cast<Object*>(obj)) != nullptr;
+    return new ExprAttribute(attribute);
+}   
+
+ExprAttribute::ExprAttribute(const Attribute& attribute)
+    : attribute_(attribute)
+{
+
 }
 
-errc_t ObjectCalculation::calculate(const Object* obj, double& result)
+Value *ExprAttribute::eval() const
 {
-    Class* expectedType = getExpectedType();
-    if (auto expectedObj = expectedType->cast(const_cast<Object*>(obj)))
-    {
-        return calculateNoCheckType(expectedObj, result);
-    }
-    else
-    {
-        aError("object is null or is not expected type");
-        return eErrorInvalidType;
-    }
+    aWarning("not implemented");
+    return nullptr;
+}
+
+errc_t ExprAttribute::setValue(Value *value)
+{
+    aWarning("not implemented");
+    return eErrorReadonly;
+}
+
+std::string ExprAttribute::getExpression(Object *context) const
+{
+    aWarning("not implemented");
+    return {};
 }
 
 AST_NAMESPACE_END
+

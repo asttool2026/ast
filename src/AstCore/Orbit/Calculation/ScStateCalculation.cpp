@@ -22,13 +22,9 @@
 
 AST_NAMESPACE_BEGIN
 
-errc_t ScStateCalculation::calculate(const Object *obj, double &result)
+errc_t ScStateCalculation::calculateNoCheckType(const Object *obj, double &result)
 {
-    const SpacecraftState *scState = dynamic_cast<const SpacecraftState*>(obj);
-    if(scState == nullptr)
-    {
-        return eErrorInvalidParam;
-    }
+    const SpacecraftState *scState = static_cast<const SpacecraftState*>(obj);
     return calculate(*scState, result);
 }
 

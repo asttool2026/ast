@@ -39,6 +39,8 @@ AST_NAMESPACE_BEGIN
 class AST_UTIL_API ObjectCalculation : public Object
 {
 public:
+    AST_OBJECT(ObjectCalculation)
+
     using Object::Object;
     ~ObjectCalculation() override = default;
 public:
@@ -49,8 +51,21 @@ public:
     /// @brief 计算结果
     /// @param obj 要计算的对象
     /// @param result 计算结果
+    /// @warning 该方法不检查对象类型是否符合预期类型，请在调用前进行类型检查或转换。
+    /// 如果对象类型不符合预期类型，将导致运行时错误。
     /// @return 错误码
-    virtual errc_t calculate(const Object* obj, double& result) = 0;
+    virtual errc_t calculateNoCheckType(const Object* obj, double& result) = 0;
+
+    /// @brief 计算结果
+    /// @param obj 要计算的对象
+    /// @param result 计算结果
+    /// @return 错误码
+    errc_t calculate(const Object* obj, double& result);
+
+    /// @brief 检查对象类型是否符合预期类型
+    /// @param obj 要检查的对象
+    /// @return 是否符合预期类型
+    bool isExpectedType(const Object* obj) const;
 };
 
 

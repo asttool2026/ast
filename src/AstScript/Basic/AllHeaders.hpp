@@ -43,6 +43,8 @@
 #include "AstScript/ExprCatVertical.hpp"
 #include "AstScript/ExprCall.hpp"
 #include "AstScript/ExprMacroExpand.hpp"
+#include "AstScript/ExprAttribute.hpp"
+#include "AstScript/ExprCalculation.hpp"
 #include "AstScript/Parser.hpp"
 #include "AstScript/Symbol.hpp"
 #include "AstScript/OpBinPredefined.hpp"
