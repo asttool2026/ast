@@ -53,6 +53,18 @@ public:
 
     ScriptingToolProfile* scriptingTool() const{return scriptingTool_.get();}
     void setScriptingTool(ScriptingToolProfile* tool){scriptingTool_ = tool;}
+
+    /// @brief 根据路径获取子段，例如"a.b.c"
+    /// @param path 路径
+    /// @return Segment* 子段指针
+    Segment* getSegmentByPath(StringView path);
+    MissionCommand* getCommandByPath(StringView path);
+
+    /// @brief 根据名称获取子段
+    /// @param name 子段名称
+    /// @return Segment* 子段指针
+    Segment* getSegmentByName(StringView name);
+    MissionCommand* getCommandByName(StringView name);
 private:
     std::vector<HMissionCommand> commands_;                 ///< 任务命令序列
     SharedPtr<ScriptingToolProfile> scriptingTool_;         ///< 脚本工具

@@ -21,10 +21,13 @@
 #include "VariableLoader.hpp"
 #include "AstScript/Variable.hpp"
 #include "AstScript/Value.hpp"
+#include "AstScript/ExprAttribute.hpp"
+#include "AstScript/ExprCalculation.hpp"
 #include "AstScript/ScriptAPI.hpp"
 #include "AstUtil/Logger.hpp"
 #include "AstUtil/Quantity.hpp"
 #include "AstUtil/ParseFormat.hpp"
+#include "AstCore/Sequence.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -97,6 +100,55 @@ errc_t aLoadCalcObject(const Value& value, Variable& var, Object* scope)
 
 errc_t aLoadAttribute(const Value& value, Variable& var, Object* scope)
 {
+    // 检查类型
+    {
+        std::string type = value["Type"];
+        if(type != "ScriptingToolAttr")
+        {
+            aError("invalid type: '%s', expected 'ScriptingToolAttr'", type.c_str());
+            return -1;
+        }
+    }
+    {
+        std::string object = value["Object"];
+        std::string attribute = value["Attribute"];
+        std::string unit = value["Unit"];
+        Variable* variable = &var;
+        WeakPtr<Object> scopePtr(scope);
+        var.addDelayedLink([variable, object, attribute, unit, scopePtr]() {
+            auto sequence = aobject_cast<Sequence*>(scopePtr.get());
+            if(!sequence)
+            {
+                std::string typeName;
+                if(auto object = scopePtr.get())
+                    typeName = object->getType()->name();
+                else
+                    typeName = "nullptr";
+                aError("expect type of scope to be sequence, but got %s", typeName.c_str());
+                return -1;
+            }
+            MissionCommand* command = nullptr;
+            // 查找段
+            {
+                StringView objectPath(object);
+                if(objectPath.starts_with("Segments."))
+                {
+                    objectPath = objectPath.substr(9);
+                    command = sequence->getCommandByPath(objectPath);
+                    if(!command)
+                        aError("command not found: %.*s", objectPath.size(), objectPath.data());
+                }
+                else
+                {
+                    aWarning("unsupported object path: '%s'", object.c_str());
+                }
+            }
+
+            
+            // printf("variable: %s\n object: %s\n attribute: %s\n unit: %s\n", variable->getName().c_str(), object.c_str(), attribute.c_str(), unit.c_str());
+            return 0;
+        });
+    }
     return 0;
 }
 

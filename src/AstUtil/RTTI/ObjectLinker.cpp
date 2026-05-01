@@ -1,9 +1,9 @@
 ///
-/// @file      TargeterProfileLoader.hpp
+/// @file      ObjectLinker.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-28
+/// @date      2026-05-01
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,29 +18,10 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#pragma once
-
-#include "AstGlobal.h"
-#include "AstUtil/SharedPtr.hpp"
+#include "ObjectLinker.hpp"
 
 AST_NAMESPACE_BEGIN
 
-/*!
-    @addtogroup 
-    @{
-*/
 
-class TargeterProfile;
-
-
-
-/// @brief 加载目标器配置
-/// @param value 值
-/// @param profile 目标器配置
-/// @return 错误码
-errc_t aLoadTargeterProfile(const Value& value, SharedPtr<TargeterProfile>& profile, Object* scope);
-
-
-/*! @} */
 
 AST_NAMESPACE_END

@@ -24,6 +24,7 @@
 #include "AstScript/Value.hpp"
 #include "AstUtil/StringView.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 #include "ValXMLLoader.hpp"
 #include "MissionCommandLoader.hpp"
 
@@ -51,6 +52,7 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
             errc_t rc = aLoadMissionCommand(dictSegment, command);
             if(!rc && command != nullptr)
             {
+                command->setName(name);
                 commands.push_back(command);
             }else
             {
@@ -64,7 +66,7 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
         auto& dictScriptingTool = dictRoot["ScriptingTool"];
         if(!dictScriptingTool.isNull())
         {
-            ScriptingToolProfile* tool = ScriptingToolProfile::New();
+            ScriptingToolProfile* tool = aNewObject<ScriptingToolProfile>(&sequence);
             sequence.setScriptingTool(tool);
             errc_t rc = aLoadScriptingToolProfile(dictScriptingTool, *tool);
             if(rc)

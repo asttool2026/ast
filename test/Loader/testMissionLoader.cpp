@@ -39,6 +39,7 @@ TEST(MissionLoaderTest, LoadHohmannTransfer)
         printf("loading file: %s\n", file.c_str());
         SharedPtr<MissionCommand> missionCommand;
         errc_t rc = aLoadMissionCommand(file, missionCommand);
+        aResolveAllLinks();
         EXPECT_EQ(rc, eNoError);
         printf("loaded file: %s\n", file.c_str());
     }

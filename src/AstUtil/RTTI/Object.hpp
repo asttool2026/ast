@@ -322,17 +322,16 @@ private:
         this->~Object();
         this->decWeakRef();
     }
-protected: // 延迟链接
+public: // 延迟链接
     /// @brief 添加延迟链接
     /// @param link 延迟链接函数
-    template<typename T>
-    void addDelayedLink(T &&link)
-    {
+    template<typename Func>
+    void addDelayedLink(Func &&link);
 
-    }
     /// @brief 解析延迟链接
     /// @details 解析所有延迟链接
     void resolveLinks();
+
 protected:
     friend class ObjectManager;
     virtual ~Object();
@@ -416,3 +415,22 @@ AST_DECL_TYPE_ALIAS(Object)
 #include "AstUtil/Attribute.hpp"
 #include "AstUtil/Class.hpp"
 #include "AstUtil/WeakPtr.hpp"
+#include "AstUtil/ObjectLinkerManager.hpp"
+
+
+AST_NAMESPACE_BEGIN
+
+template<typename Func>
+void Object::addDelayedLink(Func &&link)
+{
+    aObject_AddDelayedLink(this, std::forward<Func>(link));
+}
+
+A_ALWAYS_INLINE void Object::resolveLinks()
+{
+    aObject_ResolveLinks(this);
+}
+
+
+
+AST_NAMESPACE_END

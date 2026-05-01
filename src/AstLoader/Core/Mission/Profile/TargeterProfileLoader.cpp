@@ -25,23 +25,24 @@
 #include "AstCore/ScriptingToolProfile.hpp"
 #include "AstScript/Value.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 #include <string>
 
 AST_NAMESPACE_BEGIN
 
-errc_t aLoadTargeterProfile(const Value& value, SharedPtr<TargeterProfile>& profile)
+errc_t aLoadTargeterProfile(const Value& value, SharedPtr<TargeterProfile>& profile, Object* scope)
 {
     std::string type = value["Type"];
     if(type == "DifferentialCorrector")
     {
-        auto differentialCorrector = DifferentialCorrectorProfile::New();
+        auto differentialCorrector = aNewObject<DifferentialCorrectorProfile>(scope);
         profile = differentialCorrector;
         return aLoadDifferentialCorrectorProfile(value, *differentialCorrector);
     }
     else if(type == "ScriptingTool")
     {
 
-        auto scriptingTool = ScriptingToolProfile::New();
+        auto scriptingTool = aNewObject<ScriptingToolProfile>(scope);
         profile = scriptingTool;
         return aLoadScriptingToolProfile(value, *scriptingTool);
     }

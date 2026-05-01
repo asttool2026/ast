@@ -42,8 +42,8 @@ errc_t aLoadScriptingToolProfile(const Value& value, ScriptingToolProfile& profi
     profile.setScriptStatements(value["ScriptStatements"].toString());
     errc_t rc;
 
-    // @todo 处理加载时的作用域的问题
-    Object* scope = nullptr;
+    // 将ScriptingToolProfile的父作用域作为加载时的作用域
+    Object* scope = profile.getParentScope();
 
     // 读取属性列表
     rc = aLoadAttributes(value["Attributes"], profile.attributes(), scope);

@@ -50,7 +50,7 @@ errc_t aLoadTargeterSequence(const Value& dictRoot, TargeterSequence& sequence)
         auto& name = item.first;
         const auto& dictProfile = *item.second;
         HTargeterProfile profile;
-        errc_t rc = aLoadTargeterProfile(dictProfile, profile);
+        errc_t rc = aLoadTargeterProfile(dictProfile, profile, &sequence);
         if(!rc && profile != nullptr)
         {
             profiles.push_back(profile);

@@ -44,6 +44,43 @@ void Sequence::setCommands(std::vector<HMissionCommand>&& commands)
     commands_ = std::move(commands);
 }
 
+Segment* Sequence::getSegmentByPath(StringView path)
+{
+    return aobject_cast<Segment*>(getCommandByPath(path));
+}
+
+MissionCommand* Sequence::getCommandByPath(StringView path)
+{
+    auto pos = path.find('.');
+    if(pos == String::npos)
+        return getCommandByName(path);
+    else
+    {
+        auto sequence = aobject_cast<Sequence*>(getCommandByName(path.substr(0, pos)));
+        if(sequence)
+            return sequence->getCommandByPath(path.substr(pos + 1));
+        else
+            return nullptr;
+    }
+}
+
+Segment* Sequence::getSegmentByName(StringView name)
+{
+    return aobject_cast<Segment*>(getCommandByName(name));
+}
+
+MissionCommand* Sequence::getCommandByName(StringView name)
+{
+    for (auto& commandPtr : commands_)
+    {
+        if(auto command = commandPtr.get())
+        {
+            if(name == command->getName())
+                return command;
+        }
+    }
+    return nullptr;
+}
 
 AST_NAMESPACE_END
 
