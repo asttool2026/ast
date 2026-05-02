@@ -21,12 +21,28 @@
 #include "AstCore/Propagate.hpp"
 #include "ValXMLLoader.hpp"
 #include "AstScript/Value.hpp"
+#include "AstLoader/SegmentLoader.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t aLoadPropagate(const Value& dictRoot, Propagate& propagate)
 {
-    return 0;
+    errc_t rc;
+    const std::string type = dictRoot["Type"];
+    if(type != "Propagate")
+    {
+        aError("invalid type, expect 'Propagate'");
+        return eErrorInvalidParam;
+    }
+    // 加载公共属性
+    rc = aLoadSegment(dictRoot, propagate);
+    
+    // 加载停止条件
+    {
+
+    }
+    // 
+    return eNoError;
 }
 
 errc_t aLoadPropagate(StringView filepath, Propagate& propagate)

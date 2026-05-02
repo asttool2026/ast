@@ -27,6 +27,7 @@
 #include "AstUtil/RTTIAPI.hpp"
 #include "ValXMLLoader.hpp"
 #include "MissionCommandLoader.hpp"
+#include "AstLoader/SegmentLoader.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -38,6 +39,10 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
         aError("invalid type, expect 'Sequence' or 'TargeterSequence'");
         return eErrorInvalidParam;
     }
+   
+    // 加载公共属性
+    aLoadSegment(dictRoot, sequence);
+    
     // 加载序列命令
     {
         auto& dictSegmentList = dictRoot["SegmentList"];

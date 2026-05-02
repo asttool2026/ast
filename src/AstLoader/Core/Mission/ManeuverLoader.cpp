@@ -29,6 +29,7 @@
 #include "AstCore/BurnCollocation.hpp"
 #include "AstCore/BurnFinite.hpp"
 #include "AstLoader/BurnLoader.hpp"
+#include "AstLoader/SegmentLoader.hpp"
 
 
 AST_NAMESPACE_BEGIN
@@ -42,6 +43,9 @@ errc_t aLoadManeuver(const Value& dictRoot, Maneuver& maneuver)
         aError("invalid type, expect 'Maneuver'");
         return eErrorInvalidParam;
     }
+    // 加载公共属性
+    aLoadSegment(dictRoot, maneuver);
+    
     const std::string maneuverType = dictRoot["MnvrType"];
     const std::string mnvrKey = maneuverType + "Mnvr";
     SharedPtr<Burn> burn;

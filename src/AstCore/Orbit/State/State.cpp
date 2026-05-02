@@ -28,6 +28,7 @@
 #include "AstCore/StateCartesian.hpp"
 #include "AstCore/StateKeplerian.hpp"
 #include "AstCore/Resolve.hpp"
+#include "AstUtil/ObjectLinker.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -81,16 +82,27 @@ void State::setFrame(Frame *frame)
 
 errc_t State::setFrameByName(StringView frameName)
 {
-    // std::string name(frameName);
-    // addDelayedLink([name](){
-    //     return (Frame*)(nullptr);
-    // });
-    auto frame = aResolveFrame(frameName);
-    if(!frame){
-        aError("failed to resolve frame '%.*s'", frameName.size(), frameName.data());
-        return -1;
+    std::string name(frameName);
+    State* state = this;
+    auto resolveFunc = [name, state]() -> errc_t {
+        auto frame = aResolveFrame(name);
+        if(frame)
+        {
+            state->setFrame(frame);
+            return 0;
+        }
+        else
+        {
+            aWarning("failed to resolve frame '%s'", name.c_str());
+            return -1;
+        }
+    };
+    errc_t rc = resolveFunc();
+    if(!rc)
+    {
+        addDelayedLink(resolveFunc);
+        return eNoError;
     }
-    this->setFrame(frame);
     return eNoError;
 }
 

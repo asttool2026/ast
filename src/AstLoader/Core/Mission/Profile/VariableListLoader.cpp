@@ -34,9 +34,10 @@ errc_t aLoadParameters(const Value& value, VariableList& list)
     ScopedPtr<Variable> var;
     for(auto& item: value.items())
     {
+        std::string name = item.first;
         Value& value = *item.second;
         var.reset(Variable::New());
-        list.append(var);
+        var->setName(name);
         errc_t rc = aLoadParameter(value, *var);
         if(rc)
             aWarning("failed to load parameter");
@@ -53,9 +54,10 @@ errc_t aLoadAttributes(const Value& value, VariableList& list, Object* scope)
     ScopedPtr<Variable> var;
     for(auto& item: value.items())
     {
+        std::string name = item.first;
         Value& value = *item.second;
         var.reset(Variable::New());
-        list.append(var);
+        var->setName(name);
         errc_t rc = aLoadAttribute(value, *var, scope);
         if(rc)
             aWarning("failed to load attribute");
@@ -73,9 +75,10 @@ errc_t aLoadCalcObjects(const Value& value, VariableList& list, Object* scope)
     ScopedPtr<Variable> var;
     for(auto& item: value.items())
     {
+        std::string name = item.first;
         Value& value = *item.second;
         var.reset(Variable::New());
-        list.append(var);
+        var->setName(name);
         errc_t rc = aLoadCalcObject(value, *var, scope);
         if(rc)
             aWarning("failed to load calc object");

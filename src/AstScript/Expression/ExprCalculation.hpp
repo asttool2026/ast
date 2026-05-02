@@ -32,7 +32,17 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-class AST_SCRIPT_API ExprCalculation : public Expr
+
+class AST_SCRIPT_API ExprCalculationBase : public Expr
+{
+public:
+
+
+};
+
+
+
+class AST_SCRIPT_API ExprCalculation : public ExprCalculationBase
 {
 public:
     AST_EXPR(ExprCalculation)

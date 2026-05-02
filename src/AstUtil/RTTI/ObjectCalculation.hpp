@@ -21,7 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -36,12 +36,12 @@ AST_NAMESPACE_BEGIN
 /// 不同类型的对象计算类通过继承自ObjectCalculation类来实现多态行为
 /// 参考GMATMathSpec.pdf第三章 Calculation Objects
 /// @ingroup RTTI
-class AST_UTIL_API ObjectCalculation : public Object
+class AST_UTIL_API ObjectCalculation : public ObjectNamed
 {
 public:
     AST_OBJECT(ObjectCalculation)
 
-    using Object::Object;
+    using ObjectNamed::ObjectNamed;
     ~ObjectCalculation() override = default;
 public:
     /// @brief 获取期望输入的对象类型

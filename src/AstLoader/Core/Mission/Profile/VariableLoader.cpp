@@ -95,6 +95,15 @@ errc_t aLoadParameter(const Value& value, Variable& var)
 
 errc_t aLoadCalcObject(const Value& value, Variable& var, Object* scope)
 {
+    // 检查类型
+    {
+        std::string type = value["Type"];
+        if(type != "AgAsStateCalc")
+        {
+            aError("invalid type: '%s', expected 'AgAsStateCalc'", type.c_str());
+            return -1;
+        }
+    }
     return 0;
 }
 
@@ -144,9 +153,13 @@ errc_t aLoadAttribute(const Value& value, Variable& var, Object* scope)
                     aWarning("unsupported object path: '%s'", object.c_str());
                 }
             }
+            // 解析属性值
+            if(command)
+            {
+            }
             
             
-            // printf("variable: %s\n object: %s\n attribute: %s\n unit: %s\n", variable->getName().c_str(), object.c_str(), attribute.c_str(), unit.c_str());
+            printf("variable: %s\n object: %s\n attribute: %s\n unit: %s\n", variable->getName().c_str(), object.c_str(), attribute.c_str(), unit.c_str());
             return 0;
         });
     }

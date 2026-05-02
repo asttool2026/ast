@@ -20,16 +20,66 @@
 
 #include "SegmentLoader.hpp"
 #include "AstCore/Segment.hpp"
+#include "AstCore/ScStateCalcAllHeaders.hpp"
 #include "SpacecraftStateLoader.hpp"
 #include "AstScript/Value.hpp"
+#include "AstUtil/ObjectCalculation.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 
 AST_NAMESPACE_BEGIN
+
+errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Object* scope)
+{
+    std::string type = value["Type"];
+    if(type == "AsStateCalcEccentricity")
+    {
+        result = new ScStateCalcEccentricity();
+    }
+    else if(type == "AsStateCalcVx")
+    {
+        result = new ScStateCalcVx();
+    }
+    else if(type == "AsStateCalcVy")
+    {
+        result = new ScStateCalcVy();
+    }
+    else if(type == "AsStateCalcVz")
+    {
+        result = new ScStateCalcVz();
+    }
+    else
+    {
+        aError("unsupported result type: '%s'", type.c_str());
+        return eErrorInvalidParam;
+    }
+
+    return eNoError;
+}
+
+errc_t aLoadResults(const Value& dict, Object* scope)
+{
+    for(auto& item: dict.items())
+    {
+        std::string name = item.first;
+        Value& value = *item.second;
+        SharedPtr<ObjectCalculation> calculation;
+        aLoadResult(value, calculation, scope);
+        if(calculation)
+            calculation->setName(name);
+    }
+    return 0;
+}
 
 errc_t aLoadSegment(const Value& dict, Segment& segment)
 {
     if(auto finalStatePtr = segment.getFinalState())
     {
         aLoadSpacecraftState(dict["FinalState"], *finalStatePtr);
+    }
+    // 加载 Results
+    {
+        auto& dictResults = dict["Results"];
+        aLoadResults(dictResults, &segment);
     }
     return eNoError;
 }
