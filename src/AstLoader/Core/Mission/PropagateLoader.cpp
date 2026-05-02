@@ -22,8 +22,47 @@
 #include "ValXMLLoader.hpp"
 #include "AstScript/Value.hpp"
 #include "AstLoader/SegmentLoader.hpp"
+#include "AstCore/DetectorCartesian.hpp"
+
 
 AST_NAMESPACE_BEGIN
+
+errc_t aLoadStoppingCondition(const Value& value, SharedPtr<EventDetector>& eventDetector, Propagate& propagate)
+{
+    std::string type = value["Type"];
+    if(type == "Duration")
+    {
+
+    }
+    else
+    {
+        aError("unsupported stopping condition type '%s'", type.c_str());
+        return eErrorInvalidParam;
+    }
+    return 0;
+}
+
+errc_t aLoadStoppingConditions(const Value& dict, Propagate& propagate)
+{
+    errc_t rc;
+    std::vector<SharedPtr<EventDetector>> eventDetectors;
+    for(auto& item: dict.items())
+    {
+        std::string name = item.first;
+        Value& value = *item.second;
+        SharedPtr<EventDetector> eventDetector;
+        rc = aLoadStoppingCondition(value, eventDetector, propagate);
+        if(rc || !eventDetector)
+        {
+            std::string type = value["Type"];
+            aWarning("failed to load stopping condition '%s' with type '%s'", name.c_str(), type.c_str());
+        }
+        else
+            eventDetectors.push_back(eventDetector);
+    }
+    propagate.setEventDetectors(eventDetectors);
+    return eNoError;
+}
 
 errc_t aLoadPropagate(const Value& dictRoot, Propagate& propagate)
 {
@@ -38,10 +77,8 @@ errc_t aLoadPropagate(const Value& dictRoot, Propagate& propagate)
     rc = aLoadSegment(dictRoot, propagate);
     
     // 加载停止条件
-    {
+    rc = aLoadStoppingConditions(dictRoot["StoppingConditions"], propagate);
 
-    }
-    // 
     return eNoError;
 }
 

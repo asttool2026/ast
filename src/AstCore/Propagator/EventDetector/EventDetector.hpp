@@ -22,7 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstMath/ODEEventDetector.hpp"
-#include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -34,12 +34,15 @@ class ODEEventDetector;
 /// @brief 事件检测基类
 /// 事件检测基类，用于检测事件是否发生。
 /// 参考orekit的EventDetector类
-class AST_CORE_API EventDetector: public Object
+class AST_CORE_API EventDetector: public ObjectNamed
 {
 public:
     using EDirection = ODEEventDetector::EDirection;
-
-
+    AST_OBJECT(EventDetector)
+    AST_PROPERT(repeatCount)
+    AST_PROPERT(direction)
+    AST_PROPERT(threshold)
+    AST_PROPERT(goal)
     EventDetector() = default;
     virtual ~EventDetector() = default;
 
@@ -60,18 +63,21 @@ public:
     /// @return ODE事件检测器实例指针
     /// @note ODE事件检测器实例的生命周期由调用方负责管理，调用方需要在使用完成后调用析构函数释放资源
     ODEEventDetector* newODEEventDetector() const;
+    
+public: // rtti 暂时不支持枚举类型
 
-PROPERTIES:
-    int getRepeatCount() const {return repeatCount_;}
-    void setRepeatCount(int count) {repeatCount_ = count;}
-
-    EDirection getDirection() const {return direction_;}
+    EDirection direction() const {return direction_;}
     void setDirection(EDirection dir) {direction_ = dir;}
 
-    double getThreshold() const {return threshold_;}
+PROPERTIES:
+    int repeatCount() const {return repeatCount_;}
+    void setRepeatCount(int count) {repeatCount_ = count;}
+
+
+    double threshold() const {return threshold_;}
     void setThreshold(double threshold) {threshold_ = threshold;}
 
-    double getGoal() const {return goal_;}
+    double goal() const {return goal_;}
     void setGoal(double goal) {goal_ = goal;}
 
 private:
