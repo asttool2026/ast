@@ -1,5 +1,5 @@
 ///
-/// @file      ScStateCalcBodyRelated.hpp
+/// @file      ScStateCalcPointRelated.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -22,8 +22,7 @@
 
 #include "AstGlobal.h"
 #include "ScStateCalculation.hpp"
-#include "AstCore/CelestialBody.hpp"
-
+#include "AstCore/Point.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -32,18 +31,17 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-class AST_CORE_API ScStateCalcBodyRelated: public ScStateCalculation
+
+class AST_CORE_API ScStateCalcPointRelated : public ScStateCalculation
 {
 public:
-    AST_OBJECT(ScStateCalcBodyRelated)
-    AST_PROPERT(body)
-    ScStateCalcBodyRelated() = default;
-    ~ScStateCalcBodyRelated() = default;
+    AST_OBJECT(ScStateCalcPointRelated)
+    AST_PROPERT(point)
 PROPERTIES:
-    Body* body() const { return body_.get(); }
-    void setBody(Body* body) { body_ = body; }
+    Point* point() const { return point_.get(); }
+    void setPoint(Point* point) { point_ = point; }
 private:
-    WeakPtr<CelestialBody> body_;
+    WeakPtr<Point> point_;      ///< 点
 };
 
 /*! @} */

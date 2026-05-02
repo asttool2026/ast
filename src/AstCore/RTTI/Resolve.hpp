@@ -68,6 +68,13 @@ AST_CORE_API Frame* aResolveFrame(StringView name);
 AST_CORE_API Axes* aResolveAxes(StringView name);
 
 
+/// @brief 解析点
+/// @param name 点名称
+/// @return 点指针
+/// @note 如果点不存在，返回 nullptr
+AST_CORE_API Point* aResolvePoint(StringView name);
+
+
 /*! @} */
 
 AST_NAMESPACE_END

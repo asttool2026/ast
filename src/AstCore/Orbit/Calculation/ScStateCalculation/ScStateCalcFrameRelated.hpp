@@ -31,10 +31,12 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-class ScStateCalcFrameRelated: public ScStateCalculation
+class AST_CORE_API ScStateCalcFrameRelated: public ScStateCalculation
 {
 public:
-    AST_OBJECT(ScStateCalcFrameRelated);
+    AST_OBJECT(ScStateCalcFrameRelated)
+    AST_PROPERT(frame)
+;
 
     ScStateCalcFrameRelated() = default;
     ~ScStateCalcFrameRelated() = default;
