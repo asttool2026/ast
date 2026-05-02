@@ -26,6 +26,7 @@
 #include "AstLoader/ValXMLLoader.hpp"
 #include "AstLoader/PropagatorLoader.hpp"
 #include "AstScript/ValDict.hpp"
+#include "AstUtil/ObjectLinker.hpp"
 #include "AstTest/Test.h"
 
 

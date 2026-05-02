@@ -27,6 +27,7 @@
 #include "AstUtil/Logger.hpp"
 #include "AstUtil/Quantity.hpp"
 #include "AstUtil/ParseFormat.hpp"
+#include "AstUtil/ObjectLinker.hpp"
 #include "AstCore/Sequence.hpp"
 
 AST_NAMESPACE_BEGIN
@@ -143,7 +144,7 @@ errc_t aLoadAttribute(const Value& value, Variable& var, Object* scope)
                     aWarning("unsupported object path: '%s'", object.c_str());
                 }
             }
-
+            
             
             // printf("variable: %s\n object: %s\n attribute: %s\n unit: %s\n", variable->getName().c_str(), object.c_str(), attribute.c_str(), unit.c_str());
             return 0;

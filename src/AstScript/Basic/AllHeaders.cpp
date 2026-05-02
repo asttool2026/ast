@@ -48,6 +48,7 @@ _AST_IMPL_OBJECT(ExprCall)
 _AST_IMPL_OBJECT(ExprMacroExpand)
 _AST_IMPL_OBJECT(ExprAttribute)
 _AST_IMPL_OBJECT(ExprCalculation)
+_AST_IMPL_OBJECT(ValNamedVector)
 
 
 

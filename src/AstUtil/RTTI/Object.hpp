@@ -325,11 +325,15 @@ private:
 public: // 延迟链接
     /// @brief 添加延迟链接
     /// @param link 延迟链接函数
+    /// @warning 必须include ObjectLinker.hpp
+    /// @see ObjectLinker.hpp
     template<typename Func>
-    void addDelayedLink(Func &&link);
+    inline void addDelayedLink(Func &&link);
 
     /// @brief 解析延迟链接
     /// @details 解析所有延迟链接
+    /// @warning 必须include ObjectLinker.hpp
+    /// @see ObjectLinker.hpp
     void resolveLinks();
 
 protected:
@@ -415,22 +419,5 @@ AST_DECL_TYPE_ALIAS(Object)
 #include "AstUtil/Attribute.hpp"
 #include "AstUtil/Class.hpp"
 #include "AstUtil/WeakPtr.hpp"
-#include "AstUtil/ObjectLinkerManager.hpp"
 
 
-AST_NAMESPACE_BEGIN
-
-template<typename Func>
-void Object::addDelayedLink(Func &&link)
-{
-    aObject_AddDelayedLink(this, std::forward<Func>(link));
-}
-
-A_ALWAYS_INLINE void Object::resolveLinks()
-{
-    aObject_ResolveLinks(this);
-}
-
-
-
-AST_NAMESPACE_END

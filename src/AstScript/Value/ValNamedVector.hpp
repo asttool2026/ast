@@ -1,9 +1,9 @@
 ///
-/// @file      ValMap.hpp
+/// @file      ValNamedVector.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-15
+/// @date      2026-05-01
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -23,8 +23,6 @@
 #include "AstGlobal.h"
 #include "Value.hpp"
 #include "AstUtil/OrderedMap.hpp"
-#include <string>
-#include <map>
 
 AST_NAMESPACE_BEGIN
 
@@ -33,29 +31,34 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 字典值
-class AST_SCRIPT_API ValDict: public Value
+/// @brief 命名向量值类
+/// @todo 完善命名向量值类的实现 
+class AST_SCRIPT_API ValNamedVector: public Value
 {
-    using MapType = OrderedMap<std::string, SharedPtr<Value>>;
 public:
-    AST_EXPR(ValDict)
-    static ValDict* New();
+    using ItemType = std::pair<std::string, SharedPtr<Value>>;
+    using VectorType = std::vector<ItemType>;
+    static ValNamedVector* New();
 
-    ValDict() = default;
-    ~ValDict() override = default;
-    Value* find(const std::string& name);
-    void insert(const std::string& name, Value* value);
-    using Value::insert;
-    std::string toJsonString() const;
-    std::string toJsonString(int indent) const;
-    std::string getExpression(Object* context=nullptr) const override;
-    const ValueMapType& getMap() const{return map_;}
-protected:
-    std::string toJsonString(int indent, int currentIndent) const;
-protected:
-    MapType map_;
+    AST_EXPR(ValNamedVector)
+
+    ValNamedVector() = default;
+    ~ValNamedVector() = default;
+    /// @brief 获取向量元素数量
+    /// @return size_t 向量元素数量
+    size_t size() const{return vector_.size();}
+
+
+    VectorType& getVector() {return vector_;}
+    const VectorType& getVector() const {return vector_;}
+
+    std::string getExpression(Object* object) const override;
+private:
+    VectorType vector_;
 };
+
 
 /*! @} */
 
 AST_NAMESPACE_END
+

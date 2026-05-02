@@ -47,12 +47,12 @@ ValDict *Value::toValDict() const
     return nullptr;
 }
 
-static ValueMapType emptyMap;
+static NamedValueVector emptyMap;
 
-const ValueMapType& Value::items() const
+const NamedValueVector& Value::items() const
 {
     if(auto dict = toValDict())
-        return dict->getMap();
+        return dict->getMap().items();
     return emptyMap;
 }
 

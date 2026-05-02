@@ -27,6 +27,7 @@
 #include "AstUtil/ObjectManager.hpp"
 #include "AstUtil/RTTIAPI.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/ObjectLinker.hpp"
 
 AST_NAMESPACE_BEGIN
  

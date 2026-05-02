@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/WeakPtr.hpp"
 #include <type_traits>
 
 AST_NAMESPACE_BEGIN
@@ -93,6 +94,51 @@ public:
         return invoke(func_);
     }
 };
+
+
+
+/// @brief 添加对象延迟链接
+/// @details linker 对象延迟链接指针
+/// @return void
+AST_UTIL_CAPI void aAddObjectLinker(ObjectLinker* linker);
+
+
+/// @brief 解析对象的延迟链接
+/// @details object 对象指针
+/// @return errc_t 错误码
+AST_UTIL_CAPI errc_t aObject_ResolveLinks(Object* object);
+
+
+/// @brief 解析所有对象的延迟链接
+/// @details 解析所有对象的延迟链接
+/// @return errc_t 错误码
+AST_UTIL_CAPI errc_t aResolveAllLinks();
+
+
+/// @brief 添加对象延迟链接
+/// @tparam Func 延迟链接函数类型
+/// @param[in] object 对象指针
+/// @param[in] func 延迟链接函数
+/// @return void
+template <typename Func>
+inline void aObject_AddDelayedLink(Object* object, Func func)
+{
+    aAddObjectLinker(new ObjectLinkerGeneric<Func>(object, func));
+}
+
+
+// object methods
+
+template<typename Func>
+inline void Object::addDelayedLink(Func &&link)
+{
+    aObject_AddDelayedLink(this, std::forward<Func>(link));
+}
+
+A_ALWAYS_INLINE void Object::resolveLinks()
+{
+    aObject_ResolveLinks(this);
+}
 
 
 /*! @} */
