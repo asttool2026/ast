@@ -19,127 +19,18 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "SegmentLoader.hpp"
-#include "AstCore/Segment.hpp"
-#include "AstCore/ScStateCalcAllHeaders.hpp"
+#include "ResultLoader.hpp"
 #include "SpacecraftStateLoader.hpp"
-#include "AstScript/Value.hpp"
+#include "AstCore/Segment.hpp"
+#include "AstCore/Resolve.hpp"
 #include "AstUtil/ObjectCalculation.hpp"
 #include "AstUtil/ObjectLinker.hpp"
 #include "AstUtil/RTTIAPI.hpp"
+#include "AstScript/Value.hpp"
 #include "AstScript/ExprAttribute.hpp"
-#include "AstCore/Resolve.hpp"
 
 AST_NAMESPACE_BEGIN
 
-
-errc_t aLoadCalculation(const Value& value, ScStateCalcFrameRelated& calculation)
-{
-    std::string frameName = value["CoordSystem"];
-    auto calcPtr = &calculation;
-    auto resolveFunc = [calcPtr, frameName]() -> errc_t {
-        if(auto frame = aResolveFrame(frameName))
-        {
-            calcPtr->setFrame(frame);
-            return eNoError;
-        }
-        aError("frame '%s' not found", frameName.c_str());
-        return eErrorNullPtr;
-    };
-    calculation.addDelayedLink(resolveFunc);
-    return 0;
-}
-
-errc_t aLoadCalculation(const Value& value, ScStateCalcBodyRelated& calculation)
-{
-    std::string bodyName = value["CentralBody"];
-    auto calcPtr = &calculation;
-    auto resolveFunc = [calcPtr, bodyName]() -> errc_t {
-        if(auto body = aResolveBody(bodyName))
-        {
-            calcPtr->setBody(body);
-            return eNoError;
-        }
-        aError("body '%s' not found", bodyName.c_str());
-        return eErrorNullPtr;
-    };
-    calculation.addDelayedLink(resolveFunc);
-    return 0;
-}
-
-errc_t aLoadCalculation(const Value& value, ScStateCalcPointRelated& calculation)
-{
-    std::string pointName = value["ReferencePoint"];
-    auto calcPtr = &calculation;
-    auto resolveFunc = [calcPtr, pointName]() -> errc_t {
-        if(auto point = aResolvePoint(pointName))
-        {
-            calcPtr->setPoint(point);
-            return eNoError;
-        }
-        aError("point '%s' not found", pointName.c_str());
-        return eErrorNullPtr;
-    };
-    calculation.addDelayedLink(resolveFunc);
-    return 0;
-}
-
-errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Object* scope)
-{
-    std::string type = value["Type"];
-    if(type == "AsStateCalcEccentricity")
-    {
-        auto calculation = new ScStateCalcEccentricity();
-        result = calculation;
-        aLoadCalculation(value, *calculation);
-    }
-    else if(type == "AsStateCalcVx")
-    {
-        auto calculation = new ScStateCalcVx();
-        result = calculation;
-        aLoadCalculation(value, *calculation);
-    }
-    else if(type == "AsStateCalcVy")
-    {
-        auto calculation = new ScStateCalcVy();
-        result = calculation;
-        aLoadCalculation(value, *calculation);
-    }
-    else if(type == "AsStateCalcVz")
-    {
-        auto calculation = new ScStateCalcVz();
-        result = calculation;
-        aLoadCalculation(value, *calculation);
-    }
-    else if(type == "AsStateCalcRMag")
-    {
-        auto calculation = new ScStateCalcRMag();
-        result = calculation;
-        aLoadCalculation(value, *calculation);
-    }
-    else
-    {
-        result.reset();
-        aError("unsupported result type: '%s'", type.c_str());
-        return eErrorInvalidParam;
-    }
-    if(result)
-        result->setParentScope(scope);
-    return eNoError;
-}
-
-errc_t aLoadResults(const Value& dict, Object* scope)
-{
-    for(auto& item: dict.items())
-    {
-        std::string name = item.first;
-        Value& value = *item.second;
-        SharedPtr<ObjectCalculation> calculation;
-        aLoadResult(value, calculation, scope);
-        if(calculation)
-            calculation->setName(name);
-    }
-    return 0;
-}
 
 errc_t aLoadShooterControl(const Value& value, SharedPtr<ExprAttribute>& control, Object* scope)
 {

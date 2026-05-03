@@ -20,6 +20,7 @@
 
 #include "AstCore/Propagate.hpp"
 #include "ValXMLLoader.hpp"
+#include "ResultLoader.hpp"
 #include "AstScript/Value.hpp"
 #include "AstLoader/SegmentLoader.hpp"
 #include "AstCore/DetectorAllHeaders.hpp"
@@ -40,6 +41,19 @@ errc_t aLoadEventDetector(const Value& value, DetectorPointRelated& detector)
 {
     std::string pointName = value["CalcObjectAttributes"]["ReferencePoint"];
     detector.setPointByName(pointName);
+    return 0;
+}
+
+errc_t aLoadEventDetector(const Value& value, DetectorUserSelect& detector)
+{
+    auto& calcObject = value["CalcObject"];
+    if(!calcObject.isNull())
+    {
+        Object* scope = &detector;
+        SharedPtr<ObjectCalculation> result;
+        aLoadResult(calcObject, result, scope);
+        detector.setCalculation(aobject_cast<ScStateCalculation*>(result));
+    }
     return 0;
 }
 
@@ -77,7 +91,9 @@ errc_t aLoadStoppingCondition(const Value& value, SharedPtr<EventDetector>& even
     }
     else if(type == "UserSelect")
     {
-        // @todo 实现用户自定义停止条件的加载
+        auto detectorUserSelect = aNewObject<DetectorUserSelect>(scope);
+        aLoadEventDetector(value, *detectorUserSelect);
+        eventDetector = detectorUserSelect;
     }
     else
     {
@@ -86,8 +102,18 @@ errc_t aLoadStoppingCondition(const Value& value, SharedPtr<EventDetector>& even
     }
     if(eventDetector)
     {
-        eventDetector->setThreshold(value["Tolerance"]);
-        eventDetector->setGoal(value["TripValue"]);
+        auto& tolerance = value["Tolerance"];
+        if(!tolerance.isNull())
+            eventDetector->setThreshold(tolerance);
+        
+        // @fixme TripValue 有可能是日期类型，需要特殊处理
+        auto& tripValue = value["TripValue"];
+        if(!tripValue.isNull())
+            eventDetector->setGoal(tripValue);
+
+        auto& repeatCount = value["RepeatCount"];
+        if(!repeatCount.isNull())
+            eventDetector->setRepeatCount(repeatCount);
     }
     return 0;
 }

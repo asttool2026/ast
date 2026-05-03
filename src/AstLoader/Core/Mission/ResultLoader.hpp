@@ -1,5 +1,5 @@
 ///
-/// @file      DetectorUserSelect.hpp
+/// @file      ResultLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,7 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstCore/ScStateCalculation.hpp"
+#include "AstUtil/ObjectCalculation.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,23 +30,12 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-class AST_CORE_API DetectorUserSelect : public EventDetector
-{
-public:
-    static DetectorUserSelect* New();
 
-    AST_OBJECT(DetectorUserSelect)
-    AST_PROPERT(calculation)
-    DetectorUserSelect() = default;
-    ~DetectorUserSelect() = default;
 
-    double getValue(const SpacecraftState& state, double t) const override;
-PROPERTIES:
-    ScStateCalculation* calculation() const{return calculation_.get();}
-    void setCalculation(ScStateCalculation* calculation){calculation_ = calculation;}
-private:
-    WeakPtr<ScStateCalculation> calculation_;
-};
+errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Object* scope);
+
+
+errc_t aLoadResults(const Value& dict, Object* scope);
 
 /*! @} */
 

@@ -34,6 +34,7 @@ AST_NAMESPACE_BEGIN
 class AST_CORE_API ScStateCalculation: public ObjectCalculation
 {
 public:
+    AST_OBJECT(ScStateCalculation)
     Class* getExpectedType() const override {return SpacecraftState::StaticType();};
     errc_t calculateNoCheckType(const Object* obj, double& result) override;
     virtual errc_t calculate(const SpacecraftState& scState, double& result) = 0;
