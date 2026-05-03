@@ -19,8 +19,6 @@ void EventDetector::ClassInit(Class* cls)
     cls->setConstructor<EventDetector>();
 
     cls->addProperty("repeatCount", aNewPropertyInt<EventDetector, &EventDetector::repeatCount, &EventDetector::setRepeatCount>());
-    // rtti 暂时不支持枚举类型，所以在这里注释掉 direction 属性的添加
-    // cls->addProperty("direction", aNewProperty<EventDetector, &EventDetector::direction, &EventDetector::setDirection>());
     cls->addProperty("threshold", aNewPropertyDouble<EventDetector, &EventDetector::threshold, &EventDetector::setThreshold>());
     cls->addProperty("goal", aNewPropertyDouble<EventDetector, &EventDetector::goal, &EventDetector::setGoal>());
 }

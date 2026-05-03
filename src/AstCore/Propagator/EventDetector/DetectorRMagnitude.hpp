@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "DetectorPointRelated.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -29,7 +30,16 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+class AST_CORE_API DetectorRMagnitude : public DetectorPointRelated
+{
+public:
+    AST_OBJECT(DetectorRMagnitude)
+    
+    DetectorRMagnitude() = default;
+    ~DetectorRMagnitude() = default;
 
+    double getValue(const SpacecraftState& state, double t) const override;
+};
 
 /*! @} */
 

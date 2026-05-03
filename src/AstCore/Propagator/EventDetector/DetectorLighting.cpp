@@ -19,9 +19,14 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "DetectorLighting.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
-
+double DetectorLighting::getValue(const SpacecraftState& state, double t) const
+{
+    aError("not implemented");
+    return 0.0;
+}
 
 AST_NAMESPACE_END

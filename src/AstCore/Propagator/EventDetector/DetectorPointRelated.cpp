@@ -1,5 +1,5 @@
 ///
-/// @file      DetectorDuration.cpp
+/// @file      DetectorPointRelated.cpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,20 +18,28 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "DetectorDuration.hpp"
+#include "DetectorPointRelated.hpp"
+#include "AstCore/Resolve.hpp"
+#include "AstUtil/Logger.hpp"
+#include "AstUtil/ObjectLinker.hpp"
 
 AST_NAMESPACE_BEGIN
 
-double DetectorDuration::getValue(const SpacecraftState& state, double t) const
+void DetectorPointRelated::setPointByName(StringView pointName)
 {
-    return t;
-}
-
-DetectorDuration* DetectorDuration::New()
-{
-    return new DetectorDuration();
+    std::string pointNameStr(pointName);
+    DetectorPointRelated* detector = this;
+    auto resolveFunc = [detector, pointNameStr]() -> errc_t
+    {
+        if (auto point = aResolvePoint(pointNameStr))
+        {
+            detector->setPoint(point);
+            return 0;
+        }
+        aError("point '%s' not found", pointNameStr.c_str());
+        return eErrorNullPtr;
+    };
+    addDelayedLinkIfFailed(resolveFunc);
 }
 
 AST_NAMESPACE_END
-
-

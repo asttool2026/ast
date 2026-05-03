@@ -1,5 +1,5 @@
 ///
-/// @file      DetectorDuration.cpp
+/// @file      DetectorFrameRelated.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,20 +18,32 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "DetectorDuration.hpp"
+#pragma once
+
+#include "AstGlobal.h"
+#include "EventDetector.hpp"
 
 AST_NAMESPACE_BEGIN
 
-double DetectorDuration::getValue(const SpacecraftState& state, double t) const
-{
-    return t;
-}
+/*!
+    @addtogroup 
+    @{
+*/
 
-DetectorDuration* DetectorDuration::New()
+
+class AST_CORE_API DetectorFrameRelated : public EventDetector
 {
-    return new DetectorDuration();
-}
+public:
+    AST_OBJECT(DetectorFrameRelated)
+    AST_PROPERT(frame)
+PROPERTIES:
+    Frame* frame() const {return frame_.get();}
+    void setFrame(Frame* frame) {frame_ = frame;}
+private:
+    WeakPtr<Frame> frame_;
+};
+
+/*! @} */
 
 AST_NAMESPACE_END
-
 

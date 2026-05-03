@@ -1,5 +1,5 @@
 ///
-/// @file      DetectorDuration.cpp
+/// @file      DetectorZXPlaneCross.cpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,20 +18,10 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "DetectorDuration.hpp"
+#include "DetectorZXPlaneCross.hpp"
 
 AST_NAMESPACE_BEGIN
 
-double DetectorDuration::getValue(const SpacecraftState& state, double t) const
-{
-    return t;
-}
 
-DetectorDuration* DetectorDuration::New()
-{
-    return new DetectorDuration();
-}
 
 AST_NAMESPACE_END
-
-

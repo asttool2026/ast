@@ -40,7 +40,6 @@ public:
     using EDirection = ODEEventDetector::EDirection;
     AST_OBJECT(EventDetector)
     AST_PROPERT(repeatCount)
-    AST_PROPERT(direction)
     AST_PROPERT(threshold)
     AST_PROPERT(goal)
     EventDetector() = default;

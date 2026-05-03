@@ -21,6 +21,8 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "EventDetector.hpp"
+#include "DetectorBodyRelated.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -29,7 +31,17 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+class AST_CORE_API DetectorPeriapsis : public DetectorBodyRelated
+{
+public:
+    AST_OBJECT(DetectorPeriapsis)
 
+    static DetectorPeriapsis* New();
+
+
+    double getValue(const SpacecraftState& state, double t) const override;
+    
+};
 
 /*! @} */
 

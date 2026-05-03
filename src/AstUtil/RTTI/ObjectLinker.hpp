@@ -135,6 +135,15 @@ inline void Object::addDelayedLink(Func &&link)
     aObject_AddDelayedLink(this, std::forward<Func>(link));
 }
 
+template<typename Func>
+inline void Object::addDelayedLinkIfFailed(Func &&link)
+{
+    errc_t rc = link();
+    if(rc != eNoError)
+        aObject_AddDelayedLink(this, std::forward<Func>(link));
+}
+
+
 A_ALWAYS_INLINE void Object::resolveLinks()
 {
     aObject_ResolveLinks(this);

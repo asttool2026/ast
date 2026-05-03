@@ -22,6 +22,15 @@
 
 AST_NAMESPACE_BEGIN
 
+DetectorApoapsis* DetectorApoapsis::New()
+{
+    return new DetectorApoapsis();
+}
 
+double DetectorApoapsis::getValue(const SpacecraftState& state, double t) const
+{
+    aError("not implemented");
+    return 0;
+}
 
 AST_NAMESPACE_END

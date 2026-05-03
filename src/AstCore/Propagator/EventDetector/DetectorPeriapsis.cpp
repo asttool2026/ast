@@ -19,9 +19,19 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "DetectorPeriapsis.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
+DetectorPeriapsis* DetectorPeriapsis::New()
+{
+    return new DetectorPeriapsis();
+}
 
+double DetectorPeriapsis::getValue(const SpacecraftState& state, double t) const
+{
+    aError("not implemented");
+    return 0;
+}
 
 AST_NAMESPACE_END

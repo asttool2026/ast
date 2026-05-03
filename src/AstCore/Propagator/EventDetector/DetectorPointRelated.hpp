@@ -1,5 +1,5 @@
 ///
-/// @file      DetectorDuration.cpp
+/// @file      DetectorPointRelated.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,20 +18,36 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "DetectorDuration.hpp"
+#pragma once
+
+#include "AstGlobal.h"
+#include "EventDetector.hpp"
+#include "AstCore/Point.hpp"
 
 AST_NAMESPACE_BEGIN
 
-double DetectorDuration::getValue(const SpacecraftState& state, double t) const
-{
-    return t;
-}
+/*!
+    @addtogroup 
+    @{
+*/
 
-DetectorDuration* DetectorDuration::New()
+
+class AST_CORE_API DetectorPointRelated : public EventDetector
 {
-    return new DetectorDuration();
-}
+public:
+    AST_OBJECT(DetectorPointRelated)
+
+    DetectorPointRelated() = default;
+    ~DetectorPointRelated() = default;
+public:
+    void setPointByName(StringView pointName);
+public:
+    Point* point() const { return point_.get(); }
+    void setPoint(Point* point) { point_ = point; }
+private:
+    WeakPtr<Point> point_;
+};
+
+/*! @} */
 
 AST_NAMESPACE_END
-
-

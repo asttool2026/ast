@@ -22,22 +22,72 @@
 #include "ValXMLLoader.hpp"
 #include "AstScript/Value.hpp"
 #include "AstLoader/SegmentLoader.hpp"
-#include "AstCore/DetectorCartesian.hpp"
+#include "AstCore/DetectorAllHeaders.hpp"
+#include "AstUtil/RTTIAPI.hpp"
+
 
 
 AST_NAMESPACE_BEGIN
 
+errc_t aLoadEventDetector(const Value& value, DetectorBodyRelated& detector)
+{
+    std::string bodyName = value["CalcObjectAttributes"]["CentralBody"];
+    detector.setBodyByName(bodyName);
+    return 0;
+}
+
+errc_t aLoadEventDetector(const Value& value, DetectorPointRelated& detector)
+{
+    std::string pointName = value["CalcObjectAttributes"]["ReferencePoint"];
+    detector.setPointByName(pointName);
+    return 0;
+}
+
 errc_t aLoadStoppingCondition(const Value& value, SharedPtr<EventDetector>& eventDetector, Propagate& propagate)
 {
     std::string type = value["Type"];
+    Object* scope = &propagate;
     if(type == "Duration")
     {
-
+        eventDetector = aNewObject<DetectorDuration>(scope);
+    }
+    else if(type == "Periapsis")
+    {
+        auto detectorPeriapsis = aNewObject<DetectorPeriapsis>(scope);
+        aLoadEventDetector(value, *detectorPeriapsis);
+        eventDetector = detectorPeriapsis;
+    }
+    else if(type == "Apoapsis")
+    {
+        auto detectorApoapsis = aNewObject<DetectorApoapsis>(scope);
+        aLoadEventDetector(value, *detectorApoapsis);
+        eventDetector = detectorApoapsis;
+    }
+    else if(type == "R Magnitude")
+    {
+        auto detectorRMagnitude = aNewObject<DetectorRMagnitude>(scope);
+        aLoadEventDetector(value, *detectorRMagnitude);
+        eventDetector = detectorRMagnitude;
+    }
+    else if(type == "Lighting")
+    {
+        auto detectorLighting = aNewObject<DetectorLighting>(scope);
+        // aLoadEventDetector(value, *detectorLighting);
+        eventDetector = detectorLighting;
+    }
+    else if(type == "UserSelect")
+    {
+        // @todo 实现用户自定义停止条件的加载
     }
     else
     {
         aError("unsupported stopping condition type '%s'", type.c_str());
         return eErrorInvalidParam;
+    }
+    if(eventDetector)
+    {
+        eventDetector->setThreshold(value["Tolerance"]);
+        eventDetector->setGoal(value["TripValue"]);
     }
     return 0;
 }

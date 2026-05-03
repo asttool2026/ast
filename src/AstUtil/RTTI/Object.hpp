@@ -330,6 +330,14 @@ public: // 延迟链接
     template<typename Func>
     inline void addDelayedLink(Func &&link);
 
+
+    /// @brief 若直接解析失败则添加延迟链接
+    /// @param link 延迟链接函数
+    /// @warning 必须include ObjectLinker.hpp
+    /// @see ObjectLinker.hpp
+    template<typename Func>
+    inline void addDelayedLinkIfFailed(Func &&link);
+
     /// @brief 解析延迟链接
     /// @details 解析所有延迟链接
     /// @warning 必须include ObjectLinker.hpp

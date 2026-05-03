@@ -292,9 +292,9 @@ protected:
     int                         jplSpiceId_{-1};           ///< JPL SPICE ID
     int                         jplIndex_{-1};             ///< JPL DE Index
     GravityField                gravityField_;             ///< 重力场
-    ScopedPtr<BodyShape>        shape_;                    ///< 天体形状
-    ScopedPtr<BodyOrientation>  orientation_;              ///< 天体姿态
-    ScopedPtr<BodyEphemeris>    ephemeris_;                ///< 天体星历
+    SharedPtr<BodyShape>        shape_;                    ///< 天体形状
+    SharedPtr<BodyOrientation>  orientation_;              ///< 天体姿态
+    SharedPtr<BodyEphemeris>    ephemeris_;                ///< 天体星历
 
     SharedPtr<AxesBodyInertial> axesInertial_;             ///< 天体惯性轴
     SharedPtr<AxesBodyFixed>    axesFixed_;                ///< 天体固定轴

@@ -1,5 +1,5 @@
 ///
-/// @file      DetectorLighting.hpp
+/// @file      DetectorAllHeaders.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,25 +21,22 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "EventDetector.hpp"
-
-AST_NAMESPACE_BEGIN
-
-/*!
-    @addtogroup 
-    @{
-*/
-
-class AST_CORE_API DetectorLighting : public EventDetector
-{
-public:
-    DetectorLighting() = default;
-    ~DetectorLighting() = default;
-
-    double getValue(const SpacecraftState& state, double t) const override;
-};
-
-/*! @} */
-
-AST_NAMESPACE_END
-
+#include "DetectorAccess.hpp"
+#include "DetectorAltitude.hpp"
+#include "DetectorAlwaysTripped.hpp"
+#include "DetectorApoapsis.hpp"
+#include "DetectorAscendingNode.hpp"
+#include "DetectorCartesian.hpp"
+#include "DetectorDeltaV.hpp"
+#include "DetectorDescendingNode.hpp"
+#include "DetectorDuration.hpp"
+#include "DetectorEpoch.hpp"
+#include "DetectorLighting.hpp"
+#include "DetectorMeanAnomaly.hpp"
+#include "DetectorPeriapsis.hpp"
+#include "DetectorRMagnitude.hpp"
+#include "DetectorTrueAnomaly.hpp"
+#include "DetectorUserSelect.hpp"
+#include "DetectorXYPlaneCross.hpp"
+#include "DetectorYZPlaneCross.hpp"
+#include "DetectorZXPlaneCross.hpp"

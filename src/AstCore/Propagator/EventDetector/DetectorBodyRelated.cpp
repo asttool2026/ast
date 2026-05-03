@@ -1,5 +1,5 @@
 ///
-/// @file      DetectorDuration.cpp
+/// @file      DetectorBodyRelated.cpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,20 +18,26 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "DetectorDuration.hpp"
+#include "DetectorBodyRelated.hpp"
+#include "AstUtil/ObjectLinker.hpp"
+#include "AstCore/Resolve.hpp"
 
 AST_NAMESPACE_BEGIN
 
-double DetectorDuration::getValue(const SpacecraftState& state, double t) const
+void DetectorBodyRelated::setBodyByName(StringView bodyName)
 {
-    return t;
-}
-
-DetectorDuration* DetectorDuration::New()
-{
-    return new DetectorDuration();
+    std::string bodyNameStr = std::string(bodyName);
+    DetectorBodyRelated* detector = this;
+    auto resolveFunc = [bodyNameStr, detector]() -> errc_t {
+        if(auto body = aResolveBody(bodyNameStr))
+        {
+            detector->setBody(body);
+            return eNoError;
+        }
+        aError("body '%s' not found", bodyNameStr.c_str());
+        return eErrorNullPtr;
+    };
+    addDelayedLinkIfFailed(resolveFunc);
 }
 
 AST_NAMESPACE_END
-
-
