@@ -97,16 +97,46 @@ const Value& Value::operator[](const char* name) const
 
 Value& Value::operator[](size_t index)
 {
+    // todo: 实现数组索引
     return NullValue();
 }
+
 const Value& Value::operator[](size_t index) const
 {
+    // todo: 实现数组索引
     return NullValue();
 }
+
 bool Value::isNull() const
 {
     return getType() == &ValNull::staticType;
 }
+
+bool Value::isBool() const
+{
+    return aValueIsBool(const_cast<Value*>(this));
+}
+
+bool Value::isInt() const
+{
+    return aValueIsInt(const_cast<Value*>(this));
+}
+
+bool Value::isDouble() const
+{
+    return aValueIsDouble(const_cast<Value*>(this));
+}
+
+bool Value::isQuantity() const
+{
+    return aValueIsQuantity(const_cast<Value*>(this));
+}
+
+bool Value::isString() const
+{
+    return aValueIsString(const_cast<Value*>(this));
+}
+
 std::string Value::toString() const
 {
     auto value = const_cast<Value*>(this);

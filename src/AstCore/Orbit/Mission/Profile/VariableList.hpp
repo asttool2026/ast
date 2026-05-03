@@ -37,13 +37,24 @@ AST_NAMESPACE_BEGIN
 class AST_CORE_API VariableList
 {
 public:
+    using ListType = std::vector<SharedPtr<Variable>>;
+    using iterator = ListType::iterator;
+    using const_iterator = ListType::const_iterator;
+
+
     VariableList() = default;
     ~VariableList() = default;
     void clear() { variables_.clear(); }
     void append(Variable* var) { variables_.push_back(var); }
+    size_t size() const { return variables_.size(); }
+
+    iterator begin() { return variables_.begin(); }
+    iterator end() { return variables_.end(); }
+    const_iterator begin() const { return variables_.begin(); }
+    const_iterator end() const { return variables_.end(); }
     
 private:
-    std::vector<SharedPtr<Variable>> variables_;        ///< 变量列表
+    ListType variables_;        ///< 变量列表
 };
 
 

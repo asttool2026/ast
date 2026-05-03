@@ -42,7 +42,7 @@ errc_t Sequence::execute()
     {
         errc_t rc =  scriptingTool->execute();
         if(rc != eNoError)
-            aError("failed to execute scripting tool: %s", scriptingTool->getName().c_str());
+            aError("failed to execute scripting tool %s", scriptingTool->getName().c_str());
     }
     // 执行任务序列
     for(int repeat=0;repeat<repeatCount_;repeat++)

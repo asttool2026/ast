@@ -38,6 +38,29 @@ errc_t aLoadScriptingToolProfile(const Value& value, ScriptingToolProfile& profi
         }
     }
 
+    // 读取脚本类型
+    std::string languageStr = value["Language"];
+    EScriptLanguage language;
+    if(languageStr == "JScript")
+        language = EScriptLanguage::eJScript;
+    else if(languageStr == "VBScript")
+        language = EScriptLanguage::eVBScript;
+    else if(languageStr == "MATLAB")
+        language = EScriptLanguage::eMATLAB;
+    else if(languageStr == "Python")
+        language = EScriptLanguage::ePython;
+    else if(languageStr == "Julia")
+        language = EScriptLanguage::eJulia;
+    else if(languageStr == "Lua")
+        language = EScriptLanguage::eLua;
+    else
+    {
+        language = EScriptLanguage::ePython;
+        aWarning("invalid language: %s, use 'Python' by default", languageStr.c_str());
+    }
+
+    profile.setLanguage(language);
+
     // 读取脚本内容
     profile.setScriptStatements(value["ScriptStatements"].toString());
     errc_t rc;

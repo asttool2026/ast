@@ -42,6 +42,7 @@ public:
     ~InitialState() = default;
 public:
     /// @brief 获取初始状态
+    /// @details 对于初始轨道段，其初始状态就是输出状态
     /// @return 初始状态
     SpacecraftState* getInitialState() const{return getOutputState();}
 public:

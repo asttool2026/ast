@@ -42,6 +42,8 @@ using NamedValueVector = std::vector<std::pair<std::string, SharedPtr<Value>>>;
 class AST_SCRIPT_API Value: public Expr
 {
 public:
+    static Value& NullValue();
+
     using Expr::Expr;
     ~Value() override = default;
 
@@ -63,18 +65,26 @@ public:
     const Value& operator[](const char* name) const;
     Value& operator[](size_t index);
     const Value& operator[](size_t index) const;
+
     bool isNull() const;
+    bool isBool() const;
+    bool isInt() const;
+    bool isDouble() const;
+    bool isQuantity() const;
+    bool isString() const;
+
     std::string toString() const;
     Quantity toQuantity() const;
     double toDouble() const;
     int toInt() const;
     bool toBool() const;
+    
     operator std::string() const;
     operator Quantity() const;
     operator double() const;
     operator int() const;
     operator bool() const;
-    static Value& NullValue();
+
     ValDict* toValDict() const;
     const NamedValueVector& items() const;
 private:

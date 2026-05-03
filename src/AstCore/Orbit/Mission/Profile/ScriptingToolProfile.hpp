@@ -68,11 +68,11 @@ public:
     VariableList& calcObjects() { return calcObjects_; }
 
 private:
-    EScriptLanguage language_;              ///< 脚本语言
-    std::string scriptStatements_;          ///< 脚本语句
-    VariableList attributes_;               ///< 属性变量列表
-    VariableList parameters_;               ///< 参数变量列表
-    VariableList calcObjects_;              ///< 计算对象变量列表
+    EScriptLanguage language_{EScriptLanguage::ePython};    ///< 脚本语言
+    std::string scriptStatements_;                          ///< 脚本语句
+    VariableList attributes_;                               ///< 属性变量列表
+    VariableList parameters_;                               ///< 参数变量列表
+    VariableList calcObjects_;                              ///< 计算对象变量列表
 };
 
 /*! @} */

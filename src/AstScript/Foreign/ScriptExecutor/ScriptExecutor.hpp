@@ -41,16 +41,20 @@ enum class EScriptLanguage
     eVBScript,          ///< VBScript 脚本
     eJulia,             ///< Julia 脚本
     eLua,               ///< Lua 脚本
+    eAstScript,         ///< AstScript 脚本
 };
 
 
+AST_SCRIPT_API std::string toString(EScriptLanguage type);
+
 class ScriptExecutor;
+class Variable;
 
 /// @brief 创建脚本执行器实例
 /// @param type 脚本类型
 /// @return 脚本执行器实例指针
 /// @note 脚本执行器实例的生命周期由调用方负责管理，调用方需要在使用完成后调用析构函数释放资源
-ScriptExecutor* aNewScriptExecutor(EScriptLanguage type);
+AST_SCRIPT_CAPI ScriptExecutor* aNewScriptExecutor(EScriptLanguage type);
 
 
 
@@ -97,7 +101,7 @@ public:
     virtual errc_t setVariable(StringView name, double value) = 0;
     virtual errc_t setVariable(StringView name, int value) = 0;
     virtual errc_t setVariable(StringView name, bool value) = 0;
-
+    errc_t setVariable(Variable* var);
 
     /// @brief 获取脚本执行器的字符串变量值
     /// @param name 变量名称
@@ -107,6 +111,7 @@ public:
     virtual errc_t getVariable(StringView name, double& value) const = 0;
     virtual errc_t getVariable(StringView name, int& value) const = 0;
     virtual errc_t getVariable(StringView name, bool& value) const = 0;
+    errc_t getVariable(Variable* var);
 };
 
 

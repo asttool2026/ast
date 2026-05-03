@@ -20,12 +20,64 @@
 
 #include "ScriptingToolProfile.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstScript/ScriptExecutor.hpp"
 
 AST_NAMESPACE_BEGIN
 
+static void setVariableList(ScriptExecutor& executor, const VariableList& variableList)
+{
+    for(auto& var : variableList)
+    {
+        errc_t rc = executor.setVariable(var);
+        if(rc)
+            aWarning("failed to set variable: '%s'", var->getName().c_str());
+    }
+}
+
+static void getVariableList(ScriptExecutor& executor, VariableList& variableList)
+{
+    for(auto& var : variableList)
+    {
+        errc_t rc = executor.getVariable(var);
+        if(rc)
+            aWarning("failed to get variable: '%s'", var->getName().c_str());
+    }
+}
+
 errc_t ScriptingToolProfile::execute()
 {
-    aError("not implemented");
+    ScopedPtr<ScriptExecutor> executor = aNewScriptExecutor(language_);
+    if(!executor)
+    {
+        aError("failed to create script executor for language: '%s'", toString(language_).c_str());
+        return eErrorInvalidParam;
+    }
+    errc_t rc;
+    
+    // 初始化脚本执行器
+    rc = executor->initialize();
+    if(rc)
+    {
+        aError("failed to initialize script executor");
+        return rc;
+    }
+
+    // 设置全局变量值
+    setVariableList(*executor, parameters_);
+    setVariableList(*executor, attributes_);
+    setVariableList(*executor, calcObjects_);
+
+    // 执行脚本
+    std::string errorMessage;
+    rc = executor->execute(scriptStatements_, &errorMessage);
+    if(rc)
+    {
+        aError("failed to execute script: %s", errorMessage.c_str());
+        return rc;
+    }
+    // 获取全局变量值
+    getVariableList(*executor, attributes_);
+    // 这里只需要同步 attributes_ 中的变量值吧?
     return eNoError;
 }
 
