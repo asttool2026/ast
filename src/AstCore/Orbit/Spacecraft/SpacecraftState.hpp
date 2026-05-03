@@ -34,7 +34,7 @@ AST_NAMESPACE_BEGIN
 
 /// @brief 航天器状态，包含轨道状态、质量、面积、阻力系数、光压、密度、压力、温度等属性
 /// @details 参考orekit的SpacecraftState类
-class SpacecraftState: public ObjectNamed
+class AST_CORE_API SpacecraftState: public ObjectNamed
 {
 public:
     AST_OBJECT(SpacecraftState)

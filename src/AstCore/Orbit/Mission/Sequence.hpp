@@ -65,7 +65,16 @@ public:
     /// @return Segment* 子段指针
     Segment* getSegmentByName(StringView name);
     MissionCommand* getCommandByName(StringView name);
+
+    /// @brief 获取重复次数
+    /// @return int 重复次数
+    int repeatCount() const{return repeatCount_;}
+    void setRepeatCount(int count){repeatCount_ = count;}
+protected:
+    /// @brief 链接任务命令
+    void linkCommands();
 private:
+    int repeatCount_{1};                                    ///< 重复次数
     std::vector<HMissionCommand> commands_;                 ///< 任务命令序列
     SharedPtr<ScriptingToolProfile> scriptingTool_;         ///< 脚本工具
 };

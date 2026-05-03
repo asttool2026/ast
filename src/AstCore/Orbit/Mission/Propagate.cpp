@@ -26,9 +26,9 @@ AST_NAMESPACE_BEGIN
 
 errc_t Propagate::execute()
 {
-    auto initialState = this->getInitialState();   AST_CHECK_NULLPTR(initialState);
-    auto finalState   = this->getFinalState();     AST_CHECK_NULLPTR(finalState);
-    auto propagator   = this->getPropagator();     AST_CHECK_NULLPTR(propagator);
+    auto inputState   = this->getInputState();     AST_CHECK_NULLPTR(inputState);
+    auto outputState  = this->getOutputState();    AST_CHECK_NULLPTR(outputState);
+    auto propagator   = this->propagator();     AST_CHECK_NULLPTR(propagator);
     
     return 0;
 }

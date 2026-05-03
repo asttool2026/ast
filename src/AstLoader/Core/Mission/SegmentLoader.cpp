@@ -57,9 +57,10 @@ errc_t aLoadShooterControls(const Value& dict, Object* scope)
 
 errc_t aLoadSegment(const Value& dict, Segment& segment)
 {
-    if(auto finalStatePtr = segment.getFinalState())
+    // 一般来说，输出状态就是最终状态
+    if(auto outputState = segment.getOutputState())
     {
-        aLoadSpacecraftState(dict["FinalState"], *finalStatePtr);
+        aLoadSpacecraftState(dict["FinalState"], *outputState);
     }
     // 加载 Results
     {

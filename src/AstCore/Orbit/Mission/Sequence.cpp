@@ -19,6 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "Sequence.hpp"
+#include "AstUtil/Logger.hpp"
 
 
 AST_NAMESPACE_BEGIN
@@ -26,22 +27,75 @@ AST_NAMESPACE_BEGIN
 errc_t Sequence::execute()
 {
     errc_t rc = 0;
-    for (auto& command : commands_)
+    // 设置第一个轨道段的输入状态
+    auto intputState = getInputState();
+    for(auto& command : commands_)
     {
-        rc |= command->execute();
+        if(auto segment = aobject_cast<Segment*>(command.get()))
+        {
+            segment->setInputState(intputState);
+            break;
+        }
+    }
+    // 执行脚本
+    if(auto scriptingTool = this->scriptingTool_.get())
+    {
+        errc_t rc =  scriptingTool->execute();
+        if(rc != eNoError)
+            aError("failed to execute scripting tool: %s", scriptingTool->getName().c_str());
+    }
+    // 执行任务序列
+    for(int repeat=0;repeat<repeatCount_;repeat++)
+    {
+        for (auto& command : commands_)
+        {
+            errc_t err = command->execute();
+            if(err != eNoError)
+            {
+                aError("failed to execute command: %s<%s>", command->getName().c_str(), command->typeName().c_str());
+                rc = err;
+            }
+        }
+    }
+    
+    // 设置输出状态为输出输出状态为输出状态
+    for(auto iter = commands_.rbegin();iter != commands_.rend();iter++)
+    {
+        if(auto segment = aobject_cast<Segment*>(iter->get()))
+        {
+            // @todo: 设置输出状态
+            break;
+        }
     }
     return rc;
+}
+
+
+void Sequence::linkCommands()
+{
+    SpacecraftState* inputState = getInputState();
+    for(int i=0;i<commands_.size();i++)
+    {
+        auto command = commands_[i].get();
+        if(auto segment = aobject_cast<Segment*>(command))
+        {
+            segment->setInputState(inputState);
+            inputState = segment->getOutputState();
+        }
+    }
 }
 
 
 void Sequence::setCommands(const std::vector<HMissionCommand>& commands)
 {
     commands_ = commands;
+    linkCommands();
 }
 
 void Sequence::setCommands(std::vector<HMissionCommand>&& commands)
 {
     commands_ = std::move(commands);
+    linkCommands();
 }
 
 Segment* Sequence::getSegmentByPath(StringView path)

@@ -19,12 +19,13 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "AstCore/Propagate.hpp"
-#include "ValXMLLoader.hpp"
-#include "ResultLoader.hpp"
-#include "AstScript/Value.hpp"
-#include "AstLoader/SegmentLoader.hpp"
 #include "AstCore/DetectorAllHeaders.hpp"
+#include "AstLoader/ValXMLLoader.hpp"
+#include "AstLoader/ResultLoader.hpp"
+#include "AstLoader/SegmentLoader.hpp"
+#include "AstLoader/PropagatorLoader.hpp"
 #include "AstUtil/RTTIAPI.hpp"
+#include "AstScript/Value.hpp"
 
 
 
@@ -140,6 +141,35 @@ errc_t aLoadStoppingConditions(const Value& dict, Propagate& propagate)
     return eNoError;
 }
 
+
+HPOP* aResolveBuiltinPropagator(StringView propagatorName)
+{
+    std::string datadir = aDataDirGet();
+    std::string filepath = datadir + "/Propagator/" + std::string(propagatorName) + ".Propagator";
+    ScopedPtr<HPOP> hpop = new HPOP();
+    errc_t rc = aLoadPropagator(filepath, *hpop);
+    if(rc == eNoError)
+    {
+        hpop->setName(propagatorName);
+        auto propagator = hpop.release();
+        aAddObject(propagator);
+        return propagator;
+    }
+    else
+    {
+        aError("failed to load propagator '%s'", filepath.c_str());
+    }
+    return nullptr;
+}
+
+HPOP* aResolvePropagator(StringView propagatorName)
+{
+    HPOP* hpop = (HPOP*)aFindObject(HPOP::StaticType(), propagatorName);
+    if(hpop)
+        return hpop;
+    return aResolveBuiltinPropagator(propagatorName);
+}
+
 errc_t aLoadPropagate(const Value& dictRoot, Propagate& propagate)
 {
     errc_t rc;
@@ -154,6 +184,17 @@ errc_t aLoadPropagate(const Value& dictRoot, Propagate& propagate)
     
     // 加载停止条件
     rc = aLoadStoppingConditions(dictRoot["StoppingConditions"], propagate);
+
+    // 加载预报器
+    {
+        std::string propagatorName = dictRoot["Propagator"];
+        HPOP* propagator = aResolvePropagator(propagatorName);
+        if(!propagator)
+        {
+            aError("failed to resolve propagator '%s'", propagatorName.c_str());
+        }
+        propagate.setPropagator(propagator);
+    }
 
     return eNoError;
 }

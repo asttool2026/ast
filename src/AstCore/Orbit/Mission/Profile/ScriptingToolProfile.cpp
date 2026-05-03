@@ -19,8 +19,15 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ScriptingToolProfile.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
+
+errc_t ScriptingToolProfile::execute()
+{
+    aError("not implemented");
+    return eNoError;
+}
 
 ScriptingToolProfile* ScriptingToolProfile::New()
 {

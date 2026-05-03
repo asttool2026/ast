@@ -41,10 +41,12 @@ class HPOPEquation;
 class ODEIntegrator;
 class HPOPForceModel;
 
-/// @brief 高精度轨道预报接口类
+/// @brief 高精度轨道预报器
 class AST_CORE_API HPOP: public ObjectNamed
 {
 public:
+    AST_OBJECT(HPOP)
+
     HPOP();
     ~HPOP();
 public:

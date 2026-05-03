@@ -223,6 +223,8 @@ public: // 类型与字段属性
     /// @return Class* 类型元信息
     Class* type() const{return getType();} // 转发到新接口getType
 
+    const std::string& typeName() const;
+
     /// @brief 获取属性元信息
     /// @param fieldName 属性名
     /// @return Property* 属性元信息

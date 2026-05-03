@@ -82,6 +82,8 @@ public:
     DifferentialCorrectorProfile() = default;
     ~DifferentialCorrectorProfile() override = default;
 
+    errc_t execute() override;
+
 
     bool useHomotopy() const{return useHomotopy_;}
     void setUseHomotopy(bool useHomotopy){useHomotopy_ = useHomotopy;}

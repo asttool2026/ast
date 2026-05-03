@@ -22,6 +22,7 @@
 #include "AstCore/MissionCommand.hpp"
 #include "AstCore/InitialState.hpp"
 #include "AstCore/SpacecraftState.hpp"
+#include "AstCore/Segment.hpp"
 #include "AstCore/HPOP.hpp"
 #include "AstLoader/ValXMLLoader.hpp"
 #include "AstLoader/PropagatorLoader.hpp"
@@ -37,10 +38,19 @@ TEST(MissionLoaderTest, LoadHohmannTransfer)
 {
     std::string file = aTestGetConfigValue("STK_HOHMANNTRANSFER_FILE").toString();
     {
+        errc_t rc;
         printf("loading file: %s\n", file.c_str());
         SharedPtr<MissionCommand> missionCommand;
-        errc_t rc = aLoadMissionCommand(file, missionCommand);
-        aResolveAllLinks();
+        rc = aLoadMissionCommand(file, missionCommand);
+        EXPECT_EQ(rc, eNoError);
+        rc = aResolveAllLinks();
+        EXPECT_EQ(rc, eNoError);
+        SpacecraftState initialState;
+        if(auto segment = aobject_cast<Segment*>(missionCommand.get()))
+        {
+            segment->setInputState(&initialState);
+        }
+        rc = missionCommand->execute();
         EXPECT_EQ(rc, eNoError);
         printf("loaded file: %s\n", file.c_str());
     }
@@ -122,4 +132,11 @@ TEST(MissionLoaderTest, LoadPropagator)
 }
 
 
-GTEST_MAIN()
+// GTEST_MAIN()
+
+int main(int argc, char **argv) {
+    printf("Running main() from %s\n", __FILE__); 
+    testing::GTEST_FLAG(catch_exceptions) = false;
+    testing::InitGoogleTest(&argc, argv); 
+    return RUN_ALL_TESTS(); 
+}

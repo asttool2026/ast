@@ -44,6 +44,10 @@ public:
 
     static ScriptingToolProfile* New();
 
+    /// @brief 执行脚本工具配置
+    /// @return errc_t 执行结果
+    errc_t execute() override;
+
     ScriptingToolProfile() = default;
     ~ScriptingToolProfile() override = default;
 

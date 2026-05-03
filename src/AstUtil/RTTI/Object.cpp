@@ -190,6 +190,12 @@ errc_t Object::setAttrObject(StringView path, Object* value)
     return prop->setValueObject(this, value);
 }
 
+const std::string& Object::typeName() const
+{
+    return getType()->name();
+}
+
+
 
 Property *Object::getProperty(StringView fieldName) const
 {

@@ -19,12 +19,19 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "DifferentialCorrectorProfile.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
 DifferentialCorrectorProfile* DifferentialCorrectorProfile::New()
 {
     return new DifferentialCorrectorProfile();
+}
+
+errc_t DifferentialCorrectorProfile::execute()
+{
+    aError("not implemented");
+    return -1;
 }
 
 AST_NAMESPACE_END

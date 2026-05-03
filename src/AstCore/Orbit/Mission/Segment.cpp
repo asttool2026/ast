@@ -25,9 +25,10 @@ AST_NAMESPACE_BEGIN
 
 Segment::Segment()
     : MissionCommand()
-    , initialState_()
-    , finalState_(new SpacecraftState())
+    , inputState_()
+    , outputState_(new SpacecraftState())
 {
+    
 }
 
 AST_NAMESPACE_END

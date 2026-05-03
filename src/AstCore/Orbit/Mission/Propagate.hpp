@@ -44,7 +44,8 @@ public:
 public:
     errc_t execute() override;
 public:
-    HPOP* getPropagator() const { return propagator_.get(); }
+    HPOP* propagator() const { return propagator_.get(); }
+    void setPropagator(HPOP* propagator) { propagator_ = propagator; }
     void setEventDetectors(const std::vector<SharedPtr<EventDetector>>& eventDetectors) { eventDetectors_ = eventDetectors; }
 private:
     WeakPtr<HPOP> propagator_;                                    ///< 轨道预报器
