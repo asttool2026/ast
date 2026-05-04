@@ -23,19 +23,38 @@
 
 AST_NAMESPACE_BEGIN
 
-errc_t SpacecraftState::getState(ModOrbElem& orbElem) const
+State* SpacecraftState::getOrbitState() const
 {
     if(!orbitState_)
-        return eErrorNullPtr;
-    return orbitState_->getState(orbElem);
+        const_cast<SpacecraftState*>(this)->orbitState_ = State::NewDefault();
+    return orbitState_;
+}
+
+errc_t SpacecraftState::getState(ModOrbElem& orbElem) const
+{
+    return getOrbitState()->getState(orbElem);
 }
 
 errc_t SpacecraftState::getState(CartState& state) const
 {
-    if(!orbitState_)
-        return eErrorNullPtr;
-    return orbitState_->getState(state);
+    return getOrbitState()->getState(state);
 }
+
+errc_t SpacecraftState::setState(const ModOrbElem& orbElem)
+{
+    return getOrbitState()->setState(orbElem);
+}
+
+errc_t SpacecraftState::setState(const CartState& state)
+{
+    return getOrbitState()->setState(state);
+}
+
+void SpacecraftState::setStateEpoch(const TimePoint& stateEpoch)
+{
+    return getOrbitState()->setStateEpoch(stateEpoch);
+}
+
 
 SpacecraftState* SpacecraftState::NewDefault()
 {

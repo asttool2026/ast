@@ -126,7 +126,7 @@ public:
 public:
     void setState(OrbElem& orbElem);
     void getState(OrbElem& orbElem) const;
-    void setState(const ModOrbElem& modOrbElem){ modOrbElem_ = modOrbElem; }
+    errc_t setState(const ModOrbElem& modOrbElem) override { modOrbElem_ = modOrbElem; return eNoError; }
     errc_t getState(ModOrbElem& modOrbElem) const override { modOrbElem = modOrbElem_; return eNoError; }
 public:
     /// @brief 获取在内部表示方式下的状态

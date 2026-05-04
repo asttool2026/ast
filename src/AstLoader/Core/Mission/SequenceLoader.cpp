@@ -44,7 +44,11 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
     aLoadSegment(dictRoot, sequence);
 
     // 加载重复次数
-    sequence.setRepeatCount(dictRoot["RepeatCount"]);
+    {
+        auto& repeatCount = dictRoot["RepeatCount"];
+        if(!repeatCount.isNull())
+            sequence.setRepeatCount(repeatCount);
+    }
     
     // 加载序列命令
     {

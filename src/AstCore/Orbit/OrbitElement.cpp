@@ -58,6 +58,13 @@ std::string OrbElem::toString() const
         "}");
 }
 
+std::string CartState::toString() const
+{
+    return std::string(
+        "CartState{pos: " + pos_.toString() + 
+        ", vel: " + vel_.toString() + 
+        "}");
+}
 
 errc_t coe2rv(const double* coe, double gm, double* pos, double* vel)
 {

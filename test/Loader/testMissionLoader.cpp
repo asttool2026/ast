@@ -34,28 +34,6 @@
 AST_USING_NAMESPACE;
 
 
-TEST(MissionLoaderTest, LoadHohmannTransfer)
-{
-    std::string file = aTestGetConfigValue("STK_HOHMANNTRANSFER_FILE").toString();
-    {
-        errc_t rc;
-        printf("loading file: %s\n", file.c_str());
-        SharedPtr<MissionCommand> missionCommand;
-        rc = aLoadMissionCommand(file, missionCommand);
-        EXPECT_EQ(rc, eNoError);
-        rc = aResolveAllLinks();
-        EXPECT_EQ(rc, eNoError);
-        SharedPtr<SpacecraftState> initialState = SpacecraftState::NewDefault();
-        if(auto segment = aobject_cast<Segment*>(missionCommand.get()))
-        {
-            segment->setInputState(initialState.get());
-        }
-        rc = missionCommand->execute();
-        EXPECT_EQ(rc, eNoError);
-        printf("loaded file: %s\n", file.c_str());
-    }
-}
-
 
 TEST(MissionLoaderTest, LoadValue)
 {
@@ -126,6 +104,30 @@ TEST(MissionLoaderTest, LoadPropagator)
         printf("loading file: %s\n", file.c_str());
         HPOP propagator;
         errc_t rc = aLoadPropagator(file, propagator);
+        EXPECT_EQ(rc, eNoError);
+        printf("loaded file: %s\n", file.c_str());
+    }
+}
+
+
+TEST(MissionLoaderTest, LoadHohmannTransfer)
+{
+    std::string file = aTestGetConfigValue("STK_HOHMANNTRANSFER_FILE").toString();
+    {
+        errc_t rc;
+        printf("loading file: %s\n", file.c_str());
+        SharedPtr<MissionCommand> missionCommand;
+        rc = aLoadMissionCommand(file, missionCommand);
+        EXPECT_EQ(rc, eNoError);
+        rc = aResolveAllLinks();
+        EXPECT_EQ(rc, eNoError);
+        SharedPtr<SpacecraftState> initialState = SpacecraftState::NewDefault();
+        initialState->setStateEpoch(TimePoint::FromUTC(2026, 4, 7, 4, 0, 0));
+        if(auto segment = aobject_cast<Segment*>(missionCommand.get()))
+        {
+            segment->setInputState(initialState.get());
+        }
+        rc = missionCommand->execute();
         EXPECT_EQ(rc, eNoError);
         printf("loaded file: %s\n", file.c_str());
     }

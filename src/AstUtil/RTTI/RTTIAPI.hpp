@@ -225,6 +225,15 @@ AST_UTIL_API void aPrintAllObjects();
 AST_UTIL_API Object* aFindChild(Object* parentScope, Class* cls=nullptr, StringView name=StringView());
 
 
+template<typename T>
+T aFindChild(Object* parentScope, StringView name=StringView())
+{
+    // @todo: 这里逻辑和aobject_cast<T>的重复了，考虑怎么重构
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aFindChild requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(aFindChild(parentScope, ObjectType::StaticType(), name));
+}
+
 /// @brief 查找对象的子对象
 /// @details 根据父对象、类指针和子对象名查找子对象
 /// @param parentScope 父对象指针

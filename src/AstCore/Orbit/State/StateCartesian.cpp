@@ -75,4 +75,10 @@ errc_t StateCartesian::setState(const CartState &state)
     return eNoError;
 }
 
+errc_t StateCartesian::setState(const ModOrbElem& orbElem)
+{
+    double gm = this->getGM();
+    return aModOrbElemToCart(orbElem, gm, cartState_.pos(), cartState_.vel());
+}
+
 AST_NAMESPACE_END

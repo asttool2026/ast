@@ -27,6 +27,8 @@
 
 AST_NAMESPACE_BEGIN
 
+#define AST_DEBUG_PROPAGATE
+
 errc_t Propagate::execute()
 {
     auto inputState   = this->getInputState();        AST_CHECK_NULLPTR(inputState);
@@ -38,22 +40,32 @@ errc_t Propagate::execute()
     State* orbitState = inputState->getOrbitState();  AST_CHECK_NULLPTR(orbitState);
     TimePoint startTime;
     errc_t rc = orbitState->getStateEpoch(startTime); AST_CHECK_ERRCODE(rc, "Failed to get state epoch");
-    CartState cartState;
-    rc = orbitState->getState(cartState);             AST_CHECK_ERRCODE(rc, "Failed to get cart state");
+    CartState inputCartState;
+    rc = orbitState->getState(inputCartState);             AST_CHECK_ERRCODE(rc, "Failed to get cart state");
     
-    TimePoint targetTime = startTime + maxPropTime();
+    TimePoint endTime = startTime + maxPropTime();
     // 添加停止条件
     integrator->clearEventDetectors();
     for(auto& eventDetector: eventDetectors_)
     {
         propagator->getIntegrator()->addEventDetector(eventDetector->newODEEventDetector());
     }
-    rc = propagator->propagate(startTime, targetTime, cartState.pos(), cartState.vel()); AST_CHECK_ERRCODE(rc, "Failed to propagate");
-    // 保存结果
-    // outputState->setStateEpoch(targetTime);
-    // outputState->setState(cartState);
-    // outputState->setOrbitElement(orbitState->getOrbitElement());
-    // AST_CHECK_ERRCODE(rc, "Failed to set state");
+    CartState outputCartState = inputCartState;
+    rc = propagator->propagate(startTime, endTime, outputCartState.pos(), outputCartState.vel()); AST_CHECK_ERRCODE(rc, "Failed to propagate");
+    // 输出结果
+    outputState->setStateEpoch(endTime);
+    rc = outputState->setState(outputCartState);       AST_CHECK_ERRCODE(rc, "Failed to set cart state");
+
+    #ifdef AST_DEBUG_PROPAGATE
+    printf("\n------------------------------------\n");
+    printf("Propagate: %s\n", getName().c_str());
+    printf("------------------------------------\n");
+    printf("startTime: %s\n", startTime.toString().c_str());
+    printf("startState: %s\n", inputCartState.toString().c_str());
+    printf("endTime: %s\n", endTime.toString().c_str());
+    printf("endState: %s\n", outputCartState.toString().c_str());
+    printf("------------------------------------\n");
+    #endif
     return 0;
 }
 

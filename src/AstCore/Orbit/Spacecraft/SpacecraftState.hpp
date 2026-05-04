@@ -108,7 +108,7 @@ PROPERTIES:
 
     /// @brief 获取轨道状态
     /// @return 轨道状态
-    State* getOrbitState() const {return orbitState_;}
+    State* getOrbitState() const;
 
     /// @brief 设置轨道状态
     /// @param orbitState 轨道状态
@@ -116,6 +116,9 @@ PROPERTIES:
 public:
     errc_t getState(ModOrbElem& orbElem) const;
     errc_t getState(CartState& state) const;
+    errc_t setState(const ModOrbElem& orbElem);
+    errc_t setState(const CartState& state);
+    void setStateEpoch(const TimePoint& stateEpoch);
 private:
     HState orbitState_;                 ///< 轨道状态
     double cd_{2.2};

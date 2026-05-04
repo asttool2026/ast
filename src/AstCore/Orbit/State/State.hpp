@@ -106,6 +106,11 @@ public:
     /// @param state 状态
     /// @return errc_t 错误码
     virtual errc_t setState(const CartState& state) = 0;
+
+    /// @brief 设置状态
+    /// @param orbElem 轨道根数
+    /// @return errc_t 错误码
+    virtual errc_t setState(const ModOrbElem& orbElem) = 0;
 public:
 
     /// @brief 设置参考坐标系
