@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstCore/ScStateCalculation.hpp"
+#include "AstCore/EventDetector.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -41,6 +42,7 @@ public:
     ~DetectorUserSelect() = default;
 
     double getValue(const SpacecraftState& state, double t) const override;
+    bool isAngle() const override; 
 PROPERTIES:
     ScStateCalculation* calculation() const{return calculation_.get();}
     void setCalculation(ScStateCalculation* calculation){calculation_ = calculation;}

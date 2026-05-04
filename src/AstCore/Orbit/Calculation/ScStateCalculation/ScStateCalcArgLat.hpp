@@ -29,6 +29,7 @@ class AST_CORE_API ScStateCalcArgLat : public ScStateCalcFrameRelated
 {
 public:
     errc_t calculate(const SpacecraftState& state, double& result) override;
+    bool isAngle() const override {return true;}
 };
 
 AST_NAMESPACE_END

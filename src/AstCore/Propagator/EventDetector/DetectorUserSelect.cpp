@@ -45,4 +45,11 @@ double DetectorUserSelect::getValue(const SpacecraftState& state, double t) cons
     return std::numeric_limits<double>::quiet_NaN();
 }
 
+bool DetectorUserSelect::isAngle() const
+{
+    if(auto calculation = calculation_.get())
+        return calculation->isAngle();
+    return false;
+}
+
 AST_NAMESPACE_END

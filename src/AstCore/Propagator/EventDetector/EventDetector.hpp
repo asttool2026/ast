@@ -56,6 +56,10 @@ public:
     /// @param t 时间（相对于预报器参考时间的秒数）
     /// @return 事件检测开关函数的值
     virtual double getValue(const SpacecraftState& state, double t) const = 0;
+
+    /// @brief 是否为角度事件检测器
+    /// @return 是否为角度事件检测器
+    virtual bool isAngle() const {return false;}
 public:
     
     /// @brief 创建ODE事件检测器实例

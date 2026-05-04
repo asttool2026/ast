@@ -1,9 +1,9 @@
 ///
-/// @file      ScStateCalculation.hpp
+/// @file      Bracket.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-19
+/// @date      2026-05-04
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,31 +18,10 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#pragma once
-
-#include "AstGlobal.h"
-#include "AstUtil/ObjectCalculation.hpp"
-#include "AstCore/SpacecraftState.hpp"
+#include "Bracket.hpp"
 
 AST_NAMESPACE_BEGIN
 
-/*!
-    @addtogroup 
-    @{
-*/
 
-class AST_CORE_API ScStateCalculation: public ObjectCalculation
-{
-public:
-    AST_OBJECT(ScStateCalculation)
-    Class* getExpectedType() const override {return SpacecraftState::StaticType();};
-    errc_t calculateNoCheckType(const Object* obj, double& result) override;
-    virtual errc_t calculate(const SpacecraftState& scState, double& result) = 0;
-    virtual bool isAngle() const {return false;}
-protected:
-    
-};
-
-/*! @} */
 
 AST_NAMESPACE_END

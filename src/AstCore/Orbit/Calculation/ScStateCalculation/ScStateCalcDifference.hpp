@@ -51,6 +51,7 @@ public:
     /// @brief 设置差值顺序
     void setDifferenceOrderToUse(EDifferenceOrderToUse order){differenceOrderToUse_ = order;}
 
+    bool isAngle() const override;
 protected:
     Segment* getSegment();
 private:

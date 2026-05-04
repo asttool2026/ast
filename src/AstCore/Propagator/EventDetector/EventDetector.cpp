@@ -20,8 +20,10 @@
 
 #include "EventDetector.hpp"
 #include "AstMath/ODEEventDetector.hpp"
-#include "AstUtil/Logger.hpp"
+#include "AstMath/Bracket.hpp"
 #include "AstCore/SpacecraftState.hpp"
+#include "AstUtil/Logger.hpp"
+#include "AstUtil/Math.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -45,9 +47,36 @@ public:
         spacecraftState_->getOrbitState()->setState(*cartState);
         return eventDetector_->getValue(*spacecraftState_, x);
     }
+
 private:
     SharedPtr<SpacecraftState> spacecraftState_;    ///< 航天状态实例指针
     SharedPtr<EventDetector> eventDetector_;        ///< 事件检测器实例指针
+};
+
+
+class ODEEventDetectorWrapForAngle: public ODEEventDetectorWrap
+{
+    using ODEEventDetectorWrap::ODEEventDetectorWrap;
+public:
+    /*
+    对于角度量，需要实现：
+    1. 使不同周期的角度量都能够触发事件
+    2. 需要过滤掉每个周期内的函数值跳变
+    */
+
+    double getDifference(const double* y,double x) const override
+    {
+        double difference = getValue(y, x) - getGoal();
+        return aNormalizeAngleNegPiToPi(difference);
+    }
+    bool containsEvent(const Bracket& bracket) const override
+    {
+        double delta = bracket.rightValue() - bracket.leftValue();
+        if(fabs(delta) < kPI)
+            return ODEEventDetector::containsEvent(bracket);
+        return false;
+    }
+
 };
 
 }
@@ -55,7 +84,17 @@ private:
 
 ODEEventDetector* EventDetector::newODEEventDetector() const
 {
-    auto odeEventDetector = new ODEEventDetectorWrap(const_cast<EventDetector*>(this));
+    // 这里需要根据是否为角度量来选择不同的包装类
+    bool isAngle = this->isAngle();
+    ODEEventDetectorWrap* odeEventDetector;
+    if(isAngle)
+    {
+        odeEventDetector = new ODEEventDetectorWrapForAngle(const_cast<EventDetector*>(this));
+    }
+    else
+    {
+        odeEventDetector = new ODEEventDetectorWrap(const_cast<EventDetector*>(this));
+    }
     odeEventDetector->setRepeatCount(repeatCount_);
     odeEventDetector->setGoal(goal_);
     odeEventDetector->setDirection(direction_);

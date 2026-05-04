@@ -19,9 +19,28 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ODEEventDetector.hpp"
+#include "AstMath/Bracket.hpp"
+#include <cmath>
 
 AST_NAMESPACE_BEGIN
 
+bool ODEEventDetector::containsEvent(const Bracket& bracket) const
+{
+    auto direction = direction_;
+    bool lastSign = std::signbit(bracket.leftValue());
+    bool currentSign = std::signbit(bracket.rightValue());
+    double delta = bracket.rightAbscissa() - bracket.leftAbscissa();
 
+    // 处理事件的穿越方向
+    if(direction == ODEEventDetector::eBoth){
+        return lastSign ^ currentSign;
+    }else{
+        static_assert(ODEEventDetector::eDecrease < 0, "value not correct");
+        static_assert(ODEEventDetector::eIncrease > 0, "value not correct");
+        // 正向预报的上升触发相当于反向预报的下降触发
+        bool timeSign = std::signbit(delta * (int)direction);
+        return (lastSign^timeSign) && !(currentSign^timeSign);
+    }
+}
 
 AST_NAMESPACE_END
