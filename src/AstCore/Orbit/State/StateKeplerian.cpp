@@ -26,6 +26,7 @@
 #include "AstCore/CelestialBody.hpp"
 #include "AstUtil/Logger.hpp"
 #include "AstUtil/Class.hpp"
+#include "AstUtil/Literals.hpp"
 #include <climits>
 
 AST_NAMESPACE_BEGIN
@@ -77,11 +78,33 @@ HStateKeplerian StateKeplerian::MakeShared(const ModOrbElem &modOrbElem)
     return new StateKeplerian(modOrbElem);
 }
 
+PStateKeplerian StateKeplerian::NewDefault()
+{
+    auto stateKeplerian = new StateKeplerian();
+    auto body = aGetEarth();
+    if(body)
+    {
+        auto frame = body->makeFrameInertial();
+        frame->setName("Inertial");
+        stateKeplerian->setStateEpoch(TimePoint::Default());
+        stateKeplerian->setFrame(frame);
+        ModOrbElem modOrbElem{
+            body->getRadius() + 300_km,
+            0,
+            28.5_deg,
+            0,
+            0,
+            0
+        };
+        stateKeplerian->setState(modOrbElem);
+    }
+    
+    return stateKeplerian;
+}
+
 StateKeplerian::StateKeplerian()
 {
-    auto frame = aGetEarth()->makeFrameInertial();
-    frame->setName("Inertial");
-    this->setFrame(frame);
+    
 }
 
 StateKeplerian::StateKeplerian(const ModOrbElem &modOrbElem)

@@ -1,9 +1,9 @@
 ///
-/// @file      DetectorApoapsis.hpp
+/// @file      ReturnLoader.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-05-03
+/// @date      2026-05-04
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,7 +21,6 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "DetectorBodyRelated.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -31,21 +30,10 @@ AST_NAMESPACE_BEGIN
 */
 
 
-/// @brief 近心点事件检测器
-class AST_CORE_API DetectorApoapsis : public DetectorBodyRelated
-{
-public:
-    AST_OBJECT(DetectorApoapsis)
+class Return;
 
-    static DetectorApoapsis* New();
-
-    DetectorApoapsis();
-
-    double getValue(const SpacecraftState& state, double t) const override;
-};
-
+errc_t aLoadReturn(const Value& value, Return& ret);
 
 /*! @} */
 
 AST_NAMESPACE_END
-

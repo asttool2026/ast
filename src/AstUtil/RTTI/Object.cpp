@@ -37,8 +37,7 @@ AST_NAMESPACE_BEGIN
 
 Object* Object::Resolve(StringView value)
 {
-    /// @todo 实现解析对象的逻辑
-    return nullptr;
+    return aFindObject(nullptr, value);
 }
 
 Object::Object(Object *parentScope)

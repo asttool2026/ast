@@ -21,6 +21,7 @@
 #include "EventDetector.hpp"
 #include "AstMath/ODEEventDetector.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstCore/SpacecraftState.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -34,14 +35,18 @@ public:
     ODEEventDetectorWrap(EventDetector* eventDetector)
         : eventDetector_(eventDetector)
     {
+        spacecraftState_ = SpacecraftState::NewDefault();
     }
     ~ODEEventDetectorWrap() override = default;
     double getValue(const double* y, double x) const override
     {
-        aError("not implemented");
-        return 0;
+        // @todo 这里需要处理其他一般情况
+        CartState* cartState = (CartState*)y;
+        spacecraftState_->getOrbitState()->setState(*cartState);
+        return eventDetector_->getValue(*spacecraftState_, x);
     }
 private:
+    SharedPtr<SpacecraftState> spacecraftState_;    ///< 航天状态实例指针
     SharedPtr<EventDetector> eventDetector_;        ///< 事件检测器实例指针
 };
 

@@ -38,6 +38,7 @@ public:
 
     static DetectorPeriapsis* New();
 
+    DetectorPeriapsis();
 
     double getValue(const SpacecraftState& state, double t) const override;
     

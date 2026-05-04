@@ -128,6 +128,24 @@ Object *ObjectManager::getParentScope(Object *obj)
     return nullptr;
 }
 
+Object *ObjectManager::getAncestorScope(Object *obj, Class*cls)
+{
+    if(!obj || !cls)
+        return nullptr;
+    auto objNode = objects_[obj->index_];
+    auto parentNode = objNode->parentNode_;
+    while(parentNode)
+    {
+        auto parentObject = parentNode->getObject();
+        if(cls == nullptr || cls->cast(parentObject))
+        {
+            return parentObject;
+        }
+        parentNode = parentNode->parentNode_;
+    }
+    return nullptr;
+}
+
 errc_t ObjectManager::setMaxObjectCount(uint32_t maxCount)
 {
     uint32_t count = getObjectCount();

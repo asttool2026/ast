@@ -21,15 +21,39 @@
 #include "Propagate.hpp"
 #include "AstCore/HPOP.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstCore/SpacecraftState.hpp"
+#include "AstCore/OrbitElement.hpp"
+#include "AstMath/ODEIntegrator.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t Propagate::execute()
 {
-    auto inputState   = this->getInputState();     AST_CHECK_NULLPTR(inputState);
-    auto outputState  = this->getOutputState();    AST_CHECK_NULLPTR(outputState);
-    auto propagator   = this->propagator();     AST_CHECK_NULLPTR(propagator);
+    auto inputState   = this->getInputState();        AST_CHECK_NULLPTR(inputState);
+    auto outputState  = this->getOutputState();       AST_CHECK_NULLPTR(outputState);
+    auto propagator   = this->propagator();           AST_CHECK_NULLPTR(propagator);
+    auto integrator   = propagator->getIntegrator();  AST_CHECK_NULLPTR(integrator);
     
+    // 获取初始状态
+    State* orbitState = inputState->getOrbitState();  AST_CHECK_NULLPTR(orbitState);
+    TimePoint startTime;
+    errc_t rc = orbitState->getStateEpoch(startTime); AST_CHECK_ERRCODE(rc, "Failed to get state epoch");
+    CartState cartState;
+    rc = orbitState->getState(cartState);             AST_CHECK_ERRCODE(rc, "Failed to get cart state");
+    
+    TimePoint targetTime = startTime + maxPropTime();
+    // 添加停止条件
+    integrator->clearEventDetectors();
+    for(auto& eventDetector: eventDetectors_)
+    {
+        propagator->getIntegrator()->addEventDetector(eventDetector->newODEEventDetector());
+    }
+    rc = propagator->propagate(startTime, targetTime, cartState.pos(), cartState.vel()); AST_CHECK_ERRCODE(rc, "Failed to propagate");
+    // 保存结果
+    // outputState->setStateEpoch(targetTime);
+    // outputState->setState(cartState);
+    // outputState->setOrbitElement(orbitState->getOrbitElement());
+    // AST_CHECK_ERRCODE(rc, "Failed to set state");
     return 0;
 }
 

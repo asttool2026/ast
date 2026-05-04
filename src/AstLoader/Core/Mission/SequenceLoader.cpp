@@ -42,6 +42,9 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
    
     // 加载公共属性
     aLoadSegment(dictRoot, sequence);
+
+    // 加载重复次数
+    sequence.setRepeatCount(dictRoot["RepeatCount"]);
     
     // 加载序列命令
     {

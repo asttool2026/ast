@@ -32,6 +32,12 @@
 
 AST_NAMESPACE_BEGIN
 
+PState State::NewDefault()
+{
+    return StateKeplerian::NewDefault();
+}
+
+
 HState State::MakeShared(EStateType type)
 {
     return New(type);

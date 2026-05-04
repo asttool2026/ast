@@ -105,6 +105,15 @@ AST_CORE_CAPI errc_t aTimePointParse(StringView str, TimePoint& time);
 class TimePoint
 {
 public:
+    /// @brief 获取默认时间点
+    AST_CORE_API
+    static TimePoint Default();
+
+    /// @brief 获取历元时间点
+    /// @see RunTimeEpoch.cpp
+    AST_CORE_API
+    static TimePoint Epoch();
+
     /// @brief 获取当前时间点
     AST_CORE_API
     static TimePoint CurrentTime();

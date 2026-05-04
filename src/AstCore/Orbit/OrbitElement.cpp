@@ -31,7 +31,8 @@
 #define PI2 kTwoPI
  
 AST_NAMESPACE_BEGIN
- 
+
+using namespace math;
 
 std::string ModOrbElem::toString() const
 {

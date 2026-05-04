@@ -151,6 +151,11 @@ Object *aGetParentScope(Object *obj)
     return ObjectManager::CurrentInstance().getParentScope(obj);
 }
 
+Object *aGetAncestorScope(Object *obj, Class *cls)
+{
+    return ObjectManager::CurrentInstance().getAncestorScope(obj, cls);
+}
+
 std::vector<Object*> aGetAllObjects()
 {
     return ObjectManager::CurrentInstance().getAllObjects();

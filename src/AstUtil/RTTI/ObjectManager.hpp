@@ -76,6 +76,13 @@ public:
     /// @return 父作用域指针
     Object* getParentScope(Object* obj);
 
+
+    /// @brief 获取对象的祖先作用域
+    /// @details obj 对象指针
+    /// @param cls 类指针，如果为空则匹配所有类型
+    /// @return 祖先作用域指针
+    Object* getAncestorScope(Object* obj, Class* cls);
+
     /// @brief 获取对象节点数量
     /// @warning 对象节点数量可能大于对象数量，因为对象节点对应的对象可能已被删除
     /// @return 对象节点数量

@@ -37,10 +37,16 @@ class AST_CORE_API Return : public MissionCommand
 {
 public:
     AST_OBJECT(Return)
+    AST_PROPERT(enabled)
     Return() = default;
     ~Return() = default;
 public:
     errc_t execute() override;
+PROPERTIES:
+    bool enabled() const {return enabled_;}
+    void setEnabled(bool enabled){enabled_ = enabled;}
+private:
+    bool enabled_{true};        ///< 是否启用
 };
 
 

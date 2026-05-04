@@ -20,10 +20,35 @@
 
 #include "ResultLoader.hpp"
 #include "AstCore/ScStateCalcAllHeaders.hpp"
-#include "AstScript/Value.hpp"
 #include "AstCore/Resolve.hpp"
+#include "AstScript/Value.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 
 AST_NAMESPACE_BEGIN
+
+
+ScStateCalculation* aResolveBuiltinScStateCalculation(StringView name)
+{
+    if(name == "Argument_of_Latitude")
+    {
+        auto calculation = new ScStateCalcArgLat();
+        calculation->setName(name);
+        aAddObject(calculation);
+        return calculation;
+    }
+    else
+    {
+        aError("unsupported builtin calculation '%.*s'", name.size(), name.data());
+    }
+    return nullptr;
+}
+
+ScStateCalculation* aResolveScStateCalculation(StringView name)
+{
+    if(auto calc = aFindObject<ScStateCalculation*>(name))
+        return calc;
+    return aResolveBuiltinScStateCalculation(name);
+}
 
 
 
@@ -78,36 +103,79 @@ errc_t aLoadCalculation(const Value& value, ScStateCalcPointRelated& calculation
     return 0;
 }
 
+errc_t aLoadCalculation(const Value& value, ScStateCalcDifference& calculation)
+{
+    {
+        std::string differenceOrderToUse = value["DifferenceOrderToUse"];
+        EDifferenceOrderToUse orderToUse;
+        if(differenceOrderToUse == "Current Minus Initial")
+            orderToUse = EDifferenceOrderToUse::eCurrentMinusInitial;
+        else if(differenceOrderToUse == "Initial Minus Current")
+            orderToUse = EDifferenceOrderToUse::eInitialMinusCurrent;
+        else
+        {
+            orderToUse = EDifferenceOrderToUse::eCurrentMinusInitial;
+            aError("unsupported difference order to use: '%s', use default 'Current Minus Initial'", differenceOrderToUse.c_str());
+        }
+        calculation.setDifferenceOrderToUse(orderToUse);
+    }
+    {
+        auto& calcObject = value["CalcObject"];
+        if(calcObject.isString())
+        {
+            auto calc = aResolveScStateCalculation(calcObject.toString());
+            if(calc)
+                calculation.setCalculation(calc);
+        }
+        else
+        {
+            SharedPtr<ObjectCalculation> result;
+            Object* scope = &calculation;
+            errc_t rc = aLoadResult(calcObject, result, scope);
+            if(rc ==0 && result)
+                calculation.setCalculation(aobject_cast<ScStateCalculation*>(result.get()));
+        }
+    }
+    return 0;
+}
+
+
 errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Object* scope)
 {
     std::string type = value["Type"];
     if(type == "AsStateCalcEccentricity")
     {
-        auto calculation = new ScStateCalcEccentricity();
+        auto calculation = aNewObject<ScStateCalcEccentricity>(scope);
         result = calculation;
         aLoadCalculation(value, *calculation);
     }
     else if(type == "AsStateCalcVx")
     {
-        auto calculation = new ScStateCalcVx();
+        auto calculation = aNewObject<ScStateCalcVx>(scope);
         result = calculation;
         aLoadCalculation(value, *calculation);
     }
     else if(type == "AsStateCalcVy")
     {
-        auto calculation = new ScStateCalcVy();
+        auto calculation = aNewObject<ScStateCalcVy>(scope);
         result = calculation;
         aLoadCalculation(value, *calculation);
     }
     else if(type == "AsStateCalcVz")
     {
-        auto calculation = new ScStateCalcVz();
+        auto calculation = aNewObject<ScStateCalcVz>(scope);
         result = calculation;
         aLoadCalculation(value, *calculation);
     }
     else if(type == "AsStateCalcRMag")
     {
-        auto calculation = new ScStateCalcRMag();
+        auto calculation = aNewObject<ScStateCalcRMag>(scope);
+        result = calculation;
+        aLoadCalculation(value, *calculation);
+    }
+    else if(type == "CAgAsStateCalcDifference")
+    {
+        auto calculation = aNewObject<ScStateCalcDifference>(scope);
         result = calculation;
         aLoadCalculation(value, *calculation);
     }
@@ -117,8 +185,8 @@ errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Obj
         aError("unsupported result type: '%s'", type.c_str());
         return eErrorInvalidParam;
     }
-    if(result)
-        result->setParentScope(scope);
+    // if(result && !result->getParentScope())
+    //     result->setParentScope(scope);
     return eNoError;
 }
 

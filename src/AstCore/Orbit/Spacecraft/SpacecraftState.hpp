@@ -54,6 +54,8 @@ public:
     AST_PROPERT(TankTemperature)
     AST_PROPERT(OrbitState)
 ;
+ 
+    static SpacecraftState* NewDefault();
     
     SpacecraftState() = default;
     ~SpacecraftState() = default;
@@ -111,6 +113,9 @@ PROPERTIES:
     /// @brief 设置轨道状态
     /// @param orbitState 轨道状态
     void setOrbitState(State* orbitState){orbitState_ = orbitState;}
+public:
+    errc_t getState(ModOrbElem& orbElem) const;
+    errc_t getState(CartState& state) const;
 private:
     HState orbitState_;                 ///< 轨道状态
     double cd_{2.2};

@@ -18,6 +18,7 @@ void Return::ClassInit(Class* cls)
     cls->setParent<MissionCommand>();
     cls->setConstructor<Return>();
 
+    cls->addProperty("enabled", aNewPropertyBool<Return, &Return::enabled, &Return::setEnabled>());
 }
 
 AST_NAMESPACE_END

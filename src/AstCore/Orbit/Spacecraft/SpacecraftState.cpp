@@ -19,9 +19,29 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "SpacecraftState.hpp"
+#include "AstCore/State.hpp"
 
 AST_NAMESPACE_BEGIN
 
+errc_t SpacecraftState::getState(ModOrbElem& orbElem) const
+{
+    if(!orbitState_)
+        return eErrorNullPtr;
+    return orbitState_->getState(orbElem);
+}
 
+errc_t SpacecraftState::getState(CartState& state) const
+{
+    if(!orbitState_)
+        return eErrorNullPtr;
+    return orbitState_->getState(state);
+}
+
+SpacecraftState* SpacecraftState::NewDefault()
+{
+    auto scState = new SpacecraftState();
+    scState->setOrbitState(State::NewDefault());
+    return scState;
+}
 
 AST_NAMESPACE_END

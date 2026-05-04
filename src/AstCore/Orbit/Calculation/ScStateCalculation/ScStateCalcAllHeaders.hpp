@@ -141,6 +141,7 @@
 #include "ScStateCalcDamageFlux.hpp"
 #include "ScStateCalcMatlab.hpp"
 #include "ScStateCalcDeltaFromMaster.hpp"
+#include "ScStateCalcDifference.hpp"
 #include "ScStateCalcRelGroundTrackError.hpp"
 #include "ScStateCalcRelAOLMaster.hpp"
 #include "ScStateCalcOrbitDelaunayG.hpp"

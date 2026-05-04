@@ -56,6 +56,9 @@ public:
     AST_PROPERT(Frame)
     AST_PROPERT(StateEpoch)
 ;
+
+    static PState NewDefault();
+
     State() = default;
     ~State() override = default;
 
@@ -93,6 +96,11 @@ public:
     /// @param state 状态
     /// @return errc_t 错误码
     virtual errc_t getState(CartState& state) const = 0;
+
+    /// @brief 获取状态
+    /// @param orbElem 轨道根数
+    /// @return errc_t 错误码
+    virtual errc_t getState(ModOrbElem& orbElem) const = 0;
 
     /// @brief 设置状态
     /// @param state 状态

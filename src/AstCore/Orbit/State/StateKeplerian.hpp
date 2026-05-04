@@ -108,10 +108,12 @@ public:
     AST_PROPERT(ArgLat)
     AST_PROPERT(TimePastPeri)
     AST_PROPERT(TimePastAscNode)
+    
     static PStateKeplerian New();
     static HStateKeplerian MakeShared();
     static PStateKeplerian New(const ModOrbElem& modOrbElem);
     static HStateKeplerian MakeShared(const ModOrbElem& modOrbElem);
+    static PStateKeplerian NewDefault();
 
     StateKeplerian();
     StateKeplerian(const ModOrbElem& modOrbElem);
@@ -125,7 +127,7 @@ public:
     void setState(OrbElem& orbElem);
     void getState(OrbElem& orbElem) const;
     void setState(const ModOrbElem& modOrbElem){ modOrbElem_ = modOrbElem; }
-    void getState(ModOrbElem& modOrbElem) const { modOrbElem = modOrbElem_; }
+    errc_t getState(ModOrbElem& modOrbElem) const override { modOrbElem = modOrbElem_; return eNoError; }
 public:
     /// @brief 获取在内部表示方式下的状态
     void getInnerRepresentationState(array6d& stateInRepresentation) const;

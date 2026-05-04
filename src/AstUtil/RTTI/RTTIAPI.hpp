@@ -176,6 +176,14 @@ AST_UTIL_API std::vector<Object*> aFindObjects(Class* cls, StringView name=Strin
 /// @return 对象指针
 AST_UTIL_API Object* aFindObject(Class* cls, StringView name=StringView());
 
+template<typename T>
+T aFindObject(StringView name=StringView())
+{
+    // @todo: 这里逻辑和aobject_cast<T>的重复了，考虑怎么重构
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aFindObject requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(aFindObject(ObjectType::StaticType(), name));
+}
 
 /// @brief 设置对象的父作用域
 /// @details obj 对象指针
@@ -189,6 +197,12 @@ AST_UTIL_CAPI errc_t aSetParentScope(Object* obj, Object* parentScope);
 /// @return 父作用域指针
 AST_UTIL_CAPI Object* aGetParentScope(Object* obj);
 
+
+/// @brief 获取对象的祖先作用域
+/// @details obj 对象指针
+/// @param cls 类指针，如果为空则匹配所有类型
+/// @return 祖先作用域指针
+AST_UTIL_CAPI Object* aGetAncestorScope(Object* obj, Class* cls);
 
 /// @brief 获取所有对象
 /// @details 获取所有已添加的对象

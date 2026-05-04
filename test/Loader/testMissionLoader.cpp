@@ -45,10 +45,10 @@ TEST(MissionLoaderTest, LoadHohmannTransfer)
         EXPECT_EQ(rc, eNoError);
         rc = aResolveAllLinks();
         EXPECT_EQ(rc, eNoError);
-        SpacecraftState initialState;
+        SharedPtr<SpacecraftState> initialState = SpacecraftState::NewDefault();
         if(auto segment = aobject_cast<Segment*>(missionCommand.get()))
         {
-            segment->setInputState(&initialState);
+            segment->setInputState(initialState.get());
         }
         rc = missionCommand->execute();
         EXPECT_EQ(rc, eNoError);

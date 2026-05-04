@@ -79,8 +79,7 @@ errc_t aLoadMissionCommand(const Value& value, SharedPtr<MissionCommand>& missio
     {
         SharedPtr<Return> ret = new Return();
         missionCommand = ret;
-        // return aLoadReturn(value, *ret);
-        return eNoError;
+        return aLoadReturn(value, *ret);
     }
     else if(type == "TargeterSequence")
     {

@@ -170,30 +170,39 @@ HPOP* aResolvePropagator(StringView propagatorName)
     return aResolveBuiltinPropagator(propagatorName);
 }
 
-errc_t aLoadPropagate(const Value& dictRoot, Propagate& propagate)
+errc_t aLoadPropagate(const Value& value, Propagate& propagate)
 {
     errc_t rc;
-    const std::string type = dictRoot["Type"];
+    const std::string type = value["Type"];
     if(type != "Propagate")
     {
         aError("invalid type, expect 'Propagate'");
         return eErrorInvalidParam;
     }
     // 加载公共属性
-    rc = aLoadSegment(dictRoot, propagate);
+    rc = aLoadSegment(value, propagate);
     
     // 加载停止条件
-    rc = aLoadStoppingConditions(dictRoot["StoppingConditions"], propagate);
+    rc = aLoadStoppingConditions(value["StoppingConditions"], propagate);
 
     // 加载预报器
     {
-        std::string propagatorName = dictRoot["Propagator"];
+        std::string propagatorName = value["Propagator"];
         HPOP* propagator = aResolvePropagator(propagatorName);
         if(!propagator)
         {
             aError("failed to resolve propagator '%s'", propagatorName.c_str());
         }
         propagate.setPropagator(propagator);
+    }
+
+    // 其他配置参数
+    {
+        propagate.setMinPropTime(value["MinPropTime"]);
+        propagate.setMaxPropTime(value["MaxPropTime"]);
+        propagate.setUseMaxPropTime(value["UseMaxPropTime"]);
+        propagate.setUseMaxPropTimeWarn(value["UseMaxPropTimeWarn"]);
+        propagate.setOverrideMaxPropTime(value["OverrideMaxPropTime"]);
     }
 
     return eNoError;

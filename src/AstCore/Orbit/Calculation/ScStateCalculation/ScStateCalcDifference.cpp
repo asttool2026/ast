@@ -20,14 +20,44 @@
 
 #include "ScStateCalcDifference.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/RTTIAPI.hpp"
+#include "AstCore/Segment.hpp"
 
 AST_NAMESPACE_BEGIN
 
+void ScStateCalcDifference::setCalculation(ScStateCalculation* calculation)
+{
+    if(!calculation)
+        return;
+    if(!calculation->getParentScope())
+        calculation->setParentScope(this);
+    calculation_ = calculation;
+}
+
+Segment* ScStateCalcDifference::getSegment()
+{
+    if(auto segment = segment_.get())
+        return segment;
+    Segment* segment = (Segment*)aGetAncestorScope(this, Segment::StaticType());
+    segment_ = segment;
+    return segment;
+}
+
 errc_t ScStateCalcDifference::calculate(const SpacecraftState& state, double& result)
 {
-    // TODO: Implement difference calculation
-    aError("not implemented");
-    return -1;
+    auto segment = getSegment();                    AST_CHECK_NULLPTR(segment);
+    auto calculation = this->calculation();         AST_CHECK_NULLPTR(calculation);
+    auto inputState = segment->getInputState();     AST_CHECK_NULLPTR(inputState);
+    errc_t rc;
+    double initialValue;
+    rc = calculation->calculate(*inputState, initialValue);  AST_CHECK_ERRCODE(rc, "calculation failed");
+    double currentValue;
+    rc = calculation->calculate(state, currentValue);   AST_CHECK_ERRCODE(rc, "calculation failed");
+    if(differenceOrderToUse() == EDifferenceOrderToUse::eCurrentMinusInitial)
+        result = currentValue - initialValue;
+    else
+        result = initialValue - currentValue;
+    return rc;
 }
 
 AST_NAMESPACE_END

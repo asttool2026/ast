@@ -19,6 +19,9 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "DetectorApoapsis.hpp"
+#include "AstCore/SpacecraftState.hpp"
+#include "AstCore/OrbitElement.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -27,10 +30,21 @@ DetectorApoapsis* DetectorApoapsis::New()
     return new DetectorApoapsis();
 }
 
-double DetectorApoapsis::getValue(const SpacecraftState& state, double t) const
+DetectorApoapsis::DetectorApoapsis()
 {
-    aError("not implemented");
-    return 0;
+    this->setDirection(EDirection::eIncrease);
+}
+
+
+double DetectorApoapsis::getValue(const SpacecraftState& scState, double t) const
+{
+    auto body = this->body();
+    auto state = scState.getOrbitState();
+    // @todo: 处理其他天体的情况
+    CartState cartState;
+    errc_t rc = state->getState(cartState);
+    double v = cartState.vel().dot(cartState.pos().normalized());
+    return v;
 }
 
 AST_NAMESPACE_END

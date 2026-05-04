@@ -350,6 +350,9 @@ class Quaternion;            ///< 四元数
 class Euler;                 ///< 欧拉角
 
 class CartState;             ///< 直角坐标
+class ModOrbElem;            ///< 改进轨道根数
+class OrbElem;               ///< 经典轨道根数
+
 class State;
 class StateCartesian;
 class StateKeplerian;
