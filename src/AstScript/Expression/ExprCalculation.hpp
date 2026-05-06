@@ -68,7 +68,7 @@ public:
     /// @brief 计算表达式
     /// @param val 计算结果
     /// @return 错误码
-    errc_t calculate(double& val);
+    errc_t calculate(double& val) const;
 
 public:
     Object* object() const {return object_.get();}

@@ -19,6 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ShooterControl.hpp"
+#include "AstScript/Value.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -27,7 +28,28 @@ ShooterControl* ShooterControl::New()
     return new ShooterControl();
 }
 
+errc_t ShooterControl::setValue(double value) const
+{
+    if(auto expr = expr_.lock())
+    {
+        return expr->setValue(aNewValueDouble(value));
+    }
+    return eErrorNullPtr;
+}
 
+errc_t ShooterControl::getValue(double& value) const
+{
+    if(auto expr = expr_.lock())
+    {
+        SharedPtr<Value> val = expr->eval();
+        if(val)
+        {
+            value = val->toDouble();
+            return eNoError;
+        }
+    }
+    return eErrorNullPtr;
+}
 
 
 AST_NAMESPACE_END

@@ -38,7 +38,12 @@ ExprCalculation::ExprCalculation(Object* obj, ObjectCalculation* calc)
 
 Value* ExprCalculation::eval() const
 {
-    aWarning("not implemented");
+    double value;
+    errc_t ret = calculate(value);
+    if(ret == eNoError)
+    {
+        return aNewValueDouble(value);
+    }
     return nullptr;
 }
 
@@ -54,7 +59,7 @@ std::string ExprCalculation::getExpression(Object * context) const
     return {};
 }
 
-errc_t ExprCalculation::calculate(double& val)
+errc_t ExprCalculation::calculate(double& val) const
 {
     if (!typeMatched_)
     {

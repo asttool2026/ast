@@ -67,6 +67,12 @@ PROPERTIES:
     double totalCorrection() const { return totalCorrection_; }
     void setTotalCorrection(double totalCorrection) { totalCorrection_ = totalCorrection; }
 
+    /// @brief 设置变量的值
+    errc_t setValue(double value) const;
+
+    /// @brief 获取变量的值
+    errc_t getValue(double& value) const;
+
     Expr* expr() const { return expr_.get(); }
     void setExpr(Expr* expr) { expr_ = expr; }
 private:

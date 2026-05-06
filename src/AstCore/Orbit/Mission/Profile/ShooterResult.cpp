@@ -19,6 +19,8 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ShooterResult.hpp"
+#include "AstScript/Expr.hpp"
+#include "AstScript/Value.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -27,5 +29,18 @@ ShooterResult* ShooterResult::New()
     return new ShooterResult();
 }
 
+errc_t ShooterResult::getValue(double& value) const
+{
+    if(auto expr = expr_.lock())
+    {
+        SharedPtr<Value> val = expr->eval();
+        if(val)
+        {
+            value = val->toDouble();
+            return eNoError;
+        }
+    }
+    return eErrorNullPtr;
+}
 
 AST_NAMESPACE_END

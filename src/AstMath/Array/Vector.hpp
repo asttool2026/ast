@@ -115,9 +115,9 @@ public:
     void resize(size_t size);
     void setZero();
     A_DEF_ITERABLE(_Scalar, data_, size_)
-public:
-    _Scalar* data_;
-    size_t   size_;
+private:
+    _Scalar* data_{nullptr};
+    size_t   size_{0};
 };
 
 
@@ -157,7 +157,7 @@ inline VectorX<_Scalar>::VectorX(size_t size)
     : size_{ size }
     , data_((_Scalar*)malloc(sizeof(_Scalar)* size))
 {
-
+    setZero();
 }
 
 
