@@ -22,12 +22,17 @@
 #include "AstUtil/Logger.hpp"
 #include "AstCore/BurnImpulsive.hpp"
 #include "AstCore/AxesLinkTo.hpp"
+#include "AstCore/LocalOrbitFrame.hpp"
+#include "AstCore/OrbitElement.hpp"
+#include "AstMath/Rotation.hpp"
+#include "AstMath/KinematicRotation.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t Maneuver::execute()
 {
-    auto inputState = this->getInputState(); AST_CHECK_NULLPTR(inputState);
+    const auto inputState = this->getInputState();  AST_CHECK_NULLPTR(inputState);
+    auto outputState = this->getOutputState();      AST_CHECK_NULLPTR(outputState);
     auto burn = this->burn();
     if(burn == nullptr)
     {
@@ -44,7 +49,26 @@ errc_t Maneuver::execute()
             if(AxesLinkTo* axesLink = aobject_cast<AxesLinkTo*>(thrustAxes))
             {
                 std::string name = axesLink->name();
-                aInfo("thrustAxes is '%s'", name.c_str());
+                
+                // aInfo("thrustAxes is '%s'", name.c_str());
+
+                if(name == "VNC(Earth)")
+                {
+                    CartState cartState;
+                    errc_t rc = inputState->getStateInBodyInertial(aGetEarth(), cartState);
+                    if(rc)
+                        aWarning("failed to get state in body inertial");
+                    Rotation rotation;
+                    aVNCToFrameTransform(cartState.pos(), cartState.vel(), rotation);
+                    // @todo: 这里只能用于地球预报器
+                    impulse = rotation.transformVector(impulse);   // 从VNC(Earth)转换到 Earth Inertial
+                    cartState.vel() += impulse;
+                    TimePoint tp;
+                    inputState->getStateEpoch(tp);
+                    outputState->setStateEpoch(tp);
+                    outputState->setState(cartState);
+                    return 0;
+                }
             }
             else
             {
@@ -56,7 +80,7 @@ errc_t Maneuver::execute()
     {
         aWarning("unsupported burn type");
     }
-    this->getOutputState()->copyFrom(*inputState);
+    outputState->copyFrom(*inputState);
     return 0;
 }
 

@@ -27,11 +27,11 @@
 
 AST_NAMESPACE_BEGIN
 
-#define AST_DEBUG_PROPAGATE
+// #define AST_DEBUG_PROPAGATE
 
 errc_t Propagate::execute()
 {
-    auto inputState   = this->getInputState();        AST_CHECK_NULLPTR(inputState);
+    const auto inputState   = this->getInputState();  AST_CHECK_NULLPTR(inputState);
     auto outputState  = this->getOutputState();       AST_CHECK_NULLPTR(outputState);
     auto propagator   = this->propagator();           AST_CHECK_NULLPTR(propagator);
     auto integrator   = propagator->getIntegrator();  AST_CHECK_NULLPTR(integrator);

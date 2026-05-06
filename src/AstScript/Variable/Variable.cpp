@@ -22,6 +22,8 @@
 #include "AstScript/Value.hpp"
 #include "AstUtil/ParseFormat.hpp"
 #include "AstUtil/QuantityParser.hpp"
+#include "AstUtil/Quantity.hpp"
+#include "AstUtil/UnitManager.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -128,29 +130,42 @@ std::string Variable::value() const
     return {};
 }
 
-void Variable::setValue(StringView value)
+errc_t Variable::setValue(StringView value)
 {
     SharedPtr<Value> val = eval();
     if(val)
     {
         if(val->isQuantity())
         {
-            this->setValue(aNewValue(aQuantityParse(value)));
+            Quantity quantityNew;
+            aQuantityParse(value, quantityNew);
+            if(quantityNew.dimension() == EDimension::eUnit)
+            {
+                Quantity quantityOld = val->toQuantity();
+                if(quantityOld.dimension() != EDimension::eUnit)
+                {
+                    if(auto punit = aUnitGetSI(quantityOld.dimension()))
+                    {
+                        quantityNew.setUnit(*punit);
+                    }
+                }
+            }
+            return this->setValue(aNewValue(quantityNew));
         }
         else if(val->isDouble())
         {
-            this->setValue(aNewValue(aParseDouble(value)));
+            return this->setValue(aNewValue(aParseDouble(value)));
         }
         else if(val->isInt())
         {
-            this->setValue(aNewValue(aParseInt(value)));
+            return this->setValue(aNewValue(aParseInt(value)));
         }
         else if(val->isBool())
         {
-            this->setValue(aNewValue(aParseBool(value)));
+            return this->setValue(aNewValue(aParseBool(value)));
         }
     }
-    setValue(aNewValue(value));
+    return setValue(aNewValue(value));
 }
 
 AST_NAMESPACE_END

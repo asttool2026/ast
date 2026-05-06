@@ -46,6 +46,21 @@ errc_t SpacecraftState::getState(CartState& state) const
     return getOrbitState()->getState(state);
 }
 
+errc_t SpacecraftState::getStateIn(Frame* frame, CartState& state) const
+{
+    return getOrbitState()->getStateIn(frame, state);
+}
+
+errc_t SpacecraftState::getStateIn(Frame* frame, ModOrbElem& orbElem) const
+{
+    return getOrbitState()->getStateIn(frame, orbElem);
+}
+
+errc_t SpacecraftState::getStateInBodyInertial(Body* body, CartState& state) const
+{
+    return getOrbitState()->getStateInBodyInertial(body, state);
+}
+
 errc_t SpacecraftState::setState(const ModOrbElem& orbElem)
 {
     return getOrbitState()->setState(orbElem);

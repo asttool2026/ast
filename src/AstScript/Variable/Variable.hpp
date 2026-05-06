@@ -123,7 +123,7 @@ public:
     Expr* expr() const { return expr_.get(); }
 PROPERTIES:
     std::string value() const;
-    void setValue(StringView value);
+    errc_t setValue(StringView value);
 protected:
     std::string name_;            ///< 变量的名称
     SharedPtr<Expr> expr_;        ///< 变量的值，或者绑定的表达式

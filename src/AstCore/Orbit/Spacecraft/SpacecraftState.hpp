@@ -117,6 +117,9 @@ public:
     Frame* getFrame() const;
     errc_t getState(ModOrbElem& orbElem) const;
     errc_t getState(CartState& state) const;
+    errc_t getStateIn(Frame* frame, CartState& state) const;
+    errc_t getStateIn(Frame* frame, ModOrbElem& orbElem) const;
+    errc_t getStateInBodyInertial(Body* body, CartState& state) const;
     errc_t setState(const ModOrbElem& orbElem);
     errc_t setState(const CartState& state);
     void setStateEpoch(const TimePoint& stateEpoch);

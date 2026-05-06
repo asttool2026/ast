@@ -27,6 +27,8 @@
 
 AST_NAMESPACE_BEGIN
 
+// #define AST_DEBUG_SCRIPT_EXECUTOR
+
 
 errc_t ScriptExecutor::setVariable(Variable* var)
 {
@@ -37,6 +39,11 @@ errc_t ScriptExecutor::setVariable(Variable* var)
         aError("failed to evaluate variable: '%s'", var->getName().c_str());
         return eErrorInvalidParam;
     }
+
+    #ifdef AST_DEBUG_SCRIPT_EXECUTOR
+    aInfo("setVariable: `%s = %s`", var->getName().c_str(), value->getExpression().c_str());
+    #endif
+
     if(value->isBool())
     {
         bool val = value->toBool();
@@ -74,14 +81,26 @@ errc_t ScriptExecutor::getVariable(Variable* var)
         double value;
         errc_t rc = this->getVariable(var->getName(), value);
         if(rc == eNoError)
+        {
+            #ifdef AST_DEBUG_SCRIPT_EXECUTOR
+            aInfo("getVariable: `%s = %lf`", var->getName().c_str(), value);
+            #endif
+
             return var->setValue(aNewValueDouble(value));
+        }
     }
     // 如果double类型转换失败，则尝试获取string类型
     {
         std::string value;
         errc_t rc = this->getVariable(var->getName(), value);
         if(rc == eNoError)
+        {
+            #ifdef AST_DEBUG_SCRIPT_EXECUTOR
+            aInfo("getVariable: `%s = %s`", var->getName().c_str(), value.c_str());
+            #endif
+            
             return var->setValue(aNewValueString(value));
+        }
     }
     aError("failed to get variable: '%s'", var->getName().c_str());
     return eErrorInvalidParam;
