@@ -27,6 +27,7 @@
 #include "ShooterResultLoader.hpp"
 #include "AstScript/Value.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 #include <vector>
 
 AST_NAMESPACE_BEGIN
@@ -171,7 +172,7 @@ errc_t aLoadDifferentialCorrectorProfile(const Value& value, DifferentialCorrect
         std::vector<SharedPtr<ShooterControl>> controls;
         for(const auto& item : dictControls.items())
         {
-            auto control = ShooterControl::New();
+            auto control = aNewObject<ShooterControl>(&profile);
             const auto& dictControl = *item.second;
             aLoadShooterControl(dictControl, *control);
             control->setName(item.first);
@@ -186,7 +187,7 @@ errc_t aLoadDifferentialCorrectorProfile(const Value& value, DifferentialCorrect
         std::vector<SharedPtr<ShooterResult>> results;
         for(const auto& item : dictResults.items())
         {
-            auto result = ShooterResult::New();
+            auto result = aNewObject<ShooterResult>(&profile);
             const auto& dictResult = *item.second;
             aLoadShooterResult(dictResult, *result);
             result->setName(item.first);

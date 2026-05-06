@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstScript/Expr.hpp"
 #include "AstUtil/Object.hpp"
 #include "AstUtil/ObjectNamed.hpp"
 #include <string>
@@ -66,8 +67,11 @@ PROPERTIES:
     double totalCorrection() const { return totalCorrection_; }
     void setTotalCorrection(double totalCorrection) { totalCorrection_ = totalCorrection; }
 
+    Expr* expr() const { return expr_.get(); }
+    void setExpr(Expr* expr) { expr_ = expr; }
 private:
     bool active_{true};             ///< 是否激活
+    WeakPtr<Expr> expr_;            ///< 表达式
     double correction_{0.0};        ///< 修正值
     double maxStep_{100.0};         ///< 最大步长
     double perturbation_{0.1};      ///< 扰动值

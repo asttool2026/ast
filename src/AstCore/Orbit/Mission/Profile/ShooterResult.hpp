@@ -62,9 +62,12 @@ PROPERTIES:
     double weight() const { return weight_; }
     void setWeight(double weight) { weight_ = weight; }
     
+    Expr* expr() const { return expr_.get(); }
+    void setExpr(Expr* expr) { expr_ = expr; }
 private:
     bool active_{false};        ///< 是否激活
     bool valid_{true};          ///< 数值是否有效
+    WeakPtr<Expr> expr_;        ///< 计算表达式
     double desired_{0.0};       ///< 目标值
     double scale_{1.0};         ///< 缩放因子
     double tolerance_{0.0};     ///< 容差

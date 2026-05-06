@@ -19,9 +19,13 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ShooterControlLoader.hpp"
-#include "AstCore/ShooterControl.hpp"
 #include "AstScript/Value.hpp"
+#include "AstScript/ExprAttribute.hpp"
+#include "AstCore/ShooterControl.hpp"
+#include "AstCore/Sequence.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/RTTIAPI.hpp"
+#include "AstLoader/AttributeResolve.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -41,7 +45,28 @@ errc_t aLoadShooterControl(const Value& value, ShooterControl& control)
     control.setScale(value["Scale"]);
     control.setTolerance(value["Tolerance"]);
     control.setTotalCorrection(value["TotalCorrection"]);
-
+    {
+        std::string parentSegmentName = value["ParentSegmentName"];
+        std::string controlName = value["ControlName"];
+        Sequence* sequence = aGetAncestorScope<Sequence*>(&control);
+        if(!sequence)
+        {
+            aError("failed to get sequence for control '%s'", controlName.c_str());
+            return eErrorNullPtr;
+        }
+        auto command = sequence->getCommandByPath(parentSegmentName);
+        if(!command)
+        {
+            aError("failed to get command '%s' for control '%s'", parentSegmentName.c_str(), controlName.c_str());
+            return eErrorNullPtr;
+        }
+        Attribute attr = aResolveAttribute(command, controlName);
+        if(!attr.isValid())
+            aWarning("failed to resolve attribute '%s' for control '%s'", controlName.c_str(), parentSegmentName.c_str());
+        Expr* expr = new ExprAttribute(attr);
+        expr->setParentScope(&control);
+        control.setExpr(expr);
+    }
     return 0;
 }
 

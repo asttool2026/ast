@@ -132,6 +132,8 @@ Object *ObjectManager::getAncestorScope(Object *obj, Class*cls)
 {
     if(!obj || !cls)
         return nullptr;
+    if(obj->index_ == static_cast<uint32_t>(INVALID_ID))
+        return nullptr;
     auto objNode = objects_[obj->index_];
     auto parentNode = objNode->parentNode_;
     while(parentNode)

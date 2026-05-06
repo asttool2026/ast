@@ -20,7 +20,11 @@
 
 #include "ShooterResultLoader.hpp"
 #include "AstCore/ShooterResult.hpp"
+#include "AstCore/Sequence.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/RTTIAPI.hpp"
+#include "AstUtil/ObjectCalculation.hpp"
+#include "AstScript/ExprCalculation.hpp"
 #include "AstScript/Value.hpp"
 
 AST_NAMESPACE_BEGIN
@@ -40,7 +44,35 @@ errc_t aLoadShooterResult(const Value& value, ShooterResult& result)
     result.setTolerance(value["Tolerance"]);
     result.setWeight(value["Weight"]);
     result.setValid(value["Valid"]);
-
+    {
+        std::string resultName = value["ResultName"];
+        std::string parentSegmentName = value["ParentSegmentName"];
+        std::string parentType = value["ParentType"];
+        std::string calcType = value["CalcType"];
+        A_UNUSED(parentType);
+        A_UNUSED(calcType);
+        Sequence* sequence = aGetAncestorScope<Sequence*>(&result);
+        if(sequence == nullptr)
+        {
+            aError("failed to find parent sequence '%s'", parentSegmentName.c_str());
+            return -1;
+        }
+        auto command = sequence->getCommandByPath(parentSegmentName);
+        if(!command)
+        {
+            aError("failed to get command '%s' for result '%s'", parentSegmentName.c_str(), resultName.c_str());
+            return -1;
+        }
+        auto calculation = aFindChild<ObjectCalculation*>(command, resultName);
+        if(calculation == nullptr)
+        {
+            aError("failed to find result object '%s'", resultName.c_str());
+            return -1;
+        }
+        Expr* expr = new ExprCalculation(command, calculation);
+        expr->setParentScope(&result);
+        result.setExpr(expr);
+    }
     return 0;
 }
 
