@@ -53,6 +53,7 @@ errc_t aLoadTargeterSequence(const Value& dictRoot, TargeterSequence& sequence)
         errc_t rc = aLoadTargeterProfile(dictProfile, profile, &sequence);
         if(!rc && profile != nullptr)
         {
+            profile->setName(name);
             profiles.push_back(profile);
         }else
         {

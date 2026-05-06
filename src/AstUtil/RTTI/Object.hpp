@@ -264,6 +264,12 @@ public: // 对象ID
     /// @param typeName 类型名
     /// @return bool 是否为指定类型的实例   
     bool isOfType(StringView typeName) const;
+
+    /// @brief 判断对象是否为指定类型的实例
+    /// @param T 类型参数
+    template<typename T>
+    bool isOfType() const;
+
 public: // 引用计数
     /// @brief 获取强引用计数
     /// @return uint32_t 强引用计数
@@ -427,6 +433,14 @@ T aobject_cast(Object* obj)
     using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
     static_assert(has_own_getType<ObjectType>::value, "aobject_cast requires the type to has a AST_OBJECT macro");
     return static_cast<T>(ObjectType::StaticType()->cast(obj));
+}
+
+template<typename T>
+bool Object::isOfType() const
+{
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "isOfType requires the type to has a AST_OBJECT macro");
+    return isOfType(ObjectType::StaticType());
 }
 
 /*! @} */

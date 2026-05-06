@@ -18,6 +18,7 @@ void Maneuver::ClassInit(Class* cls)
     cls->setParent<Segment>();
     cls->setConstructor<Maneuver>();
 
+    cls->addProperty("burn", aNewPropertyObject<Maneuver, Burn, &Maneuver::burn, &Maneuver::setBurn>());
 }
 
 AST_NAMESPACE_END

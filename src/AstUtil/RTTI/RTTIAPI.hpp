@@ -206,6 +206,15 @@ AST_UTIL_CAPI Object* aGetParentScope(Object* obj);
 /// @return 祖先作用域指针
 AST_UTIL_CAPI Object* aGetAncestorScope(Object* obj, Class* cls);
 
+template<typename T>
+T aGetAncestorScope(Object* obj)
+{
+    // @todo: 这里逻辑和aobject_cast<T>的重复了，考虑怎么重构
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aGetAncestorScope requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(aGetAncestorScope(obj, ObjectType::StaticType()));
+}
+
 /// @brief 获取所有对象
 /// @details 获取所有已添加的对象
 /// @return 所有对象指针向量

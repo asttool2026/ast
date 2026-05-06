@@ -21,23 +21,32 @@
 #include "SegmentLoader.hpp"
 #include "ResultLoader.hpp"
 #include "SpacecraftStateLoader.hpp"
+#include "AttributeResolve.hpp"
 #include "AstCore/Segment.hpp"
 #include "AstCore/Resolve.hpp"
 #include "AstUtil/ObjectCalculation.hpp"
 #include "AstUtil/ObjectLinker.hpp"
 #include "AstUtil/RTTIAPI.hpp"
+#include "AstUtil/Attribute.hpp"
+#include "AstUtil/Logger.hpp"
 #include "AstScript/Value.hpp"
 #include "AstScript/ExprAttribute.hpp"
+
+
 
 AST_NAMESPACE_BEGIN
 
 
 errc_t aLoadShooterControl(const Value& value, SharedPtr<ExprAttribute>& control, Object* scope)
 {
-    Attribute attr(scope, nullptr);
     std::string attrPath = value.toString();
-    aWarning("todo: resolve attribute %s", attrPath.c_str());
+    Attribute attr = aResolveAttribute(scope, attrPath);
     control = new ExprAttribute(attr);
+    control->setParentScope(scope);
+    if(!attr.isValid())
+    {
+        aWarning("failed to resolve attribute '%.*s'", attrPath.size(), attrPath.data());
+    }
     return 0;   
 }
 

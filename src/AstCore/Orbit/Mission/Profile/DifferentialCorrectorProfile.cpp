@@ -34,5 +34,23 @@ errc_t DifferentialCorrectorProfile::execute()
     return -1;
 }
 
+ShooterResult* DifferentialCorrectorProfile::getResult(StringView name) const
+{
+    for(auto& result : results_)
+        if(name == result->name())
+            return result.get();
+    return nullptr;
+}
+
+ShooterControl* DifferentialCorrectorProfile::getControl(StringView name) const
+{
+    for(auto& control : controls_)
+        if(name == control->name())
+            return control.get();
+    return nullptr;
+}
+
+
+
 AST_NAMESPACE_END
 

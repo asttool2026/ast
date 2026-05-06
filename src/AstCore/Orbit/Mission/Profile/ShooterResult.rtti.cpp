@@ -18,6 +18,12 @@ void ShooterResult::ClassInit(Class* cls)
     cls->setParent<ObjectNamed>();
     cls->setConstructor<ShooterResult>();
 
+    cls->addProperty("active", aNewPropertyBool<ShooterResult, &ShooterResult::active, &ShooterResult::setActive>());
+    cls->addProperty("desired", aNewPropertyDouble<ShooterResult, &ShooterResult::desired, &ShooterResult::setDesired>());
+    cls->addProperty("scale", aNewPropertyDouble<ShooterResult, &ShooterResult::scale, &ShooterResult::setScale>());
+    cls->addProperty("tolerance", aNewPropertyDouble<ShooterResult, &ShooterResult::tolerance, &ShooterResult::setTolerance>());
+    cls->addProperty("valid", aNewPropertyBool<ShooterResult, &ShooterResult::valid, &ShooterResult::setValid>());
+    cls->addProperty("weight", aNewPropertyDouble<ShooterResult, &ShooterResult::weight, &ShooterResult::setWeight>());
 }
 
 AST_NAMESPACE_END

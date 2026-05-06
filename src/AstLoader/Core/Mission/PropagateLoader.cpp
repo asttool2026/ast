@@ -135,7 +135,10 @@ errc_t aLoadStoppingConditions(const Value& dict, Propagate& propagate)
             aWarning("failed to load stopping condition '%s' with type '%s'", name.c_str(), type.c_str());
         }
         else
+        {
+            eventDetector->setName(name);
             eventDetectors.push_back(eventDetector);
+        }
     }
     propagate.setEventDetectors(eventDetectors);
     return eNoError;
@@ -179,9 +182,7 @@ errc_t aLoadPropagate(const Value& value, Propagate& propagate)
         aError("invalid type, expect 'Propagate'");
         return eErrorInvalidParam;
     }
-    // 加载公共属性
-    rc = aLoadSegment(value, propagate);
-    
+
     // 加载停止条件
     rc = aLoadStoppingConditions(value["StoppingConditions"], propagate);
 
@@ -204,7 +205,9 @@ errc_t aLoadPropagate(const Value& value, Propagate& propagate)
         propagate.setUseMaxPropTimeWarn(value["UseMaxPropTimeWarn"]);
         propagate.setOverrideMaxPropTime(value["OverrideMaxPropTime"]);
     }
-
+    // 加载公共属性
+    rc = aLoadSegment(value, propagate);
+    
     return eNoError;
 }
 

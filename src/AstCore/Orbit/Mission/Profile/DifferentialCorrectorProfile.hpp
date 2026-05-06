@@ -73,6 +73,14 @@ class AST_CORE_API DifferentialCorrectorProfile : public TargeterProfile
 {
 public:
     AST_OBJECT(DifferentialCorrectorProfile)
+    AST_PROPERT(useHomotopy)
+    AST_PROPERT(numHomotopySteps)
+    AST_PROPERT(useLineSearch)
+    AST_PROPERT(lineSearchTolerance)
+    AST_PROPERT(lineSearchMaxNumCalls)
+    AST_PROPERT(lineSearchLowerBound)
+    AST_PROPERT(lineSearchUpperBound)
+    AST_PROPERT(maxIterations)
     using ControlVector = std::vector<SharedPtr<ShooterControl>>;
     using ResultVector = std::vector<SharedPtr<ShooterResult>>;
     using TargeterGraphVector = std::vector<SharedPtr<TargeterGraph>>;
@@ -85,6 +93,7 @@ public:
     errc_t execute() override;
 
 
+PROPERTIES:
     bool useHomotopy() const{return useHomotopy_;}
     void setUseHomotopy(bool useHomotopy){useHomotopy_ = useHomotopy;}
     
@@ -109,7 +118,7 @@ public:
     
     int maxIterations() const{return maxIterations_;}
     void setMaxIterations(int maxIterations){maxIterations_ = maxIterations;}
-
+public:
     ERootFindingAlgorithm rootFindingAlgorithm() const{return rootFindingAlgorithm_;}
     void setRootFindingAlgorithm(ERootFindingAlgorithm algorithm){rootFindingAlgorithm_ = algorithm;}
 
@@ -130,6 +139,9 @@ public:
 
     const ResultVector& results() const{return results_;}
     void setResults(const ResultVector& results){results_ = results;}
+
+    ShooterResult* getResult(StringView name) const;
+    ShooterControl* getControl(StringView name) const;
 private:
     EConvergenceCriteria convergenceCriteria_{EConvergenceCriteria::eEqualityConstraintsWithinTolerance};
     EFiniteDifferenceMethod finiteDifferenceMethod_{EFiniteDifferenceMethod::eForwardDifference};

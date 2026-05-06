@@ -32,11 +32,19 @@ class AST_CORE_API ShooterControl : public ObjectNamed
 {
 public:
     AST_OBJECT(ShooterControl)
+    AST_PROPERT(active)
+    AST_PROPERT(correction)
+    AST_PROPERT(maxStep)
+    AST_PROPERT(perturbation)
+    AST_PROPERT(scale)
+    AST_PROPERT(tolerance)
+    AST_PROPERT(totalCorrection)
     static ShooterControl* New();
     
     ShooterControl() = default;
     ~ShooterControl() override = default;
 
+PROPERTIES:
     bool active() const { return active_; }
     void setActive(bool active) { active_ = active; }
 

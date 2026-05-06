@@ -39,7 +39,9 @@ class Value;
 class AST_SCRIPT_API Variable: public Expr
 {
 public:
-    AST_EXPR(Variable)
+    AST_OBJECT(Variable)
+    AST_PROPERT(value)
+    AST_EXPR_EXTRA(Variable)
 
     static Variable* New();
     
@@ -114,7 +116,9 @@ public:
     const std::string& getName() const override { return name_; }
     void setName(StringView name) override { name_ = std::string(name); }
     Expr* expr() const { return expr_.get(); }
-    
+PROPERTIES:
+    std::string value() const;
+    void setValue(StringView value);
 protected:
     std::string name_;            ///< 变量的名称
     SharedPtr<Expr> expr_;        ///< 变量的值，或者绑定的表达式

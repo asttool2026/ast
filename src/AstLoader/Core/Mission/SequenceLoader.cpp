@@ -39,9 +39,7 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
         aError("invalid type, expect 'Sequence' or 'TargeterSequence'");
         return eErrorInvalidParam;
     }
-   
-    // 加载公共属性
-    aLoadSegment(dictRoot, sequence);
+
 
     // 加载重复次数
     {
@@ -88,6 +86,10 @@ errc_t aLoadSequence(const Value& dictRoot, Sequence& sequence)
             }
         }
     }
+   
+    // 加载公共属性
+    aLoadSegment(dictRoot, sequence);
+
     return 0;
 }
 

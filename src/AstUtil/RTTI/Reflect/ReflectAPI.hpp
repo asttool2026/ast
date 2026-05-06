@@ -257,6 +257,40 @@ namespace detail
         }
     };
 
+    // ---------- std::string 值返回版本的辅助函数 ----------
+    template<typename T>
+    struct PropertyBuilderValueString
+    {
+        template<std::string (T::*Getter)() const>
+        static FPropertyGet makeGetter()
+        {
+            return [](const void* obj, void* value) -> errc_t
+            {
+                *static_cast<std::string*>(value) = (static_cast<const T*>(obj)->*Getter)();
+                return 0;
+            };
+        }
+
+        template<void (T::*Setter)(StringView)>
+        static FPropertySet makeVoidSetter()
+        {
+            return [](void* obj, const void* value) -> errc_t
+            {
+                (static_cast<T*>(obj)->*Setter)(*static_cast<const StringView*>(value));
+                return 0;
+            };
+        }
+
+        template<errc_t (T::*Setter)(StringView)>
+        static FPropertySet makeErrorSetter()
+        {
+            return [](void* obj, const void* value) -> errc_t
+            {
+                return (static_cast<T*>(obj)->*Setter)(*static_cast<const StringView*>(value));
+            };
+        }
+    };
+
 } // namespace detail
 
 // ============================================================================
@@ -489,6 +523,19 @@ A_ALWAYS_INLINE Property* aNewPropertyString()
     );
 }
 
+// std::string 值返回版本：支持 std::string value() const;
+template<typename T,
+         std::string (T::*Getter)() const,
+         void (T::*Setter)(StringView)>
+A_ALWAYS_INLINE Property* aNewPropertyString()
+{
+    using Builder = detail::PropertyBuilderValueString<T>;
+    return _aNewProperty<std::string>(
+        Builder::template makeGetter<Getter>(),
+        Builder::template makeVoidSetter<Setter>()
+    );
+}
+
 
 // ---- getter + errc_t setter 旧接口 ----
 template<typename T, bool (T::*Getter)() const, errc_t (T::*Setter)(bool)>
@@ -506,6 +553,19 @@ A_ALWAYS_INLINE Property* aNewPropertyString()
     return _aNewProperty<std::string>(
         Builder::template makeGetter<Getter>(),
         Builder::template makeSetter<Setter>()
+    );
+}
+
+// std::string 值返回版本：支持 std::string value() const;
+template<typename T,
+         std::string (T::*Getter)() const,
+         errc_t (T::*Setter)(StringView)>
+A_ALWAYS_INLINE Property* aNewPropertyString()
+{
+    using Builder = detail::PropertyBuilderValueString<T>;
+    return _aNewProperty<std::string>(
+        Builder::template makeGetter<Getter>(),
+        Builder::template makeErrorSetter<Setter>()
     );
 }
 

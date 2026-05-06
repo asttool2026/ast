@@ -33,12 +33,19 @@ class PropertyVisitor;
     @{
 */
 
-enum EValueType{
-    eDouble,        ///< double类型
-    eInt,           ///< int类型
+
+enum class EValueType
+{
     eBool,          ///< bool类型
+    eInt,           ///< int类型
+    eDouble,        ///< double类型
+    eQuantity,      ///< 数量值类型
     eString,        ///< std::string类型
+    eObject,        ///< 对象类型
+    eTimePoint,     ///< 时间点类型
+    eInvalid,       ///< 无效类型
 };
+
 
 /// @brief 模拟获取属性值的函数
 /// @param container 对象指针
@@ -52,6 +59,8 @@ errc_t aFakeGet(const void* container, void* value);
 /// @param value 指向属性值的指针
 /// @return errc_t 错误码
 errc_t aFakeSet(void* container, const void* value);
+
+
 
 /// @brief 反射属性类
 class AST_UTIL_API Property: public Field
@@ -128,6 +137,11 @@ public:
     /// @param value StringView类型变量，用于设置属性值
     /// @return errc_t 错误码
     virtual errc_t setValueString(void* container, StringView value) = 0;
+
+
+    /// @brief 获取属性值类型
+    /// @return EValueType 属性值类型
+    virtual EValueType getValueType() const = 0;
 public:
     double getValueDouble(const void* container);
     int getValueInt(const void* container);

@@ -28,9 +28,87 @@
 #include "AstUtil/Quantity.hpp"
 #include "AstUtil/ParseFormat.hpp"
 #include "AstUtil/ObjectLinker.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 #include "AstCore/Sequence.hpp"
+#include "AstCore/ScStateCalculation.hpp"
+#include "AstLoader/AttributeResolve.hpp"
+#include "AstLoader/ResultLoader.hpp"
+#include "AstScript/ExprCalculation.hpp"
 
 AST_NAMESPACE_BEGIN
+
+
+class ExprCurrentScStateCalculation: public ExprCalculationBase
+{
+public:
+    static ExprCurrentScStateCalculation* New(ScStateCalculation* calculation=nullptr);
+
+    ExprCurrentScStateCalculation(ScStateCalculation* calculation=nullptr);
+    Value* eval() const override;
+    void accept(ExprVisitor& visitor) override;
+    std::string getExpression(Object* scope) const override;
+    void setCalculation(ScStateCalculation* calculation);
+private:
+    WeakPtr<ScStateCalculation> calculation_;
+};
+
+
+ExprCurrentScStateCalculation* ExprCurrentScStateCalculation::New(ScStateCalculation* calculation)
+{
+    return new ExprCurrentScStateCalculation(calculation);
+}
+
+
+ExprCurrentScStateCalculation::ExprCurrentScStateCalculation(ScStateCalculation* calculation)
+    : calculation_(calculation)
+{}
+
+void ExprCurrentScStateCalculation::accept(ExprVisitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+Value* ExprCurrentScStateCalculation::eval() const
+{
+    auto calculation = calculation_.lock();
+    if(calculation == nullptr)
+    {
+        aError("calculation is null");
+        return nullptr;
+    }
+    Sequence* sequence = aGetAncestorScope<Sequence*>(const_cast<ExprCurrentScStateCalculation*>(this));
+    if(sequence == nullptr)
+    {
+        aError("failed to get ancestor sequence");
+        return nullptr;
+    }
+    auto inputState = sequence->getInputState();
+    if(inputState == nullptr)
+    {
+        aError("failed to get current input state");
+        return nullptr;
+    }
+    double value;
+    errc_t rc = calculation->calculate(*inputState, value);
+    if(rc != 0)
+    {
+        aError("failed to evaluate calculation");
+        return nullptr;
+    }
+    return aNewValueDouble(value);
+}
+
+
+std::string ExprCurrentScStateCalculation::getExpression(Object* scope) const
+{
+    return "CurrentScStateCalculation()";
+}
+
+void ExprCurrentScStateCalculation::setCalculation(ScStateCalculation* calculation)
+{
+    calculation_ = calculation;
+}
+
 
 errc_t aLoadParameter(const Value& value, Variable& var)
 {
@@ -104,6 +182,22 @@ errc_t aLoadCalcObject(const Value& value, Variable& var, Object* scope)
             return -1;
         }
     }
+    {
+        auto& calcObject = value["CalcObject"];
+        ExprCurrentScStateCalculation* expr = aNewObject<ExprCurrentScStateCalculation>(scope);
+        var.setExpr(static_cast<Expr*>(expr));
+        SharedPtr<ObjectCalculation> result;
+        errc_t rc = aLoadResult(calcObject, result, expr);
+        if(rc && result)
+        {
+            expr->setCalculation(aobject_cast<ScStateCalculation*>(result.get()));
+            return 0;
+        }
+        else
+        {
+            aError("failed to load calculation object");
+        }
+    }
     return 0;
 }
 
@@ -156,10 +250,17 @@ errc_t aLoadAttribute(const Value& value, Variable& var, Object* scope)
             // 解析属性值
             if(command)
             {
+                Attribute attr = aResolveAttribute(command, attribute);
+                if(!attr.isValid())
+                {
+                    aError("failed to resolve attribute '%.*s'", attribute.size(), attribute.data());
+                    return -1;
+                }
+                Expr* expr = new ExprAttribute(attr);
+                variable->setExpr(expr);
             }
             
-            
-            printf("variable: %s\n object: %s\n attribute: %s\n unit: %s\n", variable->getName().c_str(), object.c_str(), attribute.c_str(), unit.c_str());
+            // printf("variable: %s\n object: %s\n attribute: %s\n unit: %s\n", variable->getName().c_str(), object.c_str(), attribute.c_str(), unit.c_str());
             return 0;
         });
     }

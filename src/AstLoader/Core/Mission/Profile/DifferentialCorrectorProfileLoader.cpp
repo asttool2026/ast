@@ -174,6 +174,7 @@ errc_t aLoadDifferentialCorrectorProfile(const Value& value, DifferentialCorrect
             auto control = ShooterControl::New();
             const auto& dictControl = *item.second;
             aLoadShooterControl(dictControl, *control);
+            control->setName(item.first);
             controls.push_back(control);
         }
         profile.setControls(controls);
@@ -188,6 +189,7 @@ errc_t aLoadDifferentialCorrectorProfile(const Value& value, DifferentialCorrect
             auto result = ShooterResult::New();
             const auto& dictResult = *item.second;
             aLoadShooterResult(dictResult, *result);
+            result->setName(item.first);
             results.push_back(result);
         }
         profile.setResults(results);

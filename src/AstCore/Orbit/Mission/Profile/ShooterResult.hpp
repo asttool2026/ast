@@ -32,11 +32,18 @@ class AST_CORE_API ShooterResult : public ObjectNamed
 {
 public:
     AST_OBJECT(ShooterResult)
+    AST_PROPERT(active)
+    AST_PROPERT(desired)
+    AST_PROPERT(scale)
+    AST_PROPERT(tolerance)
+    AST_PROPERT(valid)
+    AST_PROPERT(weight)
     static ShooterResult* New();
 
     ShooterResult() = default;
     ~ShooterResult() override = default;
-
+    
+PROPERTIES:
     bool active() const { return active_; }
     void setActive(bool active) { active_ = active; }
 

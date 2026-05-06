@@ -84,8 +84,7 @@ errc_t aLoadInitialState(const Value& dictRoot, InitialState& initialState)
         aError("invalid type, expect 'InitialState'");
         return eErrorInvalidParam;
     }
-    // 加载公共属性
-    aLoadSegment(dictRoot, initialState);
+
     
     // 似乎不用判断"CoordinateType"字段，因为默认存的都是Cartesian坐标
     // auto& dictCoordinateType = dictRoot["CoordinateType"];
@@ -96,6 +95,9 @@ errc_t aLoadInitialState(const Value& dictRoot, InitialState& initialState)
         auto& spacecraftState = *spacecraftStatePtr;
         aLoadSpacecraftState(dictRoot["InitialState"], spacecraftState);
     }
+
+    // 加载公共属性
+    aLoadSegment(dictRoot, initialState);
     return eNoError;
 }
 

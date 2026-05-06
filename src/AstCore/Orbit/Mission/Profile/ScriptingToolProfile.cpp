@@ -81,6 +81,17 @@ errc_t ScriptingToolProfile::execute()
     return eNoError;
 }
 
+Variable* ScriptingToolProfile::getParameter(StringView name) const
+{
+    for(auto& var : parameters_)
+    {
+        if(name == var->getName())
+            return var;
+    }
+    return nullptr;
+}
+
+
 ScriptingToolProfile* ScriptingToolProfile::New()
 {
     return new ScriptingToolProfile();

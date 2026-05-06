@@ -22,6 +22,14 @@
 
 AST_NAMESPACE_BEGIN
 
-
+TargeterProfile* TargeterSequence::getTargeterProfile(StringView name) const
+{
+    for(const auto& profile : profiles_)
+    {
+        if(name == profile->name())
+            return profile.get();
+    }
+    return nullptr;
+}
 
 AST_NAMESPACE_END

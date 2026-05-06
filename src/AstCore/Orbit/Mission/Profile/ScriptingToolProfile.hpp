@@ -67,6 +67,9 @@ public:
     const VariableList& calcObjects() const { return calcObjects_; }
     VariableList& calcObjects() { return calcObjects_; }
 
+    /// @brief 获取参数变量
+    Variable* getParameter(StringView name) const;
+
 private:
     EScriptLanguage language_{EScriptLanguage::ePython};    ///< 脚本语言
     std::string scriptStatements_;                          ///< 脚本语句

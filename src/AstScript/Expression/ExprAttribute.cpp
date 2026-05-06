@@ -36,7 +36,24 @@ ExprAttribute::ExprAttribute(const Attribute& attribute)
 
 Value *ExprAttribute::eval() const
 {
-    aWarning("not implemented");
+    EValueType valueType = attribute_.getValueType();
+    switch (valueType)
+    {
+    case EValueType::eBool:
+        return aNewValueBool(attribute_.getValueBool());
+    case EValueType::eInt:
+        return aNewValueInt(attribute_.getValueInt());
+    case EValueType::eDouble:
+    case EValueType::eQuantity:
+        return aNewValueDouble(attribute_.getValueDouble());
+    case EValueType::eTimePoint:
+    case EValueType::eString:
+        return aNewValueString(attribute_.getValueString());
+    default:
+        aWarning("invalid value type");
+        return nullptr;
+    }
+
     return nullptr;
 }
 

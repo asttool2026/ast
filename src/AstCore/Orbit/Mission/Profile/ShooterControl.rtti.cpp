@@ -18,6 +18,13 @@ void ShooterControl::ClassInit(Class* cls)
     cls->setParent<ObjectNamed>();
     cls->setConstructor<ShooterControl>();
 
+    cls->addProperty("active", aNewPropertyBool<ShooterControl, &ShooterControl::active, &ShooterControl::setActive>());
+    cls->addProperty("correction", aNewPropertyDouble<ShooterControl, &ShooterControl::correction, &ShooterControl::setCorrection>());
+    cls->addProperty("maxStep", aNewPropertyDouble<ShooterControl, &ShooterControl::maxStep, &ShooterControl::setMaxStep>());
+    cls->addProperty("perturbation", aNewPropertyDouble<ShooterControl, &ShooterControl::perturbation, &ShooterControl::setPerturbation>());
+    cls->addProperty("scale", aNewPropertyDouble<ShooterControl, &ShooterControl::scale, &ShooterControl::setScale>());
+    cls->addProperty("tolerance", aNewPropertyDouble<ShooterControl, &ShooterControl::tolerance, &ShooterControl::setTolerance>());
+    cls->addProperty("totalCorrection", aNewPropertyDouble<ShooterControl, &ShooterControl::totalCorrection, &ShooterControl::setTotalCorrection>());
 }
 
 AST_NAMESPACE_END

@@ -69,4 +69,14 @@ errc_t Propagate::execute()
     return 0;
 }
 
+EventDetector* Propagate::getEventDetector(StringView name) const
+{
+    for(auto& eventDetector: eventDetectors_)
+    {
+        if(name == eventDetector->getName())
+            return eventDetector.get();
+    }
+    return nullptr;
+}
+
 AST_NAMESPACE_END

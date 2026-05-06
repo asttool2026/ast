@@ -20,6 +20,8 @@
 
 #include "Variable.hpp"
 #include "AstScript/Value.hpp"
+#include "AstUtil/ParseFormat.hpp"
+#include "AstUtil/QuantityParser.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -108,6 +110,40 @@ errc_t Variable::bind(Expr *expr)
     expr_ = expr;
     bind_ = true;
     return eNoError;
+}
+
+std::string Variable::value() const
+{
+    SharedPtr<Value> value = eval();
+    if(value){
+        return value->toString();
+    }
+    return {};
+}
+
+void Variable::setValue(StringView value)
+{
+    SharedPtr<Value> val = eval();
+    if(val)
+    {
+        if(val->isQuantity())
+        {
+            this->setValue(aNewValue(aQuantityParse(value)));
+        }
+        else if(val->isDouble())
+        {
+            this->setValue(aNewValue(aParseDouble(value)));
+        }
+        else if(val->isInt())
+        {
+            this->setValue(aNewValue(aParseInt(value)));
+        }
+        else if(val->isBool())
+        {
+            this->setValue(aNewValue(aParseBool(value)));
+        }
+    }
+    setValue(aNewValue(value));
 }
 
 AST_NAMESPACE_END

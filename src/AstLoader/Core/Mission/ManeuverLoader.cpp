@@ -43,8 +43,7 @@ errc_t aLoadManeuver(const Value& dictRoot, Maneuver& maneuver)
         aError("invalid type, expect 'Maneuver'");
         return eErrorInvalidParam;
     }
-    // 加载公共属性
-    aLoadSegment(dictRoot, maneuver);
+
     
     const std::string maneuverType = dictRoot["MnvrType"];
     const std::string mnvrKey = maneuverType + "Mnvr";
@@ -59,6 +58,9 @@ errc_t aLoadManeuver(const Value& dictRoot, Maneuver& maneuver)
         burn->setParentScope(&maneuver);    // 设置父作用域为机动，避免内存泄漏与野指针问题
         maneuver.setBurn(burn);
     }
+
+    // 加载公共属性
+    aLoadSegment(dictRoot, maneuver);
     return eNoError;
 }
 
