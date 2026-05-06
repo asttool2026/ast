@@ -20,13 +20,18 @@
 
 #include "ScStateCalcRadiusOfApoapsis.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstCore/OrbitElement.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t ScStateCalcRadiusOfApoapsis::calculate(const SpacecraftState& state, double& result)
 {
-    aError("not implemented");
-    return -1;
+    ModOrbElem modOrbElem;
+    errc_t rc = state.getState(modOrbElem);
+    if(rc != 0)
+        return rc;
+    result = modOrbElem.getApoRad();
+    return rc;
 }
 
 AST_NAMESPACE_END

@@ -196,3 +196,4 @@
 #include "ScStateCalcOutAsympDec.hpp"
 #include "ScStateCalcOutAsympRA.hpp"
 #include "ScStateCalcOutVAzP.hpp"
+#include "ScStateCalcVMag.hpp"

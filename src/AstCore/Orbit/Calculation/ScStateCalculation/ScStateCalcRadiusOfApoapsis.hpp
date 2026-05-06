@@ -21,10 +21,11 @@
 
 #include "AstGlobal.h"
 #include "ScStateCalculation.hpp"
+#include "ScStateCalcBodyRelated.hpp"
 
 AST_NAMESPACE_BEGIN
 
-class AST_CORE_API ScStateCalcRadiusOfApoapsis : public ScStateCalculation
+class AST_CORE_API ScStateCalcRadiusOfApoapsis : public ScStateCalcBodyRelated
 {
 public:
     errc_t calculate(const SpacecraftState& state, double& result) override;

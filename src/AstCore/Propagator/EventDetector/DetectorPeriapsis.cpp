@@ -33,7 +33,7 @@ DetectorPeriapsis* DetectorPeriapsis::New()
 
 DetectorPeriapsis::DetectorPeriapsis()
 {
-    this->setDirection(EDirection::eDecrease);
+    this->setDirection(EDirection::eIncrease);
 }
 
 double DetectorPeriapsis::getValue(const SpacecraftState& scState, double t) const

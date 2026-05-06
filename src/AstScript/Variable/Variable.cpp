@@ -70,6 +70,13 @@ errc_t Variable::setExpr(Expr *expr)
     return eNoError;
 }
 
+errc_t Variable::setBindExpr(Expr *expr)
+{
+    expr_ = expr;
+    bind_ = true;
+    return eNoError;
+}
+
 errc_t Variable::setExpr(Value* value)
 {
     return setValue(const_cast<Value*>(value));

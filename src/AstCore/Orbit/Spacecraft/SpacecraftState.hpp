@@ -114,11 +114,14 @@ PROPERTIES:
     /// @param orbitState 轨道状态
     void setOrbitState(State* orbitState){orbitState_ = orbitState;}
 public:
+    Frame* getFrame() const;
     errc_t getState(ModOrbElem& orbElem) const;
     errc_t getState(CartState& state) const;
     errc_t setState(const ModOrbElem& orbElem);
     errc_t setState(const CartState& state);
     void setStateEpoch(const TimePoint& stateEpoch);
+    errc_t getStateEpoch(TimePoint& stateEpoch) const;
+    void copyFrom(const SpacecraftState& srcState);
 private:
     HState orbitState_;                 ///< 轨道状态
     double cd_{2.2};

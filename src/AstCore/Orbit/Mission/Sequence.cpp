@@ -20,9 +20,13 @@
 
 #include "Sequence.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstCore/Return.hpp"
+#include "AstCore/OrbitElement.hpp"
 
 
 AST_NAMESPACE_BEGIN
+
+
 
 errc_t Sequence::execute()
 {
@@ -45,28 +49,43 @@ errc_t Sequence::execute()
             aWarning("failed to execute scripting tool %s", scriptingTool->getName().c_str());
     }
     // 执行任务序列
-    for(int repeat=0;repeat<repeatCount_;repeat++)
-    {
-        for (auto& command : commands_)
+    int lastCommandIndex = 0;
+    try{
+        for(int repeat=0;repeat<repeatCount_;repeat++)
         {
-            errc_t err = command->execute();
-            if(err != eNoError)
+            for (lastCommandIndex = 0; lastCommandIndex < commands_.size(); lastCommandIndex++)
             {
-                aError("failed to execute command: %s<%s>", command->getName().c_str(), command->typeName().c_str());
-                rc = err;
+                auto& command = commands_[lastCommandIndex];
+                errc_t err = command->execute();
+                if(err != eNoError)
+                {
+                    aError("failed to execute command: %s<%s>", command->getName().c_str(), command->typeName().c_str());
+                    rc = err;
+                }
             }
         }
     }
+    catch(const Return& returnCommand)
+    {
+        A_UNUSED(returnCommand);
+        // do nothing
+    }
+    
+    auto outputState = getOutputState();
     
     // 设置输出状态为输出输出状态为输出状态
-    for(auto iter = commands_.rbegin();iter != commands_.rend();iter++)
+    for(int i=lastCommandIndex-1;i>=0;i--)
     {
-        if(auto segment = aobject_cast<Segment*>(iter->get()))
+        auto& command = commands_[i];
+        if(auto segment = aobject_cast<Segment*>(command.get()))
         {
-            // @todo: 设置输出状态
-            break;
+            auto lastState = segment->getOutputState();
+            outputState->copyFrom(*lastState);
+            return rc;
         }
     }
+    if(auto inputState = getInputState())
+        outputState->copyFrom(*inputState);
     return rc;
 }
 

@@ -32,7 +32,7 @@ DetectorApoapsis* DetectorApoapsis::New()
 
 DetectorApoapsis::DetectorApoapsis()
 {
-    this->setDirection(EDirection::eIncrease);
+    this->setDirection(EDirection::eDecrease);
 }
 
 

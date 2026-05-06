@@ -56,7 +56,9 @@ PROPERTIES:
 
     Axes* axes() const {return axes_.get();}
     void setAxes(Axes* value) {axes_ = value;}
-
+public:
+    const Vector3d& impulse() const {return impulse_;}
+    void setImpulse(const Vector3d& value) {impulse_ = value;}
 private:
     WeakPtr<Axes> axes_;
     Vector3d impulse_;

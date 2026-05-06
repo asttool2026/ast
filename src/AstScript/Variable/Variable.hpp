@@ -62,6 +62,11 @@ public:
     /// @return 错误码
     errc_t setExpr(Expr* expr);
 
+    /// @brief 设置变量的表达式为双向绑定
+    /// @param expr 要设置的表达式
+    /// @return 错误码
+    errc_t setBindExpr(Expr* expr);
+
     /// @brief 设置变量的表达式
     /// @param value 要设置的值
     /// @return 错误码

@@ -96,7 +96,7 @@ errc_t aLoadCalculation(const Value& value, ScStateCalcPointRelated& calculation
             calcPtr->setPoint(point);
             return eNoError;
         }
-        aError("point '%s' not found", pointName.c_str());
+        aError("point '%s' not found for calculation '%s<%s>'", pointName.c_str(), calcPtr->getName().c_str(), calcPtr->typeName().c_str());
         return eErrorNullPtr;
     };
     calculation.addDelayedLink(resolveFunc);
@@ -149,6 +149,18 @@ errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Obj
         result = calculation;
         aLoadCalculation(value, *calculation);
     }
+    else if(type == "AsStateCalcTrueAnomaly")
+    {
+        auto calculation = aNewObject<ScStateCalcTrueAnomaly>(scope);
+        result = calculation;
+        aLoadCalculation(value, *calculation);
+    }
+    else if(type == "AsStateCalcRadiusOfApoapsis")
+    {
+        auto calculation = aNewObject<ScStateCalcRadiusOfApoapsis>(scope);
+        result = calculation;
+        aLoadCalculation(value, *calculation);
+    }
     else if(type == "AsStateCalcVx")
     {
         auto calculation = aNewObject<ScStateCalcVx>(scope);
@@ -173,11 +185,23 @@ errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Obj
         result = calculation;
         aLoadCalculation(value, *calculation);
     }
+    else if(type == "AsStateCalcVMag")
+    {
+        auto calculation = aNewObject<ScStateCalcVMag>(scope);
+        result = calculation;
+        aLoadCalculation(value, *calculation);
+    }
     else if(type == "CAgAsStateCalcDifference")
     {
         auto calculation = aNewObject<ScStateCalcDifference>(scope);
         result = calculation;
         aLoadCalculation(value, *calculation);
+    }
+    else if(type == "AsStateCalcMu")
+    {
+        auto calculation = aNewObject<ScStateCalcMu>(scope);
+        result = calculation;
+        // aLoadCalculation(value, *calculation);
     }
     else
     {

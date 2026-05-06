@@ -20,13 +20,16 @@
 
 #include "ScStateCalcEccentricity.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstCore/OrbitElement.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t ScStateCalcEccentricity::calculate(const SpacecraftState &scState, double &result)
 {
-    aError("not implemented");
-    return -1;
+    ModOrbElem modOrbElem{};
+    scState.getState(modOrbElem);
+    result = modOrbElem.e();
+    return 0;
 }
 
 

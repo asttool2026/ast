@@ -24,12 +24,16 @@
 #include "MissionCommand.hpp"
 #include "AstCore/SpacecraftState.hpp"
 
+
 AST_NAMESPACE_BEGIN
 
 /*!
     @addtogroup 
     @{
 */
+
+// class ControlFlowEscape {};
+// class ReturnEscape : public ControlFlowEscape{};
 
 
 /// @brief 轨道段（虚基类），用于描述任务序列中的轨道段，例如初始状态段、轨道机动段、轨道预报段等

@@ -20,15 +20,16 @@
 
 #include "ScStateCalcVMag.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstCore/OrbitElement.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t ScStateCalcVMag::calculate(const SpacecraftState& state, double& result)
 {
-    // TODO: Implement velocity magnitude calculation
-    // Need to get velocity from State first
-    aError("not implemented");
-    return -1;
+    CartState cartState{};
+    state.getState(cartState);
+    result = cartState.vel().norm();
+    return 0;
 }
 
 AST_NAMESPACE_END

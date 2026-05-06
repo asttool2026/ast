@@ -21,10 +21,12 @@
 
 #include "AstGlobal.h"
 #include "ScStateCalculation.hpp"
+#include "ScStateCalcPointRelated.hpp"
+#include "ScStateCalcFrameRelated.hpp"
 
 AST_NAMESPACE_BEGIN
 
-class AST_CORE_API ScStateCalcVMag : public ScStateCalculation
+class AST_CORE_API ScStateCalcVMag : public ScStateCalcFrameRelated
 {
 public:
     errc_t calculate(const SpacecraftState& state, double& result) override;

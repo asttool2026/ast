@@ -20,6 +20,7 @@
 
 #include "ExprAttribute.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstScript/Value.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -59,8 +60,16 @@ Value *ExprAttribute::eval() const
 
 errc_t ExprAttribute::setValue(Value *value)
 {
-    aWarning("not implemented");
-    return eErrorReadonly;
+    if(!value)
+        return eErrorNullInput;
+    if(value->isBool())
+        return attribute_.setValueBool(value->toBool());
+    else if(value->isInt())
+        return attribute_.setValueInt(value->toInt());
+    else if(value->isDouble() || value->isQuantity())
+        return attribute_.setValueDouble(value->toDouble());
+    else
+        return attribute_.setValueString(value->toString());
 }
 
 std::string ExprAttribute::getExpression(Object *context) const

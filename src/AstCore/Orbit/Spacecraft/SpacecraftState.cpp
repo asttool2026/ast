@@ -20,6 +20,7 @@
 
 #include "SpacecraftState.hpp"
 #include "AstCore/State.hpp"
+#include "AstCore/OrbitElement.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -28,6 +29,11 @@ State* SpacecraftState::getOrbitState() const
     if(!orbitState_)
         const_cast<SpacecraftState*>(this)->orbitState_ = State::NewDefault();
     return orbitState_;
+}
+
+Frame* SpacecraftState::getFrame() const
+{
+    return getOrbitState()->getFrame();
 }
 
 errc_t SpacecraftState::getState(ModOrbElem& orbElem) const
@@ -50,11 +56,27 @@ errc_t SpacecraftState::setState(const CartState& state)
     return getOrbitState()->setState(state);
 }
 
+errc_t SpacecraftState::getStateEpoch(TimePoint& stateEpoch) const
+{
+    return getOrbitState()->getStateEpoch(stateEpoch);
+}
+
+
 void SpacecraftState::setStateEpoch(const TimePoint& stateEpoch)
 {
     return getOrbitState()->setStateEpoch(stateEpoch);
 }
 
+
+void SpacecraftState::copyFrom(const SpacecraftState& srcState)
+{
+    CartState state{};
+    TimePoint tp{};
+    srcState.getStateEpoch(tp);
+    srcState.getState(state);
+    setStateEpoch(tp);
+    setState(state);
+}
 
 SpacecraftState* SpacecraftState::NewDefault()
 {

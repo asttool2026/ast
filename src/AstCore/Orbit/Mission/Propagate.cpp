@@ -48,7 +48,9 @@ errc_t Propagate::execute()
     integrator->clearEventDetectors();
     for(auto& eventDetector: eventDetectors_)
     {
-        propagator->getIntegrator()->addEventDetector(eventDetector->newODEEventDetector());
+        // 检查事件检测器是否激活
+        if(eventDetector->active())
+            propagator->getIntegrator()->addEventDetector(eventDetector->newODEEventDetector());
     }
     CartState outputCartState = inputCartState;
     rc = propagator->propagate(startTime, endTime, outputCartState.pos(), outputCartState.vel()); AST_CHECK_ERRCODE(rc, "Failed to propagate");

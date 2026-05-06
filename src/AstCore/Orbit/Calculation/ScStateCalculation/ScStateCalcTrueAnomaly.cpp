@@ -20,15 +20,18 @@
 
 #include "ScStateCalcTrueAnomaly.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstCore/OrbitElement.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t ScStateCalcTrueAnomaly::calculate(const SpacecraftState& state, double& result)
 {
-    // TODO: Implement true anomaly calculation
-    // Need to convert State to Keplerian elements first
-    aError("not implemented");
-    return -1;
+    ModOrbElem modOrbElem;
+    errc_t rc = state.getState(modOrbElem);
+    if(rc != 0)
+        return rc;
+    result = modOrbElem.getTrueAnomaly();
+    return rc;
 }
 
 AST_NAMESPACE_END

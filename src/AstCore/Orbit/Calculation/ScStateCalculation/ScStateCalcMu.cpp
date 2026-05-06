@@ -25,10 +25,11 @@ AST_NAMESPACE_BEGIN
 
 errc_t ScStateCalcMu::calculate(const SpacecraftState& state, double& result)
 {
-    // TODO: Implement gravitational parameter calculation
-    // Need to get central body info from State or Frame
-    aError("not implemented");
-    return -1;
+    auto orbitState = state.getOrbitState();
+    if(!orbitState)
+        return eErrorInvalidParam;
+    result = orbitState->getGM();
+    return 0;
 }
 
 AST_NAMESPACE_END

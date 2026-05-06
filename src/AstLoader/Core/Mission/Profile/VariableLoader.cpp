@@ -185,10 +185,10 @@ errc_t aLoadCalcObject(const Value& value, Variable& var, Object* scope)
     {
         auto& calcObject = value["CalcObject"];
         ExprCurrentScStateCalculation* expr = aNewObject<ExprCurrentScStateCalculation>(scope);
-        var.setExpr(static_cast<Expr*>(expr));
+        var.setBindExpr(static_cast<Expr*>(expr));
         SharedPtr<ObjectCalculation> result;
         errc_t rc = aLoadResult(calcObject, result, expr);
-        if(rc && result)
+        if(rc == 0 && result)
         {
             expr->setCalculation(aobject_cast<ScStateCalculation*>(result.get()));
             return 0;
@@ -257,7 +257,7 @@ errc_t aLoadAttribute(const Value& value, Variable& var, Object* scope)
                     return -1;
                 }
                 Expr* expr = new ExprAttribute(attr);
-                variable->setExpr(expr);
+                variable->setBindExpr(expr);
             }
             
             // printf("variable: %s\n object: %s\n attribute: %s\n unit: %s\n", variable->getName().c_str(), object.c_str(), attribute.c_str(), unit.c_str());

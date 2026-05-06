@@ -19,11 +19,44 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "Maneuver.hpp"
+#include "AstUtil/Logger.hpp"
+#include "AstCore/BurnImpulsive.hpp"
+#include "AstCore/AxesLinkTo.hpp"
 
 AST_NAMESPACE_BEGIN
 
 errc_t Maneuver::execute()
 {
+    auto inputState = this->getInputState(); AST_CHECK_NULLPTR(inputState);
+    auto burn = this->burn();
+    if(burn == nullptr)
+    {
+        aWarning("burn is nullptr");
+    }
+    else if(auto impulsive = aobject_cast<BurnImpulsive*>(burn))
+    {
+        Vector3d impulse = impulsive->impulse();
+        Axes* thrustAxes = impulsive->axes();
+        if(thrustAxes == nullptr)
+            aWarning("thrustAxes is nullptr");
+        else
+        {
+            if(AxesLinkTo* axesLink = aobject_cast<AxesLinkTo*>(thrustAxes))
+            {
+                std::string name = axesLink->name();
+                aInfo("thrustAxes is %s", name.c_str());
+            }
+            else
+            {
+                aWarning("unsupported thrustAxes type");
+            }
+        }
+    }
+    else
+    {
+        aWarning("unsupported burn type");
+    }
+    this->getOutputState()->copyFrom(*inputState);
     return 0;
 }
 
