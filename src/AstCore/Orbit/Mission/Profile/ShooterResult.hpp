@@ -63,12 +63,12 @@ PROPERTIES:
     void setWeight(double weight) { weight_ = weight; }
     
 private:
-    bool active_{false};
-    bool valid_{true};
-    double desired_{0.0};
-    double scale_{1.0};
-    double tolerance_{0.0};
-    double weight_{1.0};
+    bool active_{false};        ///< 是否激活
+    bool valid_{true};          ///< 数值是否有效
+    double desired_{0.0};       ///< 目标值
+    double scale_{1.0};         ///< 缩放因子
+    double tolerance_{0.0};     ///< 容差
+    double weight_{1.0};        ///< 权重
 };
 
 AST_NAMESPACE_END

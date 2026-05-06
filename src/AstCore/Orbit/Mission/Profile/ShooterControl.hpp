@@ -67,13 +67,13 @@ PROPERTIES:
     void setTotalCorrection(double totalCorrection) { totalCorrection_ = totalCorrection; }
 
 private:
-    bool active_{true};
-    double correction_{0.0};
-    double maxStep_{100.0};
-    double perturbation_{0.1};
-    double scale_{1.0};
-    double tolerance_{1e-6};
-    double totalCorrection_{0.0};
+    bool active_{true};             ///< 是否激活
+    double correction_{0.0};        ///< 修正值
+    double maxStep_{100.0};         ///< 最大步长
+    double perturbation_{0.1};      ///< 扰动值
+    double scale_{1.0};             ///< 缩放因子
+    double tolerance_{1e-6};        ///< 容差
+    double totalCorrection_{0.0};   ///< 总修正值??
 };
 
 AST_NAMESPACE_END

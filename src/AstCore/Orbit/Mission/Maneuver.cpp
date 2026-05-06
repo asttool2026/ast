@@ -44,7 +44,7 @@ errc_t Maneuver::execute()
             if(AxesLinkTo* axesLink = aobject_cast<AxesLinkTo*>(thrustAxes))
             {
                 std::string name = axesLink->name();
-                aInfo("thrustAxes is %s", name.c_str());
+                aInfo("thrustAxes is '%s'", name.c_str());
             }
             else
             {

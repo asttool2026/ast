@@ -19,6 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "TargeterSequence.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,6 +31,20 @@ TargeterProfile* TargeterSequence::getTargeterProfile(StringView name) const
             return profile.get();
     }
     return nullptr;
+}
+
+errc_t TargeterSequence::execute()
+{
+    errc_t rc = 0;
+    for(const auto& profile : profiles_)
+    {
+        if(errc_t err = profile->execute())
+        {
+            aError("failed execute targeter profile '%s'", profile->name().c_str());
+            rc = err;
+        }    
+    }
+    return rc;
 }
 
 AST_NAMESPACE_END

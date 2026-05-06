@@ -21,7 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "Struct.hpp"
+#include "AstUtil/Struct.hpp"
 #include "AstUtil/SharedPtr.hpp"
 #include "AstUtil/Object.hpp"
 #include <type_traits>

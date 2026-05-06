@@ -1,9 +1,9 @@
 ///
-/// @file      TargeterProfile.hpp
+/// @file      Command.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-28
+/// @date      2026-05-06
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,35 +21,28 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstUtil/Object.hpp"
 #include "AstUtil/ObjectNamed.hpp"
-#include "AstCore/Command.hpp"
-#include <vector>
-#include <string>
 
 AST_NAMESPACE_BEGIN
 
+/*!
+    @addtogroup 
+    @{
+*/
 
-class TargeterProfile;
-
-using HTargeterProfile = SharedPtr<TargeterProfile>;
-using PTargeterProfile = TargeterProfile*;
-
-/// @brief 目标器配置文件基类
-class AST_CORE_API TargeterProfile : public Command
+class AST_CORE_API Command: public ObjectNamed
 {
 public:
-    AST_OBJECT(TargeterProfile)
+    AST_OBJECT(Command)
 
-    /// @brief 执行目标器配置
+    /// @brief 执行命令
     virtual errc_t execute() = 0;
-    
-    TargeterProfile() = default;
-    ~TargeterProfile() override = default;
+private:
+
 };
 
 
 
-
+/*! @} */
 
 AST_NAMESPACE_END

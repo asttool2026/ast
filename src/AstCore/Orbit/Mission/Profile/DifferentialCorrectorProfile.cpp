@@ -19,7 +19,9 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "DifferentialCorrectorProfile.hpp"
+#include "AstCore/Sequence.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,9 +32,40 @@ DifferentialCorrectorProfile* DifferentialCorrectorProfile::New()
 
 errc_t DifferentialCorrectorProfile::execute()
 {
-    aError("not implemented");
-    return -1;
+    // aError("not implemented");
+    return executeRelatedCommand();
 }
+
+errc_t DifferentialCorrectorProfile::executeRelatedCommand() const
+{
+    Command* command = getRelatedCommand();
+    if(!command)
+    {
+        aError("failed to find related command");
+        return eErrorNullPtr;
+    }
+
+    if(Sequence* sequence = aobject_cast<Sequence*>(command))
+        return sequence->Sequence::execute();
+    
+    return command->execute();
+}
+
+Sequence* DifferentialCorrectorProfile::getRelatedSequence() const
+{
+    return aobject_cast<Sequence*>(getRelatedCommand());
+}
+
+Command* DifferentialCorrectorProfile::getRelatedCommand() const
+{
+    if(auto command = relatedCommand_.get())
+        return command;
+    auto command = aGetAncestorScope<Command*>(const_cast<DifferentialCorrectorProfile*>(this));
+    relatedCommand_ = command;
+    return command;
+}
+
+
 
 ShooterResult* DifferentialCorrectorProfile::getResult(StringView name) const
 {

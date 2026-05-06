@@ -46,7 +46,10 @@ public:
     void setProfiles(const std::vector<HTargeterProfile>& profiles){profiles_ = profiles;}
 
     TargeterProfile* getTargeterProfile(StringView name) const;
+
     
+    errc_t execute() override;
+
 private:
     std::vector<HTargeterProfile> profiles_;
 };

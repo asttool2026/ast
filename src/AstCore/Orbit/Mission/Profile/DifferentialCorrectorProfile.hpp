@@ -66,7 +66,7 @@ enum class EScaleGoals
     eByDesiredValue, ///< 由期望值缩放
 };
 
-
+class Sequence;
 
 /// @brief 微分修正器配置，用于求解非线性方程，可以用于修正轨道参数以满足约束条件要求
 class AST_CORE_API DifferentialCorrectorProfile : public TargeterProfile
@@ -93,6 +93,15 @@ public:
     errc_t execute() override;
 
 
+protected:
+    /// @brief 执行与微分修正器绑定的命令
+    errc_t executeRelatedCommand() const;
+
+    /// @brief 获取与微分修正器绑定的序列
+    Sequence* getRelatedSequence() const;
+
+    /// @brief 获取与微分修正器绑定的命令
+    Command* getRelatedCommand() const;
 PROPERTIES:
     bool useHomotopy() const{return useHomotopy_;}
     void setUseHomotopy(bool useHomotopy){useHomotopy_ = useHomotopy;}
@@ -143,6 +152,8 @@ public:
     ShooterResult* getResult(StringView name) const;
     ShooterControl* getControl(StringView name) const;
 private:
+    mutable WeakPtr<Command> relatedCommand_;
+
     EConvergenceCriteria convergenceCriteria_{EConvergenceCriteria::eEqualityConstraintsWithinTolerance};
     EFiniteDifferenceMethod finiteDifferenceMethod_{EFiniteDifferenceMethod::eForwardDifference};
     double lineSearchLowerBound_ = 1e-6;
