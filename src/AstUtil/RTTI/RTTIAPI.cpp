@@ -25,6 +25,7 @@
 #include "AstUtil/Object.hpp"
 #include "AstUtil/ObjectManager.hpp"
 #include "AstUtil/ColoredPrint.hpp"
+#include "AstUtil/Logger.hpp"
 #include <cstdio>
 
 
@@ -92,15 +93,44 @@ SharedPtr<Object> aMakeObject(StringView name, Object* parentScope)
 
 Object *aResolveObject(StringView value, Class* cls)
 {
-    // 如果未指定类型，则采用Object类型进行解析
-    if(!cls)
-        return Object::Resolve(value);
-    while(cls)
+    auto pos = value.find("/");
+    if(pos == StringView::npos)
     {
-        auto obj = cls->resolve(value);
-        if(obj && obj->isOfType(cls))
-            return obj;
-        cls = cls->getParent();
+        if(cls)
+        {
+            do
+            {
+                auto obj = cls->resolve(value);
+                if(obj && obj->isOfType(cls))
+                    return obj;
+                cls = cls->getParent();
+            }while(cls);
+            return aFindObject(cls, value);
+        }
+        else
+            return aGetClass(value);
+    }
+    else
+    {
+        StringView className = value.substr(0, pos);
+        auto pos2 = value.substr(pos + 1).find("/");
+        StringView objName = value.substr(pos + 1, pos2);
+        Object* obj = aFindObject(aGetClass(className), objName);
+        while(pos2 != StringView::npos)
+        {
+            value = value.substr(pos2 + 1);
+            pos = value.find("/");
+            if(pos == StringView::npos)
+            {
+                aError("invalid object path: '%.*s'", value.size(), value.data());
+                return nullptr;
+            }
+            className = value.substr(0, pos);
+            pos2 = value.substr(pos + 1).find("/");
+            objName = value.substr(pos + 1, pos2);
+            obj = aFindChild(obj, cls, objName);
+        }
+        return obj;
     }
     return nullptr;
 }

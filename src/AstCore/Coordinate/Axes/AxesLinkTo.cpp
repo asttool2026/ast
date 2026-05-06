@@ -53,21 +53,22 @@ Axes* AxesLinkTo::resolve(Object* scope) const
     {
         if(!scope->isOfType(objectType_))
         {
-            aError("failed to resolve axes '%.*s' for object type '%.*s'", 
-                name_.size(), name_.data(), 
-                objectType_.size(), objectType_.data()
+            aError("failed to resolve axes '%s' for object type '%s'", 
+                name().c_str(), 
+                objectType_.c_str()
             );
             return nullptr;
         }
     }
-    return aFindChild<Axes*>(scope, name_);
+    return aFindChild<Axes*>(scope, name());
 }
 
 
 AxesLinkTo::AxesLinkTo(StringView objectType, StringView name)
     : objectType_{objectType}
-    , name_{name}
+    //, name_{name}
 {
+    setName(name);
 }
 
 AST_NAMESPACE_END

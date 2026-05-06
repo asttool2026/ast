@@ -60,6 +60,8 @@ struct property_trait<TimePoint>
 
 using FPropertyGet = errc_t (*)(const void* obj, void* value);      ///< 获取属性值
 using FPropertySet = errc_t (*)(void* obj, const void* value);      ///< 设置属性值
+using FPropertyGetItemByString = errc_t (*)(const void* obj, StringView key, Object*& value);
+using FPropertyGetItemByIndex  = errc_t (*)(const void* obj, size_t key, Object*& value);
 
 // ----------------------------------------------------------------------------
 // 底层工厂函数

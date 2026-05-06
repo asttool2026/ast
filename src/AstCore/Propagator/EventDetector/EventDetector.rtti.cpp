@@ -18,6 +18,7 @@ void EventDetector::ClassInit(Class* cls)
     cls->setParent<ObjectNamed>();
     cls->setConstructor<EventDetector>();
 
+    cls->addProperty("active", aNewPropertyBool<EventDetector, &EventDetector::active, &EventDetector::setActive>());
     cls->addProperty("repeatCount", aNewPropertyInt<EventDetector, &EventDetector::repeatCount, &EventDetector::setRepeatCount>());
     cls->addProperty("threshold", aNewPropertyDouble<EventDetector, &EventDetector::threshold, &EventDetector::setThreshold>());
     cls->addProperty("goal", aNewPropertyDouble<EventDetector, &EventDetector::goal, &EventDetector::setGoal>());

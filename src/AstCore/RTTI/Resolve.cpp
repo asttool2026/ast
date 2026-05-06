@@ -26,6 +26,7 @@
 #include "AstCore/FrameAssembly.hpp"
 #include "AstCore/EventTimeExplicit.hpp"
 #include "AstCore/BuiltinAxes.hpp"
+#include "AstCore/AxesLinkTo.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -109,6 +110,12 @@ Axes* aObject_GetAxes(Object* obj, StringView axesName)
         {
             return aAxesJ2000();
         }
+    }
+    else if(auto cls = aobject_cast<Class*>(obj))
+    {
+        auto axes = AxesLinkTo::New(cls->name(), axesName);
+        axes->setParentScope(cls);
+        return axes;
     }
     return nullptr;
 }

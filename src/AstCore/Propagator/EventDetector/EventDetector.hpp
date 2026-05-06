@@ -39,6 +39,7 @@ class AST_CORE_API EventDetector: public ObjectNamed
 public:
     using EDirection = ODEEventDetector::EDirection;
     AST_OBJECT(EventDetector)
+    AST_PROPERT(active)
     AST_PROPERT(repeatCount)
     AST_PROPERT(threshold)
     AST_PROPERT(goal)
@@ -73,6 +74,10 @@ public: // rtti 暂时不支持枚举类型
     void setDirection(EDirection dir) {direction_ = dir;}
 
 PROPERTIES:
+
+    bool active() const {return active_;}
+    void setActive(bool active) {active_ = active;}
+
     int repeatCount() const {return repeatCount_;}
     void setRepeatCount(int count) {repeatCount_ = count;}
 
@@ -84,6 +89,7 @@ PROPERTIES:
     void setGoal(double goal) {goal_ = goal;}
 
 private:
+    bool        active_{true};                  ///< 是否激活
     int         repeatCount_{1};                ///< 事件触发后的重复次数
     EDirection  direction_{EDirection::eBoth};  ///< 事件检测开关函数的方向
     double      threshold_{1e-10};              ///< 事件检测开关函数的阈值

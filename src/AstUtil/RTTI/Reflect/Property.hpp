@@ -44,14 +44,14 @@ enum EValueType{
 /// @param container 对象指针
 /// @param value 指向属性值的指针
 /// @return errc_t 错误码
-AST_UTIL_CAPI errc_t aFakeGet(const void* container, void* value);
+errc_t aFakeGet(const void* container, void* value);
 
 
 /// @brief 模拟设置属性值的函数
 /// @param container 对象指针
 /// @param value 指向属性值的指针
 /// @return errc_t 错误码
-AST_UTIL_CAPI errc_t aFakeSet(void* container, const void* value);
+errc_t aFakeSet(void* container, const void* value);
 
 /// @brief 反射属性类
 class AST_UTIL_API Property: public Field

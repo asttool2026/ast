@@ -112,8 +112,10 @@ AST_UTIL_CAPI void aDeleteObject(Object* obj);
 AST_UTIL_API SharedPtr<Object> aMakeObject(StringView name, Object* parentScope=nullptr);
 
 
+
 /// @brief 解析对象
 /// @details 根据对象路径/名称/表达式解析对象
+/// @warning 要求value为对象路径（带有类型名称），或者cls不为空，否则只查找类型对象
 /// @param value 对象路径/名称/表达式
 /// @param cls 对象类型，默认 nullptr 表示不指定类型
 /// @return 解析后的对象指针

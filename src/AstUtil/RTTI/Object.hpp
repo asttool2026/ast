@@ -76,6 +76,8 @@ enum {
     INVALID_ID = -1, ///< 无效对象ID
 };
 
+struct initial_strong_ref_t {};                      ///< 初始化强引用计数的标记
+constexpr initial_strong_ref_t initial_strong_ref{}; ///< 初始化强引用计数的标记值
 
 
 /// @brief 对象基类，继承自该类的对象可以使用运行时类型信息相关功能，实现强弱引用计数、运行时元信息（属性访问、序列化等）等基础功能
@@ -100,6 +102,13 @@ public:
     {}
     Object(Object* parentScope);
     Object(std::nullptr_t);
+    
+    /// @brief 构造函数，用于初始化对象的强引用计数为1
+    /// @param initial_strong_ref_t 初始化强引用计数的标记
+    Object(initial_strong_ref_t)
+        : refcnt_{1}
+        , weakrefcnt_{1}
+    {}
 public:
     static Class staticType;
     static void ClassInit(Class* cls);
@@ -110,12 +119,14 @@ public:
     virtual Class* getType() const;
 
     /// @brief 获取对象的名称
-    /// @return const char* 对象名称
     virtual const std::string& getName() const;
 
     /// @brief 设置对象的名称
     /// @param name 对象名称
     virtual void setName(StringView name) = 0;
+
+    /// @brief 获取对象的名称
+    const std::string& name() const {return this->getName();}
 public: // 编辑属性
     
     /// @brief 显示编辑对话框，用于编辑对象的属性
@@ -394,8 +405,8 @@ public: // 实参依赖查找（ADL）
     }
 
 private:
-    // Class*                type_;                                     ///< 类型元信息，同时用于标识对象是否被析构(废弃)
-    std::atomic<uint32_t>    refcnt_{0};                                ///< 强引用计数，给SharedPtr使用
+    // Class*                type_;                                     ///< 类型元信息，同时用于标识对象是否被析构(废弃，采用虚函数`getType()`实现)
+    std::atomic<uint32_t>    refcnt_{0};                                ///< 强引用计数，给SharedPtr使用（是否考虑废弃共享引用计数，全面采用父子对象进行内存管理？）
     std::atomic<uint32_t>    weakrefcnt_{1};                            ///< 弱引用计数，给WeakPtr使用
     uint32_t                 index_{static_cast<uint32_t>(INVALID_ID)}; ///< 对象索引，用于唯一标识对象
     // uint32_t                 flags_{0};                                 ///< 对象标志位，用于存储对象的额外信息

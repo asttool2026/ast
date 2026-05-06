@@ -78,33 +78,38 @@ HStateKeplerian StateKeplerian::MakeShared(const ModOrbElem &modOrbElem)
     return new StateKeplerian(modOrbElem);
 }
 
-PStateKeplerian StateKeplerian::NewDefault()
+static void initDefault(StateKeplerian &stateKeplerian)
 {
-    auto stateKeplerian = new StateKeplerian();
     auto body = aGetEarth();
     if(body)
     {
         auto frame = body->makeFrameInertial();
         frame->setName("Inertial");
-        stateKeplerian->setStateEpoch(TimePoint::Default());
-        stateKeplerian->setFrame(frame);
-        ModOrbElem modOrbElem{
+        stateKeplerian.setStateEpoch(TimePoint::Default());
+        stateKeplerian.setFrame(frame);
+        stateKeplerian.setState(ModOrbElem{
             body->getRadius() + 300_km,
             0,
             28.5_deg,
             0,
             0,
             0
-        };
-        stateKeplerian->setState(modOrbElem);
+        });
     }
-    
+}
+
+PStateKeplerian StateKeplerian::NewDefault()
+{
+    auto stateKeplerian = new StateKeplerian();
+    #if 0
+    initDefault(*stateKeplerian);
+    #endif
     return stateKeplerian;
 }
 
 StateKeplerian::StateKeplerian()
 {
-    
+    initDefault(*this);
 }
 
 StateKeplerian::StateKeplerian(const ModOrbElem &modOrbElem)
