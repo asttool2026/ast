@@ -33,7 +33,8 @@ ZIP_NAME = 'ast-nt.zip'
 
 # 排除的目录
 EXCLUDE_DIRS = ['data', 'docs', '.git', 'build', '.xmake', ".trae", ".vscode", ".github", 
-                ".vs", "thirdparty", "vs2015", "vs2026", "vsxmake2022", "vsxmake2026"]
+                ".vs", "thirdparty", "vs2015", "vs2026", "vsxmake2022", "vsxmake2026",
+                "node_modules"]
 
 # 空行替换内容（可配置）
 EMPTY_LINE_REPLACEMENT = '// 请不要修改此文件(do not modify this file)'  # 默认替换为空字符串，即删除空行

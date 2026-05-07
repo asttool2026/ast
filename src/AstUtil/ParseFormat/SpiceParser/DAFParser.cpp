@@ -283,7 +283,7 @@ errc_t DAFParser::readSummaryRecords(int fward, int bward, std::vector<Record>& 
 {
     int recordIndex = fward;
     constexpr size_t max_elem = 1024 * 1024 * 1024 / sizeof(Record);    //  1GB
-    const size_t max_size = std::min(summaryRecords.max_size(), max_elem);
+    const size_t max_size = (std::min)(summaryRecords.max_size(), max_elem);
     while(1)
     {
         Record record;

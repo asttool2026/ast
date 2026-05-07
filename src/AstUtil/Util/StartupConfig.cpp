@@ -30,6 +30,7 @@ errc_t StartupConfig::load(StringView filepath)
     parser.open(filepath);
     if(!parser.isOpen())
         return eErrorInvalidFile;
+    this->filepath_ = std::string(filepath);
     this->configMap_.clear();
     BKVItemView item;
     while(1)
@@ -46,6 +47,16 @@ errc_t StartupConfig::load(StringView filepath)
         }
     }
     return eNoError;
+}
+
+
+StringView StartupConfig::dirpath() const
+{
+    #ifdef _WIN32
+    return filepath_.substr(0, filepath_.find_last_of('\\'));
+    #else
+    return filepath_.substr(0, filepath_.find_last_of('/'));
+    #endif
 }
 
 ValueView StartupConfig::getConfig(StringView key) const
