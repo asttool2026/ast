@@ -37,6 +37,8 @@ class CelestialBody;
 class AST_CORE_API Point: public ObjectNamed
 {
 public:
+    AST_OBJECT(Point)
+    
     Point() = default;
     ~Point() override = default;
 

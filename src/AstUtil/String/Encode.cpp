@@ -163,6 +163,19 @@ errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8)
 
 #else
 
+#if defined(__wasm__)
+errc_t aUtf8ToWide(const char* utf8, std::wstring& wide) {
+    aError("utf8ToWide not supported on wasm");
+    return -1;
+}
+
+errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8) 
+{
+    aError("wideToUtf8 not supported on wasm");
+    return -1;
+}
+
+#else
 errc_t aUtf8ToWide(const char* utf8, std::wstring& wide) {
     if (utf8 == nullptr) {
         return eErrorNullInput;
@@ -182,8 +195,8 @@ errc_t aUtf8ToWide(const char* utf8, std::wstring& wide) {
     }
 }
 
-
-errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8) {
+errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8) 
+{
     if (wide == nullptr) {
         return eErrorNullInput;
     }
@@ -200,6 +213,8 @@ errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8) {
         return eErrorInvalidParam;
     }
 }
+#endif
+
 #endif
 
 

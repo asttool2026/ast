@@ -58,7 +58,7 @@ std::string ChatSession::makeChatCompletion(int maxIterations)
     json["messages"] = this->messages_.toJson();
     json["model"] = "deepseek-v4-flash";
     json["temperature"] = 0.2;
-    json["thinking"]["type"] = "enabled";  // "enabled" or "disabled"
+    json["thinking"]["type"] = "disabled";  // "enabled" or "disabled"
     json["stream"] = false;
     json["tools"] = tools_.toJson();
 

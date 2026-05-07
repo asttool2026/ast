@@ -298,8 +298,9 @@ class BaseHeaderAnalyzer:
                 elif prop_info.setter:
                     lines.append(f'    cls->addProperty("{prop_name}", {prop_func}<{class_info.name}, nullptr, &{class_info.name}::{prop_info.setter}>());')
                 else:
-                    lines.append(f"    constexpr auto member_{prop_name} = &{class_info.name}::{prop_info.original_name};")
-                    lines.append(f'    cls->addProperty("{prop_name}", {prop_func}<{class_info.name}, member_{prop_name}>());')
+                    # lines.append(f"    constexpr auto member_{prop_name} = &{class_info.name}::{prop_info.original_name};")
+                    # lines.append(f'    cls->addProperty("{prop_name}", {prop_func}<{class_info.name}, member_{prop_name}>());')
+                    lines.append(f'    cls->addProperty("{prop_name}", {prop_func}Mem<{class_info.name}, &{class_info.name}::{prop_info.original_name}>());')
         
         lines.append("}")
         lines.append("")

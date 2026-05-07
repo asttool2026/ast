@@ -153,6 +153,13 @@ public: // 获取属性
     /// @return errc_t 错误码
     errc_t getAttrString(StringView path, std::string& value) const;
 
+
+    /// @brief 获取属性值，属性路径格式为 "attr1.attr2.attr3"
+    /// @param path 属性路径
+    /// @param value 属性值引用
+    /// @return errc_t 错误码
+    errc_t getAttrObject(StringView path, Object*& value) const;
+
 public: // 获取属性值
     /// @brief 获取属性值，属性路径格式为 "attr1.attr2.attr3"
     /// @param path 属性路径
@@ -173,6 +180,12 @@ public: // 获取属性值
     /// @param path 属性路径
     /// @return std::string 属性值
     std::string getAttrString(StringView path) const;
+
+
+    /// @brief 获取属性值，属性路径格式为 "attr1.attr2.attr3"
+    /// @param path 属性路径
+    /// @return Object* 属性值
+    Object* getAttrObject(StringView path) const;
 
 public: // 设置属性值
     /// @param path 属性路径
@@ -198,6 +211,13 @@ public: // 设置属性值
     /// @return errc_t 错误码
     errc_t setAttrString(StringView path, StringView value);
 
+
+    /// @brief 设置属性值，属性路径格式为 "attr1.attr2.attr3"
+    /// @param path 属性路径
+    /// @param value 属性值
+    /// @return errc_t 错误码
+    errc_t setAttrObject(StringView path, Object* value);
+
 public: // 类型与字段属性
     /// @brief 获取对象类型
     /// @return Class* 类型元信息
@@ -210,8 +230,8 @@ public: // 类型与字段属性
 public: // 对象ID
 
     /// @brief 获取对象ID
-    /// @return uint32_t 对象ID
-    uint32_t getID() const;
+    /// @return ObjectId 对象ID
+    ObjectId getID() const;
 
     /// @brief 设置对象的父作用域
     /// @param parentScope 父作用域指针
@@ -225,7 +245,7 @@ public: // 对象ID
     /// @brief 判断对象是否为指定类型的实例
     /// @param type 类型元信息
     /// @return bool 是否为指定类型的实例
-    bool isOfType(Class* type) const;
+    bool isOfType(const Class* type) const;
 
     /// @brief 判断对象是否为指定类型的实例
     /// @param typeName 类型名
@@ -368,7 +388,22 @@ private:
     // uint32_t                 flags_{0};                                 ///< 对象标志位，用于存储对象的额外信息
 };
 
+// 主模板：默认 false
+template <typename T, typename = void>
+struct has_own_getType : std::false_type {};
 
+// 特化：仅当 &T::getType 的类型严格为 Class* (T::*)()const 时匹配
+template <typename T>
+struct has_own_getType<T, typename std::enable_if<
+    std::is_same<decltype(&T::getType), Class* (T::*)()const>::value>::type> : std::true_type {};
+
+template<typename T>
+T aobject_cast(Object* obj)
+{
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aobject_cast requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(ObjectType::StaticType()->cast(obj));
+}
 
 /*! @} */
 

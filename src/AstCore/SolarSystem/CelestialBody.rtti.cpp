@@ -18,10 +18,6 @@ void CelestialBody::ClassInit(Class* cls)
     cls->setParent<Point>();
     cls->setConstructor<CelestialBody>();
 
-    cls->addProperty("Shape", aNewPropertyObject<CelestialBody, BodyShape, &CelestialBody::getShape>());
-    // cls->addProperty("GravityField", aNewProperty<CelestialBody, &CelestialBody::getGravityField>());
-    cls->addProperty("Ephemeris", aNewPropertyObject<CelestialBody, BodyEphemeris, &CelestialBody::getEphemeris>());
-    cls->addProperty("Orientation", aNewPropertyObject<CelestialBody, BodyOrientation, &CelestialBody::getOrientation>());
 }
 
 AST_NAMESPACE_END

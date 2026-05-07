@@ -53,6 +53,23 @@ void aInitAgentSession(ChatSession& session);
 /// @return 智能体系统提示
 const char* aAgentSystemPrompt();
 
+
+/// @brief 获取默认的智能体工具集合
+AST_AI_API ChatTools& aAgentTools();
+
+/// @brief 获取默认的智能体工具集合的JSON表示
+AST_AI_API JsonValue aAgentToolsJson();
+
+/// @brief 获取默认的智能体工具集合的JSON字符串表示
+AST_AI_API std::string aAgentToolsJsonStr();
+
+/// @brief 使用智能体工具集合处理单次工具调用
+AST_AI_API std::string aAgentToolsHandleToolCall(const JsonValue& toolCall);
+
+/// @brief 使用智能体工具集合处理单次工具调用
+AST_AI_API std::string aAgentToolsHandleToolCall(const std::string& toolCallStr);
+
+
 /*! @} */
 
 AST_NAMESPACE_END

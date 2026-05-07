@@ -1,13 +1,13 @@
 ///
-/// @file      Satellite.hpp
+/// @file      WasmBind.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-04-13
-/// @copyright 版权所有 (C) 2026-present, ast项目.
+/// @date      2026-04-28
+/// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
-/// ast项目（https://github.com/space-ast/ast）
-/// 本项目基于 Apache 2.0 开源许可证分发。
+/// SpaceAST项目（https://github.com/space-ast/ast）
+/// 本软件基于 Apache 2.0 开源许可证分发。
 /// 您可在遵守许可证条款的前提下使用、修改和分发本软件。
 /// 许可证全文请见：
 /// 
@@ -21,7 +21,6 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstSim/Spacecraft.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,16 +29,6 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 卫星对象
-class AST_SIM_API Satellite: public Spacecraft
-{
-public:
-    AST_OBJECT(Satellite)
-    static Satellite* New();
-    
-    Satellite() = default;
-    ~Satellite() override = default;
-};
 
 
 /*! @} */

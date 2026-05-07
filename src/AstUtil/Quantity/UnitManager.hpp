@@ -44,7 +44,7 @@ AST_UTIL_API Unit* aUnitGet(StringView name);
 /// @brief 获取国际制单位
 /// @param dim 单位维度
 /// @return 国际制单位
-AST_UTIL_API Unit* aUnitSIGet(Dimension dim);
+AST_UTIL_API Unit* aUnitGetSI(Dimension dim);
 
 
 /// @brief 添加单位

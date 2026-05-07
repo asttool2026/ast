@@ -24,12 +24,12 @@
 #include "Struct.hpp"
 #include "AstUtil/SharedPtr.hpp"
 #include "AstUtil/Object.hpp"
+#include <type_traits>
 
 AST_NAMESPACE_BEGIN
 
 class Object;
 
-#include <type_traits>
 
 
 /// @brief 类元信息
@@ -47,6 +47,11 @@ public:
     Class(Class* parent = nullptr);
 
     ~Class();
+
+    /// @brief 类型转换
+    /// @param obj 输入对象指针
+    /// @return Object* 转换后的对象指针
+    Object* cast(Object* obj) const;
 
     /// @brief 检查类是否为虚类
     /// @return 是否为虚类

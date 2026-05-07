@@ -115,6 +115,11 @@ uint32_t aAddObject(Object *object)
     return ObjectManager::CurrentInstance().addObject(object);
 }
 
+errc_t aRemoveObject(Object *object)
+{
+    return ObjectManager::CurrentInstance().removeObject(object);
+}
+
 void aRemoveAllObjects()
 {
     ObjectManager::CurrentInstance().removeAllObjects();

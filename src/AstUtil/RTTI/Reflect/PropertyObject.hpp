@@ -55,6 +55,8 @@ public:
     /// @return 0 成功，其他值 失败
     errc_t setValue(void* container, const InputType* value);
     errc_t getValue(const void* container, OutputType* value);
+
+    Class* getClass() const { return class_; }
 public:
     /// @brief 接受访问者
     /// @param visitor 访问者对象

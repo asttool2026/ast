@@ -23,6 +23,7 @@
 #include "AstAI/LLMClient.hpp"
 #include "AstAI/ChatMessage.hpp"
 #include "AstAI/ChatTool.hpp"
+#include "AstUtil/StringView.hpp"
 #include <string>
 #include <vector>
 #include <map>
@@ -72,6 +73,14 @@ public: // 底层json接口
     /// @param response 响应参数
     /// @return 错误码
     errc_t chat(const JsonValue& request, JsonValue& response);
+
+    /// @brief 设置API密钥
+    /// @param apiKey API密钥
+    void setApiKey(StringView apiKey){apiKey_ = std::string(apiKey);}
+
+    /// @brief 设置API基础URL
+    /// @param baseUrl API基础URL
+    void setBaseUrl(StringView baseUrl){baseUrl_ = std::string(baseUrl);}
 protected:
     const std::string& apiKey() const { return apiKey_; }
     const std::string& baseUrl() const { return baseUrl_; }

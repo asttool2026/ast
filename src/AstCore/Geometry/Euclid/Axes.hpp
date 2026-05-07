@@ -69,6 +69,7 @@ AST_CORE_API errc_t aAxesTransform(Axes* source, Axes* target, const TimePoint& 
 class AST_CORE_API Axes : public ObjectNamed
 {
 public:
+    AST_OBJECT(Axes)
     ~Axes() override = default;
     
     /// @brief 获取当前轴系的父轴系
