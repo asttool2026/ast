@@ -66,7 +66,7 @@ def merge_module_sources():
             print(f"Merging {len(cpp_files)} .cpp files in {module_name} to {merged_file_path}")
             
             # 合并文件内容
-            with open(merged_file_path, 'w', encoding='utf-8') as merged_file:
+            with open(merged_file_path, 'w', encoding='utf-8-sig') as merged_file:
                 for cpp_file in cpp_files:
                     with open(cpp_file, 'r', encoding='utf-8', errors='ignore') as f:
                         content = f.read()
