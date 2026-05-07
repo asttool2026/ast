@@ -43,7 +43,7 @@ class ExprCurrentScStateCalculation: public ExprCalculationBase
 public:
     static ExprCurrentScStateCalculation* New(ScStateCalculation* calculation=nullptr);
 
-    ExprCurrentScStateCalculation(ScStateCalculation* calculation=nullptr);
+    explicit ExprCurrentScStateCalculation(ScStateCalculation* calculation=nullptr);
     Value* eval() const override;
     void accept(ExprVisitor& visitor) override;
     std::string getExpression(Object* scope) const override;

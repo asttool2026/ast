@@ -22,6 +22,7 @@
  
 #include "AstGlobal.h"
 #include "AstMath/MathOperator.hpp"
+#include "AstUtil/Constants.h"
 #include <stdlib.h>    // for malloc
 #include <string>      // for std::string
  

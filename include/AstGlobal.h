@@ -368,6 +368,11 @@ class TimeInterval;         ///< 时间段
 class JulianDate;           ///< 儒略日
 class ModJulianDate;        ///< 简约儒略日
 
+class Rotation;              ///< 旋转
+class Transform;             ///< 变换
+class KinematicRotation;     ///< 动力学旋转
+class KinematicTransform;    ///< 动力学变换
+
 class Frame;                 ///< 坐标系
 class Axes;                  ///< 坐标轴
 class Point;                 ///< 坐标点

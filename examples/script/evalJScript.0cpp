@@ -203,7 +203,6 @@ int main()
 
         // 3. 设置脚本站点
         SimpleScriptSite* pSite = new SimpleScriptSite();
-        pSite->AddRef(); // 传递给 SetScriptSite 时会增加引用，这里额外保活
         hr = pScript->SetScriptSite(pSite);
         pSite->Release();
         if (FAILED(hr))

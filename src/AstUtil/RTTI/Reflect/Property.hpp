@@ -51,14 +51,14 @@ enum class EValueType
 /// @param container 对象指针
 /// @param value 指向属性值的指针
 /// @return errc_t 错误码
-errc_t aFakeGet(const void* container, void* value);
+AST_UTIL_API errc_t aFakeGet(const void* container, void* value);
 
 
 /// @brief 模拟设置属性值的函数
 /// @param container 对象指针
 /// @param value 指向属性值的指针
 /// @return errc_t 错误码
-errc_t aFakeSet(void* container, const void* value);
+AST_UTIL_API errc_t aFakeSet(void* container, const void* value);
 
 
 

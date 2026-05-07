@@ -26,13 +26,13 @@ AST_USING_NAMESPACE
 
 int main()
 {
-    {Satellite sat;}
+    {Satellite sat;}  // 确保链接到AstSim库
     char buffer[1024];
     while (true)
     {
         ast_printf("请和我说你的需求，我来设计场景: \n");
-        fgets(buffer, sizeof(buffer), stdin);
-        if (buffer[0] == '\n')
+        char* str = fgets(buffer, sizeof(buffer), stdin);
+        if (str && buffer[0] == '\n')
             continue;
         AgentSession session;
         std::string response = session.sendMessage(buffer);
