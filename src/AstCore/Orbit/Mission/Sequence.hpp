@@ -23,6 +23,7 @@
 #include "AstGlobal.h"
 #include "MissionCommand.hpp"
 #include "Segment.hpp"
+#include "AstCore/ScriptingToolProfile.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -49,9 +50,35 @@ public:
     void setCommands(const std::vector<HMissionCommand>& commands);
     void setCommands(std::vector<HMissionCommand>&& commands);
     const std::vector<HMissionCommand>& getCommands() const;
+
+    ScriptingToolProfile* scriptingTool() const{return scriptingTool_.get();}
+    void setScriptingTool(ScriptingToolProfile* tool){scriptingTool_ = tool;}
+
+    /// @brief 根据路径获取子段，例如"a.b.c"
+    /// @param path 路径
+    /// @return Segment* 子段指针
+    Segment* getSegmentByPath(StringView path);
+    MissionCommand* getCommandByPath(StringView path);
+
+    /// @brief 根据名称获取子段
+    /// @param name 子段名称
+    /// @return Segment* 子段指针
+    Segment* getSegmentByName(StringView name);
+    MissionCommand* getCommandByName(StringView name);
+
+    /// @brief 获取重复次数
+    /// @return int 重复次数
+    int repeatCount() const{return repeatCount_;}
+    void setRepeatCount(int count){repeatCount_ = count;}
+protected:
+    /// @brief 链接任务命令
+    void linkCommands();
 private:
-    std::vector<HMissionCommand> commands_;     ///< 任务命令序列
+    int repeatCount_{1};                                    ///< 重复次数
+    std::vector<HMissionCommand> commands_;                 ///< 任务命令序列
+    SharedPtr<ScriptingToolProfile> scriptingTool_;         ///< 脚本工具
 };
+
 
 /*! @} */
 

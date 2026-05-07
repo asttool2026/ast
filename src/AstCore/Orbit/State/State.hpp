@@ -56,6 +56,9 @@ public:
     AST_PROPERT(Frame)
     AST_PROPERT(StateEpoch)
 ;
+
+    static PState NewDefault();
+
     State() = default;
     ~State() override = default;
 
@@ -94,10 +97,42 @@ public:
     /// @return errc_t 错误码
     virtual errc_t getState(CartState& state) const = 0;
 
+    /// @brief 获取状态
+    /// @param orbElem 轨道根数
+    /// @return errc_t 错误码
+    virtual errc_t getState(ModOrbElem& orbElem) const = 0;
+
     /// @brief 设置状态
     /// @param state 状态
     /// @return errc_t 错误码
     virtual errc_t setState(const CartState& state) = 0;
+
+    /// @brief 设置状态
+    /// @param orbElem 轨道根数
+    /// @return errc_t 错误码
+    virtual errc_t setState(const ModOrbElem& orbElem) = 0;
+
+
+    /// @brief 获取在给定坐标系下的状态根数
+    /// @param frame 坐标系
+    /// @param orbElem 轨道根数
+    /// @return errc_t 错误码
+    errc_t getStateIn(Frame* frame, ModOrbElem& orbElem) const;
+
+
+    /// @brief 获取在给定坐标系下的状态量
+    /// @param frame 坐标系
+    /// @param state 状态
+    /// @return errc_t 错误码
+    errc_t getStateIn(Frame* frame, CartState& state) const;
+
+    /// @brief 获取在给定天体惯性坐标系下的状态量
+    /// @param body 天体
+    /// @param state 状态
+    /// @return errc_t 错误码
+    errc_t getStateInBodyInertial(Body* body, CartState& state) const;
+
+
 public:
 
     /// @brief 设置参考坐标系
@@ -143,17 +178,6 @@ public:
     /// @param gm 引力常数
     void setGM(double gm){ gm_ = gm; }
 public:
-    /// @brief 获取在给定天体惯性坐标系下的状态量
-    /// @param body 天体
-    /// @param state 状态
-    /// @return errc_t 错误码
-    errc_t getStateInBodyInertial(Body* body, CartState& state) const;
-
-    /// @brief 获取在给定坐标系下的状态量
-    /// @param frame 坐标系
-    /// @param state 状态
-    /// @return errc_t 错误码
-    errc_t getStateIn(Frame* frame, CartState& state) const;
 
 public:
 

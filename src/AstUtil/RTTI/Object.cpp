@@ -27,6 +27,7 @@
 #include "AstUtil/ObjectManager.hpp"
 #include "AstUtil/RTTIAPI.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/ObjectLinker.hpp"
 
 AST_NAMESPACE_BEGIN
  
@@ -36,8 +37,7 @@ AST_NAMESPACE_BEGIN
 
 Object* Object::Resolve(StringView value)
 {
-    /// @todo 实现解析对象的逻辑
-    return nullptr;
+    return aFindObject(nullptr, value);
 }
 
 Object::Object(Object *parentScope)
@@ -188,6 +188,12 @@ errc_t Object::setAttrObject(StringView path, Object* value)
         return eErrorInvalidParam;
     return prop->setValueObject(this, value);
 }
+
+const std::string& Object::typeName() const
+{
+    return getType()->name();
+}
+
 
 
 Property *Object::getProperty(StringView fieldName) const

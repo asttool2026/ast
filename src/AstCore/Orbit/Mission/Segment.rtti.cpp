@@ -18,8 +18,8 @@ void Segment::ClassInit(Class* cls)
     cls->setParent<MissionCommand>();
     cls->setConstructor<Segment>();
 
-    cls->addProperty("InitialState", aNewPropertyObject<Segment, SpacecraftState, &Segment::getInitialState>());
-    cls->addProperty("FinalState", aNewPropertyObject<Segment, SpacecraftState, &Segment::getFinalState>());
+    cls->addProperty("InputState", aNewPropertyObject<Segment, SpacecraftState, &Segment::getInputState, &Segment::setInputState>());
+    cls->addProperty("OutputState", aNewPropertyObject<Segment, SpacecraftState, &Segment::getOutputState>());
 }
 
 AST_NAMESPACE_END

@@ -25,7 +25,7 @@ AST_NAMESPACE_BEGIN
 
 InitialState::InitialState()
 {
-    setInitialState(getFinalState());
+    
 }
 
 errc_t InitialState::execute()

@@ -140,6 +140,10 @@ public:
     /// @param detector 事件检测器对象
     void removeEventDetector(ODEEventDetector* detector);
 
+    /// @brief 清除所有事件检测器
+    /// @details 清除所有添加的事件检测器
+    void clearEventDetectors();
+
     /// @brief 添加状态观察者
     /// @details 添加一个状态观察者，用于观察ODE的状态
     /// @param observer 状态观察者对象

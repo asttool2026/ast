@@ -15,7 +15,7 @@ void MissionCommand::ClassInit(Class* cls)
     cls->setName("MissionCommand");
     cls->setDesc(u8R"(任务命令（虚基类），用于定义任务序列中的任务命令，例如初始状态、轨道机动、轨道预报等)");
     cls->addToRegistry();
-    cls->setParent<ObjectNamed>();
+    cls->setParent<Command>();
     cls->setConstructor<MissionCommand>();
 
 }

@@ -34,7 +34,9 @@ AST_NAMESPACE_BEGIN
 /// @brief 发动机点火
 class AST_CORE_API Burn: public ObjectNamed
 {
-
+public:
+    AST_OBJECT(Burn)
+    
 };
 
 

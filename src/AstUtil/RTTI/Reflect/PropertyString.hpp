@@ -46,6 +46,7 @@ public:
     errc_t setValueDouble(void* container, double value) override;
     errc_t getValueString(const void* container, std::string& value) override;
     errc_t setValueString(void* container, StringView value) override;
+    EValueType getValueType() const override{return EValueType::eString;}
     
     /// @brief 接受访问者
     /// @param visitor 访问者对象

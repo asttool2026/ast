@@ -58,7 +58,9 @@ public:
 public:
     EStateType getStateType() const override { return EStateType::eCartesian; }
     errc_t getState(CartState& state) const override;
+    errc_t getState(ModOrbElem& orbElem) const override;
     errc_t setState(const CartState& state) override;
+    errc_t setState(const ModOrbElem& orbElem) override;
 PROPERTIES:
     length_d x() const { return cartState_.x(); }
     length_d y() const { return cartState_.y(); }

@@ -20,6 +20,7 @@
 
 #include "Encode.hpp"
 #include "AstUtil/Logger.hpp"
+#include "AstUtil/StringView.hpp"
 #include <vector>
 #include <memory>
 #include <stdexcept>
@@ -146,6 +147,18 @@ errc_t aUtf8ToWide(const char* utf8, std::wstring& wide)
     return eErrorInvalidParam;
 }
 
+std::wstring aUtf8ToWide(StringView utf8)
+{
+    int len = MultiByteToWideChar(CP_UTF8, 0, utf8.data(), (int)utf8.size(), nullptr, 0);
+    if (len > 0)
+    {
+        std::wstring wide(len, L'\0');
+        wchar_t* buffer = &wide[0];
+        MultiByteToWideChar(CP_UTF8, 0, utf8.data(), (int)utf8.size(), buffer, len);
+        return wide;
+    }
+    return {};
+}
 
 
 errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8)

@@ -24,12 +24,16 @@
 #include "MissionCommand.hpp"
 #include "AstCore/SpacecraftState.hpp"
 
+
 AST_NAMESPACE_BEGIN
 
 /*!
     @addtogroup 
     @{
 */
+
+// class ControlFlowEscape {};
+// class ReturnEscape : public ControlFlowEscape{};
 
 
 /// @brief 轨道段（虚基类），用于描述任务序列中的轨道段，例如初始状态段、轨道机动段、轨道预报段等
@@ -40,29 +44,30 @@ class AST_CORE_API Segment: public MissionCommand
 {
 public:
     AST_OBJECT(Segment)
-    AST_PROPERT(InitialState)
-    AST_PROPERT(FinalState)
+    AST_PROPERT(InputState)
+    AST_PROPERT(OutputState)
     Segment();
     ~Segment() override = default;
 public:
     /// @brief 执行任务
     /// @return 错误码
     virtual errc_t execute() override = 0;
-public:
-    /// @brief 设置初始状态
-    /// @param initialState 初始状态
-    void setInitialState(SpacecraftState* initialState){initialState_ = initialState;}
-PROPERTIES:
-    /// @brief 获取初始状态
-    /// @return 初始状态
-    SpacecraftState* getInitialState() const{return initialState_.get();}
 
-    /// @brief 获取最终状态
-    /// @return 最终状态
-    SpacecraftState* getFinalState() const{return finalState_.get();}
+PROPERTIES:
+    /// @brief 设置输入状态
+    /// @param inputState 输入状态
+    void setInputState(SpacecraftState* inputState){inputState_ = inputState;}
+
+    /// @brief 获取输入状态
+    /// @return 输入状态
+    SpacecraftState* getInputState() const{return inputState_.get();}
+
+    /// @brief 获取输出状态
+    /// @return 输出状态
+    SpacecraftState* getOutputState() const{return outputState_.get();}
 private:
-    WeakPtr<SpacecraftState> initialState_;     ///< 初始状态
-    SharedPtr<SpacecraftState> finalState_;     ///< 最终状态
+    WeakPtr<SpacecraftState> inputState_;          ///< 输入状态
+    SharedPtr<SpacecraftState> outputState_;       ///< 输出状态
 };
 
 

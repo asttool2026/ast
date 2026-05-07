@@ -112,8 +112,10 @@ AST_UTIL_CAPI void aDeleteObject(Object* obj);
 AST_UTIL_API SharedPtr<Object> aMakeObject(StringView name, Object* parentScope=nullptr);
 
 
+
 /// @brief 解析对象
 /// @details 根据对象路径/名称/表达式解析对象
+/// @warning 要求value为对象路径（带有类型名称），或者cls不为空，否则只查找类型对象
 /// @param value 对象路径/名称/表达式
 /// @param cls 对象类型，默认 nullptr 表示不指定类型
 /// @return 解析后的对象指针
@@ -176,6 +178,14 @@ AST_UTIL_API std::vector<Object*> aFindObjects(Class* cls, StringView name=Strin
 /// @return 对象指针
 AST_UTIL_API Object* aFindObject(Class* cls, StringView name=StringView());
 
+template<typename T>
+T aFindObject(StringView name=StringView())
+{
+    // @todo: 这里逻辑和aobject_cast<T>的重复了，考虑怎么重构
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aFindObject requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(aFindObject(ObjectType::StaticType(), name));
+}
 
 /// @brief 设置对象的父作用域
 /// @details obj 对象指针
@@ -189,6 +199,21 @@ AST_UTIL_CAPI errc_t aSetParentScope(Object* obj, Object* parentScope);
 /// @return 父作用域指针
 AST_UTIL_CAPI Object* aGetParentScope(Object* obj);
 
+
+/// @brief 获取对象的祖先作用域
+/// @details obj 对象指针
+/// @param cls 类指针，如果为空则匹配所有类型
+/// @return 祖先作用域指针
+AST_UTIL_CAPI Object* aGetAncestorScope(Object* obj, Class* cls);
+
+template<typename T>
+T aGetAncestorScope(Object* obj)
+{
+    // @todo: 这里逻辑和aobject_cast<T>的重复了，考虑怎么重构
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aGetAncestorScope requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(aGetAncestorScope(obj, ObjectType::StaticType()));
+}
 
 /// @brief 获取所有对象
 /// @details 获取所有已添加的对象
@@ -210,6 +235,15 @@ AST_UTIL_API void aPrintAllObjects();
 /// @return 子对象指针
 AST_UTIL_API Object* aFindChild(Object* parentScope, Class* cls=nullptr, StringView name=StringView());
 
+
+template<typename T>
+T aFindChild(Object* parentScope, StringView name=StringView())
+{
+    // @todo: 这里逻辑和aobject_cast<T>的重复了，考虑怎么重构
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aFindChild requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(aFindChild(parentScope, ObjectType::StaticType(), name));
+}
 
 /// @brief 查找对象的子对象
 /// @details 根据父对象、类指针和子对象名查找子对象

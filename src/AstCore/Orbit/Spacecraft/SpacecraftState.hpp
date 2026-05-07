@@ -33,7 +33,8 @@ AST_NAMESPACE_BEGIN
 */
 
 /// @brief 航天器状态，包含轨道状态、质量、面积、阻力系数、光压、密度、压力、温度等属性
-class SpacecraftState: public ObjectNamed
+/// @details 参考orekit的SpacecraftState类
+class AST_CORE_API SpacecraftState: public ObjectNamed
 {
 public:
     AST_OBJECT(SpacecraftState)
@@ -53,6 +54,8 @@ public:
     AST_PROPERT(TankTemperature)
     AST_PROPERT(OrbitState)
 ;
+ 
+    static SpacecraftState* NewDefault();
     
     SpacecraftState() = default;
     ~SpacecraftState() = default;
@@ -105,11 +108,23 @@ PROPERTIES:
 
     /// @brief 获取轨道状态
     /// @return 轨道状态
-    State* getOrbitState() const {return orbitState_;}
+    State* getOrbitState() const;
 
     /// @brief 设置轨道状态
     /// @param orbitState 轨道状态
     void setOrbitState(State* orbitState){orbitState_ = orbitState;}
+public:
+    Frame* getFrame() const;
+    errc_t getState(ModOrbElem& orbElem) const;
+    errc_t getState(CartState& state) const;
+    errc_t getStateIn(Frame* frame, CartState& state) const;
+    errc_t getStateIn(Frame* frame, ModOrbElem& orbElem) const;
+    errc_t getStateInBodyInertial(Body* body, CartState& state) const;
+    errc_t setState(const ModOrbElem& orbElem);
+    errc_t setState(const CartState& state);
+    void setStateEpoch(const TimePoint& stateEpoch);
+    errc_t getStateEpoch(TimePoint& stateEpoch) const;
+    void copyFrom(const SpacecraftState& srcState);
 private:
     HState orbitState_;                 ///< 轨道状态
     double cd_{2.2};

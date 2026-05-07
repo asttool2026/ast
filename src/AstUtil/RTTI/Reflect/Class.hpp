@@ -21,7 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "Struct.hpp"
+#include "AstUtil/Struct.hpp"
 #include "AstUtil/SharedPtr.hpp"
 #include "AstUtil/Object.hpp"
 #include <type_traits>
@@ -42,10 +42,15 @@ class AST_UTIL_API Class: public Struct
     typedef Object* (*FResolve)(StringView value);
 
 public:
+    AST_OBJECT(Class);
+
+    using Struct::Struct;
+
     /// @brief 构造函数
     /// @param parent 父类指针
     Class(Class* parent = nullptr);
 
+    
     ~Class();
 
     /// @brief 类型转换

@@ -21,6 +21,7 @@
 #include "ForceModelLoader.hpp"
 #include "AstCore/HPOPForceModel.hpp"
 #include "AstScript/Value.hpp"
+#include "AstUtil/FileSystem.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -34,7 +35,20 @@ errc_t aLoadGravityForce(const Value& value, GravityForce& gravityForce)
     // 基础重力场配置参数
     gravityForce.maxDegree_ = value["Degree"];
     gravityForce.maxOrder_ = value["Order"];
-    gravityForce.model_ = std::string(value["GravityFile"]);
+
+    // 重力场模型
+    {
+        std::string gravityFile = value["GravityFile"];
+        // 特殊处理一下
+        if(StringView(gravityFile).starts_with(R"(STKData\CentralBodies\)"))
+        {
+            gravityForce.model_ = fs::path(gravityFile).stem().string();
+        }
+        else
+        {
+            gravityForce.model_ = gravityFile;
+        }
+    }
     gravityForce.useSecularVariations_ = value["UseSecularVariations"];
 
     // 固体潮汐配置参数

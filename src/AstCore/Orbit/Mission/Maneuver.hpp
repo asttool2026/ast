@@ -40,10 +40,13 @@ class AST_CORE_API Maneuver: public Segment
 {
 public:
     AST_OBJECT(Maneuver)
+    AST_PROPERT(burn)
     Maneuver() = default;
     ~Maneuver() = default;
 public:
     errc_t execute() override;
+PROPERTIES:
+    Burn* burn() const {return burn_.get();}
     void setBurn(Burn* burn);
 private:
     WeakPtr<Burn> burn_;        ///< 发动机点火

@@ -350,6 +350,9 @@ class Quaternion;            ///< 四元数
 class Euler;                 ///< 欧拉角
 
 class CartState;             ///< 直角坐标
+class ModOrbElem;            ///< 改进轨道根数
+class OrbElem;               ///< 经典轨道根数
+
 class State;
 class StateCartesian;
 class StateKeplerian;
@@ -364,6 +367,11 @@ class TimePoint;            ///< 时间点
 class TimeInterval;         ///< 时间段
 class JulianDate;           ///< 儒略日
 class ModJulianDate;        ///< 简约儒略日
+
+class Rotation;              ///< 旋转
+class Transform;             ///< 变换
+class KinematicRotation;     ///< 动力学旋转
+class KinematicTransform;    ///< 动力学变换
 
 class Frame;                 ///< 坐标系
 class Axes;                  ///< 坐标轴

@@ -28,8 +28,15 @@
 #include "AstCore/StateCartesian.hpp"
 #include "AstCore/StateKeplerian.hpp"
 #include "AstCore/Resolve.hpp"
+#include "AstUtil/ObjectLinker.hpp"
 
 AST_NAMESPACE_BEGIN
+
+PState State::NewDefault()
+{
+    return StateKeplerian::NewDefault();
+}
+
 
 HState State::MakeShared(EStateType type)
 {
@@ -81,16 +88,27 @@ void State::setFrame(Frame *frame)
 
 errc_t State::setFrameByName(StringView frameName)
 {
-    // std::string name(frameName);
-    // addDelayedLink([name](){
-    //     return (Frame*)(nullptr);
-    // });
-    auto frame = aResolveFrame(frameName);
-    if(!frame){
-        aError("failed to resolve frame '%.*s'", frameName.size(), frameName.data());
-        return -1;
+    std::string name(frameName);
+    State* state = this;
+    auto resolveFunc = [name, state]() -> errc_t {
+        auto frame = aResolveFrame(name);
+        if(frame)
+        {
+            state->setFrame(frame);
+            return 0;
+        }
+        else
+        {
+            aWarning("failed to resolve frame '%s'", name.c_str());
+            return -1;
+        }
+    };
+    errc_t rc = resolveFunc();
+    if(!rc)
+    {
+        addDelayedLink(resolveFunc);
+        return eNoError;
     }
-    this->setFrame(frame);
     return eNoError;
 }
 
@@ -154,18 +172,32 @@ double State::getBodyRadius() const
     return 0.0;
 }
 
-errc_t State::getStateInBodyInertial(Body * body, CartState & state) const
+
+errc_t State::getStateIn(Frame* frame, ModOrbElem& orbElem) const
 {
-    if(!body)
+    if(frame == frame_)
+        return getState(orbElem);
+    if(!frame)
         return eErrorNullInput;
-    auto frameInertial = body->makeFrameInertial();
-    return getStateIn(frameInertial, state);
+    CartState cartState;
+    errc_t rc = getState(cartState);
+    if(rc) return rc;
+    KinematicTransform transform;
+    rc = aFrameTransform(frame_, frame, getStateEpoch_TimePoint(), transform);
+    if(rc) return rc;
+    cartState = transform.transformPositionVelocity(cartState);
+    if(rc) return rc;
+    aCartToModOrbElem(cartState.pos(), cartState.vel(), frame->getGM(), orbElem);
+    return eNoError;
 }
+
 
 errc_t State::getStateIn(Frame *frame, CartState &state) const
 {
     errc_t rc = getState(state);
     if(rc) return rc;
+    if(frame == frame_)
+        return eNoError;
     if(!frame)
         return eErrorNullInput;
     KinematicTransform transform;
@@ -175,6 +207,16 @@ errc_t State::getStateIn(Frame *frame, CartState &state) const
     if(rc) return rc;
     return eNoError;
 }
+
+
+errc_t State::getStateInBodyInertial(Body *body, CartState&state) const
+{
+    if(!body)
+        return eErrorNullInput;
+    auto frameInertial = body->makeFrameInertial();
+    return getStateIn(frameInertial, state);
+}
+
 
 #if 0 
 
