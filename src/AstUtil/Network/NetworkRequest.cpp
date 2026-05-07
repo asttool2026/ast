@@ -19,8 +19,9 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "NetworkRequest.hpp"
-#include "StringView.hpp"
+#include "AstUtil/StringView.hpp"
 #include "AstUtil/StringUtil.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -45,5 +46,27 @@ void NetworkRequest::setMethod(StringView method)
     else
         method_ = ENetworkRequestMethod::eUnknown;
 }
+
+
+void NetworkRequest::setJson(const JsonValue& json)
+{
+    body_ = json.toJsonString();
+}
+
+errc_t NetworkRequest::toJson(JsonValue& json) const
+{
+    return json.parseFromString(body_);
+}
+
+JsonValue NetworkRequest::toJson() const
+{
+    JsonValue json;
+    errc_t rc = toJson(json);
+    if(rc != 0){
+        aError("failed to parse request body to json");
+    }
+    return json;
+}
+
 
 AST_NAMESPACE_END

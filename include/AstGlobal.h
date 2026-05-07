@@ -379,6 +379,7 @@ class Expr;                 ///< 表达式
 class Variable;             ///< 变量
 
 class BKVParser;            ///< BKV解析器
+class JsonValue;            ///< JSON值
 
 class Dimension;            ///< 量纲
 class Unit;                 ///< 单位

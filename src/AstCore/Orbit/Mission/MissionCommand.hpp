@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -35,12 +36,14 @@ class MissionCommand;
 using PMissianCommand = MissionCommand*;
 using HMissionCommand = SharedPtr<MissionCommand>;
 
-/// @brief 任务命令
+/// @brief 任务命令（虚基类），用于定义任务序列中的任务命令，例如初始状态、轨道机动、轨道预报等
 /// @details 任务命令负责执行任务序列中的任务
 /// 参考GMAT的GmatCommand.hpp
-class AST_CORE_API MissionCommand: public Object
+class AST_CORE_API MissionCommand: public ObjectNamed
 {
 public:
+    AST_OBJECT(MissionCommand)
+
     /// @brief 控制命令
     enum EControlCommand
     {

@@ -10,6 +10,7 @@ add_deps(
     "AstSPICE", 
     "AstSim",
     "AstLoader",
+    "AstAI",
     "AstTest"
 )
 add_packages("gtest")

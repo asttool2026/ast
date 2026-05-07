@@ -57,7 +57,7 @@ typedef AttributeBasic<WeakPtr<Object>, Property> Attribute;
 // AST 对象运行时元信息
 #define AST_OBJECT(TYPE) \
     static Class staticType;\
-    static inline Class* getStaticType(){return &staticType;}\
+    static inline Class* StaticType(){return &staticType;}\
     Class* getType() const override{return &staticType;} \
     static void ClassInit(Class* cls);\
 
@@ -83,6 +83,11 @@ enum {
 class AST_UTIL_API Object
 {
 public:
+    /// @brief 解析字符串
+    /// @param value 字符串值
+    /// @return Object* 解析结果
+    static Object* Resolve(StringView value);
+    
     // friend uint32_t aObject_IncRef(Object* obj);
     // friend uint32_t aObject_DecRef(Object* obj);
     // friend uint32_t aObject_IncWeakRef(Object* obj);
@@ -97,7 +102,8 @@ public:
     Object(std::nullptr_t);
 public:
     static Class staticType;
-    static inline Class* getStaticType(){return &staticType;}
+    static void ClassInit(Class* cls);
+    static inline Class* StaticType(){return &staticType;}
 
     /// @brief 获取对象的类型元信息
     /// @return Class* 类型元信息指针
@@ -107,12 +113,14 @@ public:
     /// @return const char* 对象名称
     virtual const std::string& getName() const;
 
-
+    /// @brief 设置对象的名称
+    /// @param name 对象名称
+    virtual void setName(StringView name) = 0;
 public: // 编辑属性
     
-    /// @brief 打开编辑对话框，用于编辑对象的属性
+    /// @brief 显示编辑对话框，用于编辑对象的属性
     /// @return errc_t 错误码
-    errc_t openEditDialog();
+    errc_t showEditDialog();
 
 public: // 通用属性访问
     /// @brief 获取属性，属性路径格式为 "attr1.attr2.attr3"
@@ -213,6 +221,16 @@ public: // 对象ID
     /// @brief 获取对象的父作用域
     /// @return Object* 父作用域指针
     Object* getParentScope() const;
+
+    /// @brief 判断对象是否为指定类型的实例
+    /// @param type 类型元信息
+    /// @return bool 是否为指定类型的实例
+    bool isOfType(Class* type) const;
+
+    /// @brief 判断对象是否为指定类型的实例
+    /// @param typeName 类型名
+    /// @return bool 是否为指定类型的实例   
+    bool isOfType(StringView typeName) const;
 public: // 引用计数
     /// @brief 获取强引用计数
     /// @return uint32_t 强引用计数

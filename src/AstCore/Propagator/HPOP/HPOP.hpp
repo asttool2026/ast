@@ -24,6 +24,7 @@
 #include "AstUtil/Constants.h"
 #include "AstUtil/ScopedPtr.hpp"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 #include "AstCore/CelestialBody.hpp"
 #include <string>
 #include <vector>
@@ -41,7 +42,7 @@ class ODEIntegrator;
 class HPOPForceModel;
 
 /// @brief 高精度轨道预报接口类
-class AST_CORE_API HPOP: public Object
+class AST_CORE_API HPOP: public ObjectNamed
 {
 public:
     HPOP();

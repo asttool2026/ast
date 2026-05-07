@@ -32,6 +32,23 @@ AST_NAMESPACE_BEGIN
 class AST_MATH_API ODEVarStepIntegrator : public ODEFixedStepIntegrator
 {
 public:
+    AST_OBJECT(ODEVarStepIntegrator)
+    AST_PROPERT(useMinStep)
+    AST_PROPERT(useMaxStep)
+    AST_PROPERT(warnOnMinStep)
+    AST_PROPERT(maxStepAttempts)
+    AST_PROPERT(minStepSize)
+    AST_PROPERT(maxStepSize)
+    AST_PROPERT(maxAbsErr)
+    AST_PROPERT(maxRelErr)
+    AST_PROPERT(minStepScaleFactor)
+    AST_PROPERT(maxStepScaleFactor)
+    AST_PROPERT(safetyCoeffLow)
+    AST_PROPERT(safetyCoeffHigh)
+    AST_PROPERT(errCtrPowthLow)
+    AST_PROPERT(errCtrPowthHigh)
+;
+    
     ODEVarStepIntegrator();
     ~ODEVarStepIntegrator();
     using ODEFixedStepIntegrator::integrate;
@@ -98,7 +115,7 @@ protected:
     /// @param ynew 新状态向量
     /// @return 是否满足误差要求
     bool isErrorMeet(double& absh, const double* y, const double* ynew);
-private:
+PROPERTIES:
     bool useMinStep_;           ///< 是否使用最小步长
     bool useMaxStep_;           ///< 是否使用最大步长
     // bool useFixedStepSize_;     ///< 是否使用固定步长

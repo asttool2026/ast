@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/ObjectNamed.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -31,7 +32,7 @@ AST_NAMESPACE_BEGIN
 */
 
 /// @brief 发动机点火
-class AST_CORE_API Burn: public Object
+class AST_CORE_API Burn: public ObjectNamed
 {
 
 };

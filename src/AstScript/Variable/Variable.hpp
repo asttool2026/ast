@@ -68,6 +68,8 @@ public:
     std::string getExpression(Object* context=nullptr) const override{return name_;}
 public:
     const std::string& name() const { return name_; }
+    const std::string& getName() const override { return name_; }
+    void setName(StringView name) override { name_ = std::string(name); }
     Expr* expr() const { return expr_.get(); }
     
 protected:

@@ -128,6 +128,18 @@ public:
     /// @param value StringView类型变量，用于设置属性值
     /// @return errc_t 错误码
     virtual errc_t setValueString(void* container, StringView value) = 0;
+public:
+    double getValueDouble(const void* container);
+    int getValueInt(const void* container);
+    bool getValueBool(const void* container);
+    std::string getValueString(const void* container);
+    
+    template<typename T>
+    T getValue(const void* container);
+public:
+    /// @brief 检查属性是否为对象类型
+    /// @return bool 是否为对象类型
+    bool isObject() const;
 
 protected:
     /// @brief 获取属性值
@@ -153,6 +165,31 @@ protected:
     FPropertyGet getter_ {nullptr};                                 // 获取属性值的函数指针
     FPropertySet setter_ {nullptr};                                 // 设置属性值的函数指针
 };
+
+
+template<>
+inline double Property::getValue<double>(const void* container)
+{
+    return getValueDouble(container);
+}
+template<>
+inline int Property::getValue<int>(const void* container)
+{
+    return getValueInt(container);
+}
+template<>
+inline bool Property::getValue<bool>(const void* container)
+{
+    return getValueBool(container);
+}
+
+template<>
+inline std::string Property::getValue<std::string>(const void* container)
+{
+    return getValueString(container);
+}
+
+
 
 /*! @} */
 

@@ -35,14 +35,27 @@ void aGetAllClassNames(std::vector<std::string> &names)
     ClassRegistry::Instance()->getAllClassNames(names);
 }
 
+const std::unordered_map<std::string, Class*>& aGetAllClasses()
+{
+    return ClassRegistry::Instance()->getAllClasses();
+}
+
 Class *aGetClass(StringView name)
 {
     return ClassRegistry::Instance()->getClass(name);
 }
 
-void aRegisterClass(Class *cls)
+bool aIsVirtualClass(StringView name)
 {
-    ClassRegistry::Instance()->registerClass(cls);
+    Class *cls = aGetClass(name);
+    return cls && cls->isVirtual();
+}
+
+void aRegisterClass(Class *cls, StringView name)
+{
+    if(name.empty())
+        return ClassRegistry::Instance()->registerClass(cls);
+    return ClassRegistry::Instance()->registerClass(cls, name);
 }
 
 Object *aGetClassDefaultObject(StringView name)
@@ -63,7 +76,7 @@ Object *aNewObject(StringView name, Object* parentScope)
     Class *cls = aGetClass(name);
     if(!cls)
         return nullptr;
-    return cls->NewObject(parentScope);
+    return cls->newObject(parentScope);
 }
 
 void aDeleteObject(Object *obj)
@@ -76,6 +89,22 @@ SharedPtr<Object> aMakeObject(StringView name, Object* parentScope)
     return aNewObject(name, parentScope);
 }
 
+
+Object *aResolveObject(StringView value, Class* cls)
+{
+    // 如果未指定类型，则采用Object类型进行解析
+    if(!cls)
+        return Object::Resolve(value);
+    while(cls)
+    {
+        auto obj = cls->resolve(value);
+        if(obj && obj->isOfType(cls))
+            return obj;
+        cls = cls->getParent();
+    }
+    return nullptr;
+}
+
 Object *aGetObject(uint32_t id)
 {
     return ObjectManager::CurrentInstance().getObject(id);
@@ -86,6 +115,27 @@ uint32_t aAddObject(Object *object)
     return ObjectManager::CurrentInstance().addObject(object);
 }
 
+void aRemoveAllObjects()
+{
+    ObjectManager::CurrentInstance().removeAllObjects();
+}
+
+int aGetObjectCount()
+{
+    return ObjectManager::CurrentInstance().getObjectCount();
+}
+
+
+std::vector<Object*> aFindObjects(Class* cls, StringView name)
+{
+    return ObjectManager::CurrentInstance().findObjects(cls, name);
+}
+
+Object *aFindObject(Class* cls, StringView name)    
+{
+    return ObjectManager::CurrentInstance().findObject(cls, name);
+}
+
 errc_t aSetParentScope(Object *obj, Object *parentScope)
 {
     return ObjectManager::CurrentInstance().setParentScope(obj, parentScope);
@@ -94,6 +144,20 @@ errc_t aSetParentScope(Object *obj, Object *parentScope)
 Object *aGetParentScope(Object *obj)
 {
     return ObjectManager::CurrentInstance().getParentScope(obj);
+}
+
+std::vector<Object*> aGetAllObjects()
+{
+    return ObjectManager::CurrentInstance().getAllObjects();
+}
+
+void aPrintAllObjects()
+{
+    auto objects = aGetAllObjects();
+    for(auto obj : objects)
+    {
+        aPrintObject(obj);
+    }
 }
 
 Object *aFindChild(Object *parentScope, Class *cls, StringView name)
@@ -211,28 +275,21 @@ std::vector<Object*> aFindChildren(Object* parentScope, Class* cls, StringView n
     return children;
 }
 
-void aPrintObjectTree(Object* root, int indent)
+void aPrintObject(Object* obj, int indent, const ObjectPrintConfig& config)
 {
-    aPrintObjectTree(root, indent, PrintObjectTreeConfig());
-}
-
-void aPrintObjectTree(Object* root, int indent, const PrintObjectTreeConfig& config)
-{
-    if (!root) {
+    if(!obj)
         return;
-    }
-
     // 打印缩进
     for (int i = 0; i < indent; i++) {
         printf("  ");
     }
 
     // 打印对象信息
-    const std::string& name = root->getName();
-    Class* type = root->getType();
-    uint32_t id = root->getID();
-    uint32_t refCount = root->refCount();
-    uint32_t weakRefCount = root->weakRefCount();
+    const std::string& name = obj->getName();
+    Class* type = obj->getType();
+    uint32_t id = obj->getID();
+    uint32_t refCount = obj->refCount();
+    uint32_t weakRefCount = obj->weakRefCount();
 
     // 使用不同颜色和符号来区分字段
     cprintf(eGreen, "%s", name.c_str());
@@ -246,8 +303,20 @@ void aPrintObjectTree(Object* root, int indent, const PrintObjectTreeConfig& con
     if (config.printWeakRefCount) {
         cprintf(eLightBlue, " W:%u", weakRefCount);
     }
-    
     printf("\n");
+}
+
+void aPrintObjectTree(Object* root, int indent)
+{
+    aPrintObjectTree(root, indent, ObjectPrintConfig());
+}
+
+void aPrintObjectTree(Object* root, int indent, const ObjectPrintConfig& config)
+{
+    if (!root) {
+        return;
+    }
+    aPrintObject(root, indent, config);
 
     // 打印子对象
     std::vector<Object*> children = aFindChildren(root);

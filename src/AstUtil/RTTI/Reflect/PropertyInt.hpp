@@ -33,6 +33,7 @@ class AST_UTIL_API PropertyInt: public Property
 {
 public:
     using Property::Property;
+    using Property::getValue;
     using InputType = int;
     using OutputType = int;
     errc_t getValueBool(const void* container, bool& value) override;

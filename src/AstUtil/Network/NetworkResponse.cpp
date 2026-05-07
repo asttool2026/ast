@@ -19,9 +19,30 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "NetworkResponse.hpp"
+#include "AstUtil/JsonValue.hpp"
+#include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
 
+void NetworkResponse::setJson(const JsonValue &json)
+{
+    body_ = json.toJsonString();
+}
 
+errc_t NetworkResponse::toJson(JsonValue &json) const
+{
+    return json.parseFromString(body_);
+}
+
+JsonValue NetworkResponse::toJson() const
+{
+    JsonValue json;
+    errc_t ret = toJson(json);
+    if(ret != 0)
+        aError("failed to parse response body to json");
+    return json;
+}
 
 AST_NAMESPACE_END
+
+

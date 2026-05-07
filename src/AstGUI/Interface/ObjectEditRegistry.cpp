@@ -55,15 +55,15 @@ ObjectEditRegistry::ObjectEditRegistry(bool shouldRegistEditWidget)
     if(shouldRegistEditWidget)
     {
         aGuiInit();
-        registerEditWidget(StateCartesian::getStaticType(), [](Object *object) -> QWidget* { return new UiStateCartesian(object); });
-        registerEditWidget(StateKeplerian::getStaticType(), [](Object *object) -> QWidget* { return new UiStateKeplerian(object); });
-        registerEditWidget(MotionTwoBody::getStaticType(), [](Object *object) -> QWidget* { return new UiMotionTwoBody(object); });
-        registerEditWidget(BodyEphemerisDE::getStaticType(), [](Object *object) -> QWidget* { return new UiBodyEphemerisDE(object); });
-        registerEditWidget(BodyEphemerisSPK::getStaticType(), [](Object *object) -> QWidget* { return new UiBodyEphemerisSPK(object); });
-        registerEditWidget(GravityForce::getStaticType(), [](Object *object) -> QWidget* { return new UiGravityForce(object); });
-        registerEditWidget(DragForce::getStaticType(), [](Object *object) -> QWidget* { return new UiDragForce(object); });
-        registerEditWidget(SolarRadiationPressure::getStaticType(), [](Object *object) -> QWidget* { return new UiSolarRadiationPressure(object); });
-        registerEditWidget(ThirdBodyForce::getStaticType(), [](Object *object) -> QWidget* { return new UiThirdBodyForce(object); });
+        registerEditWidget(StateCartesian::StaticType(), [](Object *object) -> QWidget* { return new UiStateCartesian(object); });
+        registerEditWidget(StateKeplerian::StaticType(), [](Object *object) -> QWidget* { return new UiStateKeplerian(object); });
+        registerEditWidget(MotionTwoBody::StaticType(), [](Object *object) -> QWidget* { return new UiMotionTwoBody(object); });
+        registerEditWidget(BodyEphemerisDE::StaticType(), [](Object *object) -> QWidget* { return new UiBodyEphemerisDE(object); });
+        registerEditWidget(BodyEphemerisSPK::StaticType(), [](Object *object) -> QWidget* { return new UiBodyEphemerisSPK(object); });
+        registerEditWidget(GravityForce::StaticType(), [](Object *object) -> QWidget* { return new UiGravityForce(object); });
+        registerEditWidget(DragForce::StaticType(), [](Object *object) -> QWidget* { return new UiDragForce(object); });
+        registerEditWidget(SolarRadiationPressure::StaticType(), [](Object *object) -> QWidget* { return new UiSolarRadiationPressure(object); });
+        registerEditWidget(ThirdBodyForce::StaticType(), [](Object *object) -> QWidget* { return new UiThirdBodyForce(object); });
     }
 }
 

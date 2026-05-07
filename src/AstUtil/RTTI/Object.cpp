@@ -33,7 +33,12 @@ AST_NAMESPACE_BEGIN
 
 static_assert(sizeof(Object) == sizeof(void*) * 1 + sizeof(uint32_t) * 4, "size not correct");      // 检查 Object 类的大小是否正确
 
-Class Object::staticType;
+
+Object* Object::Resolve(StringView value)
+{
+    /// @todo 实现解析对象的逻辑
+    return nullptr;
+}
 
 Object::Object(Object *parentScope)
     : Object{}
@@ -58,7 +63,7 @@ const std::string &Object::getName() const
     return empty;
 }
 
-errc_t Object::openEditDialog()
+errc_t Object::showEditDialog()
 {
     return aUiEditObject(this);
 }
@@ -191,6 +196,30 @@ errc_t Object::setParentScope(Object *parentScope)
 Object *Object::getParentScope() const
 {
     return aGetParentScope(const_cast<Object*>(this));
+}
+
+bool Object::isOfType(Class* type) const
+{
+    auto t = getType();
+    while(t)
+    {
+        if(t == type)
+            return true;
+        t = t->getParent();
+    }
+    return false;
+}
+
+bool Object::isOfType(StringView typeName) const
+{
+    auto t = getType();
+    while(t)
+    {
+        if(typeName == t->name())
+            return true;
+        t = t->getParent();
+    }
+    return false;
 }
 
 Object::~Object()

@@ -131,7 +131,7 @@ errc_t State::getStateEpoch(TimePoint &stateEpoch) const
     return stateEpoch_->getTime(stateEpoch);
 }
 
-TimePoint State::getStateEpoch() const
+TimePoint State::getStateEpoch_TimePoint() const
 {
     TimePoint tp{};
     errc_t rc = getStateEpoch(tp);
@@ -169,7 +169,7 @@ errc_t State::getStateIn(Frame *frame, CartState &state) const
     if(!frame)
         return eErrorNullInput;
     KinematicTransform transform;
-    rc = aFrameTransform(frame_, frame, getStateEpoch(), transform);
+    rc = aFrameTransform(frame_, frame, getStateEpoch_TimePoint(), transform);
     if(rc) return rc;
     state = transform.transformPositionVelocity(state);
     if(rc) return rc;
