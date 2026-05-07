@@ -100,7 +100,7 @@ public:
         : refcnt_{0}
         , weakrefcnt_{1}
     {}
-    Object(Object* parentScope);
+    explicit Object(Object* parentScope);
     Object(std::nullptr_t);
     
     /// @brief 构造函数，用于初始化对象的强引用计数为1

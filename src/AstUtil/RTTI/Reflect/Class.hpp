@@ -48,7 +48,7 @@ public:
 
     /// @brief 构造函数
     /// @param parent 父类指针
-    Class(Class* parent = nullptr);
+    explicit Class(Class* parent = nullptr);
 
     
     ~Class();

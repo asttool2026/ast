@@ -42,7 +42,7 @@ public:
     static SharedPtr<EventTimeExplicit> MakeShared(const TimePoint& time);
 
     EventTimeExplicit() = default;
-    EventTimeExplicit(const TimePoint& time);
+    explicit EventTimeExplicit(const TimePoint& time);
     ~EventTimeExplicit() override = default;
 PROPERTIES:
     errc_t getTime(TimePoint& time) const override;
