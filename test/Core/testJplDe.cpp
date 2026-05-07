@@ -23,6 +23,7 @@
 #include "AstCore/RunTime.hpp"
 #include "AstCore/Vector.hpp"
 #include "AstUtil/FileSystem.hpp"
+#include "AstUtil/Literals.hpp"
 
 AST_USING_NAMESPACE
 
@@ -39,22 +40,40 @@ TEST(JplDe, Load)
 
 TEST(JplDe, PosVel)
 {
-    JplDe jplDe;
-    errc_t err = jplDe.openDefault();
-    EXPECT_FALSE(err);
-    int denum = jplDe.getEphemVersion();
-    EXPECT_EQ(denum, 430);
-    auto time = TimePoint::FromUTC({2025, 12, 6, 4, 0, 0});
-    Vector3d pos, vel;
-    err = jplDe.getPosVelICRF(time, JplDe::eEarth, JplDe::eSSBarycenter, pos, vel);
-    Vector3d expect_pos { 40340688655.266181945800781,    129187016414.9415588378906250,    56021612758.1787185668945313 };
-    Vector3d expect_vel { -29081.3914269203341973,    7466.4619473275215569,    3236.8305386958791132 };
-    EXPECT_FALSE(err);
-    for (int i = 0; i < 3; i++) {
-        EXPECT_NEAR(pos[i], expect_pos[i], 1e-1);
-        EXPECT_NEAR(vel[i], expect_vel[i], 1e-4);
+    {
+        JplDe jplDe;
+        errc_t err = jplDe.openDefault();
+        EXPECT_FALSE(err);
+        int denum = jplDe.getEphemVersion();
+        EXPECT_EQ(denum, 430);
+        auto time = TimePoint::FromUTC({2025, 12, 6, 4, 0, 0});
+        Vector3d pos, vel;
+        err = jplDe.getPosVelICRF(time, JplDe::eEarth, JplDe::eSSBarycenter, pos, vel);
+        Vector3d expect_pos { 40340688655.266181945800781,    129187016414.9415588378906250,    56021612758.1787185668945313 };
+        Vector3d expect_vel { -29081.3914269203341973,    7466.4619473275215569,    3236.8305386958791132 };
+        EXPECT_FALSE(err);
+        for (int i = 0; i < 3; i++) {
+            EXPECT_NEAR(pos[i], expect_pos[i], 1e-1);
+            EXPECT_NEAR(vel[i], expect_vel[i], 1e-4);
+        }
     }
-
+    {
+        JplDe jplDe;
+        errc_t err = jplDe.openDefault();
+        EXPECT_FALSE(err);
+        int denum = jplDe.getEphemVersion();
+        EXPECT_EQ(denum, 430);
+        auto time = TimePoint::FromUTC({2026, 1, 1, 0, 0, 0});
+        Vector3d pos, vel;
+        err = jplDe.getPosVelICRF(time, JplDe::eSun, JplDe::eEarth, pos, vel);
+        Vector3d expect_pos { 26074199.566242_km,    -132831361.091847_km,    -57579750.394130_km };
+        Vector3d expect_vel { 29.78885492_km/s,    4.95152585_km/s,    2.14630130_km/s };
+        EXPECT_FALSE(err);
+        for (int i = 0; i < 3; i++) {
+            EXPECT_NEAR(pos[i], expect_pos[i], 1e-1_m);
+            EXPECT_NEAR(vel[i], expect_vel[i], 1e-4_m/s);
+        }
+    }
 }
 
 TEST(JplDe, IsOpenAndClose)
