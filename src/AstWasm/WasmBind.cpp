@@ -39,7 +39,7 @@ std::string aAgentSystemPrompt_wrap()
     return aAgentSystemPrompt();
 }
 
-EMSCRIPTEN_BINDINGS(ObjectProtocol) {
+EMSCRIPTEN_BINDINGS(AstWasm) {
     using namespace emscripten;
     AST_USING_NAMESPACE
 
