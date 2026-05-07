@@ -28,6 +28,7 @@
 
 AST_NAMESPACE_BEGIN
 
+class ActiveScriptExecutor::Impl{};
 ActiveScriptExecutor::ActiveScriptExecutor(){aError("ActiveScriptExecutor not supported on this platform");}
 ActiveScriptExecutor::ActiveScriptExecutor(const wchar_t* progId){}
 ActiveScriptExecutor::~ActiveScriptExecutor() = default;
