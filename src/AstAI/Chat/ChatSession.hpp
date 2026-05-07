@@ -66,11 +66,12 @@ public:
     /// @brief 获取当前使用的AI接口
     OpenAI& client();
 private:
-    std::string makeChatCompletion();
+    std::string makeChatCompletion(int maxInteractions=20);
 
     /// @brief 处理工具调用
     /// @param toolCalls 工具调用列表
-    void handleToolCalls(const JsonValue& toolCalls);
+    /// @param maxInteractions 最大交互轮数
+    void handleToolCalls(const JsonValue& toolCalls, int maxInteractions = 20);
 
     /// @brief 处理单个工具调用
     /// @param toolCall 单个工具调用
