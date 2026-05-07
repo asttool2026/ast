@@ -40,8 +40,9 @@ AST_AI_API JsonValue aObjectToBriefJson(Object* obj);
 
 /// @brief 将对象转换为JSON值
 /// @param object 对象
+/// @param maxDepth 最大递归深度
 /// @return JSON值
-AST_AI_API JsonValue aObjectToJson(Object* object);
+AST_AI_API JsonValue aObjectToJson(Object* object, int maxDepth = 20);
 
 
 //--------------

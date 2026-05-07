@@ -39,8 +39,20 @@ std::string ChatSession::sendMessage(StringView message)
 }
 
 
-std::string ChatSession::makeChatCompletion()
+std::string ChatSession::makeChatCompletion(int maxIterations)
 {
+    /*
+    @todo 
+    模型名称和温度参数被硬编码在 makeChatCompletion 方法中。
+    这限制了会话的灵活性。需要将这些参数移动到 LLMConfig 中，
+    或者作为 ChatSession 的成员变量，以便在运行时进行配置。
+
+    @fixme
+    thinking 字段是 DeepSeek 特有的扩展参数。
+    如果将来切换到标准的 OpenAI 或其他服务商，该请求可能会因为包含未知字段而被拒绝。
+    需要根据当前使用的 Provider 动态添加此字段，或者将其放入配置项中。
+    */
+
     auto& client = this->client();
     JsonValue json;
     json["messages"] = this->messages_.toJson();
@@ -54,11 +66,17 @@ std::string ChatSession::makeChatCompletion()
         JsonValue res = client.chat(json);
         if(!res["error"].isNull())
         {
-            aError("%s", res["error"]["message"].toString().c_str());
-            return aText("系统错误");
+            std::string errorMsg = res["error"]["message"].toString();
+            return aText("response error: " + errorMsg);
         }
         // ast_printf("res: %s\n", res.toJsonString().c_str());
-        JsonValue& message = res["choices"][0]["message"];
+        auto& choices = res["choices"];
+        if(!choices.isArray() || choices.size() == 0)
+        {
+            aError("choices is empty or not array");
+            return aText("response error: choices is empty or not array");
+        }
+        JsonValue& message = choices[0]["message"];
         std::string response = message["content"].toString();
         ast_printf("ai: %s\n", response.c_str());
         JsonValue& toolCalls = message["tool_calls"];
@@ -69,7 +87,7 @@ std::string ChatSession::makeChatCompletion()
 
         if(toolCalls.isArray() && toolCalls.size() > 0)
         {
-            this->handleToolCalls(toolCalls);
+            this->handleToolCalls(toolCalls, maxIterations);
         }
         return response;
     }
@@ -80,7 +98,7 @@ void ChatSession::setSystemPrompt(StringView systemPrompt)
     this->messages_.setSystemPrompt(systemPrompt);
 }
 
-void ChatSession::handleToolCalls(const JsonValue &toolCalls)
+void ChatSession::handleToolCalls(const JsonValue &toolCalls, int maxInteractions)
 {
     if(toolCalls.isArray() && toolCalls.size() > 0)
     {
@@ -90,7 +108,10 @@ void ChatSession::handleToolCalls(const JsonValue &toolCalls)
             std::string id = item["id"];
             this->messages_.addToolMessage(response, id);
         }
-        this->makeChatCompletion();
+        if(maxInteractions > 0)
+            this->makeChatCompletion(maxInteractions-1);
+        else
+            aInfo("max interactions reached");
     }
 }
 

@@ -48,6 +48,7 @@ public:
     /// @param baseUrl API基础URL
     OpenAI(const std::string& apiKey, const std::string& baseUrl);
 
+    #if 0
     /// @brief 发送聊天请求
     /// @param model 模型名称
     /// @param messages 消息列表
@@ -58,7 +59,7 @@ public:
         const std::string& model, const std::vector<ChatMessage>& messages, 
         const std::vector<ChatTool>& tools = {}, float temperature = 0.7f
     );
-
+    #endif
 public: // 底层json接口
 
     /// @brief 聊天

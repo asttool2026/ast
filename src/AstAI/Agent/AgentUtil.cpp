@@ -30,19 +30,21 @@ AST_NAMESPACE_BEGIN
 
 
 
-JsonValue aObjectToJson(Object* obj);
+
 
 namespace{
     class PropertyVisitorImplForJson : public PropertyVisitor 
     {
     public:
-    PropertyVisitorImplForJson()
+    PropertyVisitorImplForJson(int maxDepth)
         : internalJson_()
         , json_(internalJson_)
+        , maxDepth_(maxDepth)
     {
     }
-    PropertyVisitorImplForJson(JsonValue& json)
+    PropertyVisitorImplForJson(JsonValue& json, int maxDepth)
         : json_(json)
+        , maxDepth_(maxDepth)
     {
     }
     ~PropertyVisitorImplForJson() override = default;
@@ -77,7 +79,8 @@ namespace{
     {
         Object* obj = nullptr;
         property.getValue(container, &obj);
-        json()[property.name()] = aObjectToJson(obj);
+        if(maxDepth_ > 0)
+            json()[property.name()] = aObjectToJson(obj, maxDepth_-1);
         return 0;
     }
     errc_t visit(PropertyStruct& property, const void* container) override
@@ -106,6 +109,7 @@ namespace{
 private:
     JsonValue internalJson_;
     JsonValue& json_;
+    int maxDepth_{0};
 };
 }
 
@@ -123,12 +127,12 @@ JsonValue aObjectToBriefJson(Object* obj)
     return json;
 }
 
-JsonValue aObjectToJson(Object* obj)
+JsonValue aObjectToJson(Object* obj, int maxDepth)
 {
     if(!obj){return JsonValue();}
     JsonValue json = aObjectToBriefJson(obj);
     auto clazz = obj->getType();
-    PropertyVisitorImplForJson visitor(json);
+    PropertyVisitorImplForJson visitor(json, maxDepth);
     while(clazz)
     {
         auto& properties = clazz->getProperties();
@@ -261,7 +265,7 @@ std::string aFindObjects(const JsonValue& arguments)
         {
             for(auto& obj : objects)
             {
-                if(obj->getType() == cls)
+                if(obj->isOfType(cls))
                 {
                     objectsMatched.push_back(obj);
                 }

@@ -155,10 +155,14 @@ JsonValue OpenAI::chat(const JsonValue &request)
 
 errc_t OpenAI::chat(const JsonValue &request, JsonValue &response)
 {
+    // 确保 baseUrl 结尾没有斜杠
+    std::string baseUrl = this->baseUrl();
+    if (!baseUrl.empty() && baseUrl.back() == '/') baseUrl.pop_back();
+    
     // 构建网络请求
     NetworkRequest networkRequest;
     networkRequest.setMethod(ENetworkRequestMethod::ePost);
-    networkRequest.setUrl(baseUrl() + "/chat/completions");
+    networkRequest.setUrl(baseUrl + "/chat/completions");
     networkRequest.setBody(request.toJsonString());
     
     // ast_printf("request: %s\n", request.toJsonString(2).c_str());
