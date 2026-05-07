@@ -53,7 +53,7 @@ errc_t Sequence::execute()
     try{
         for(int repeat=0;repeat<repeatCount_;repeat++)
         {
-            for (lastCommandIndex = 0; lastCommandIndex < commands_.size(); lastCommandIndex++)
+            for (lastCommandIndex = 0; lastCommandIndex < (int)commands_.size(); lastCommandIndex++)
             {
                 auto& command = commands_[lastCommandIndex];
                 errc_t err = command->execute();
@@ -93,7 +93,7 @@ errc_t Sequence::execute()
 void Sequence::linkCommands()
 {
     SpacecraftState* inputState = getInputState();
-    for(int i=0;i<commands_.size();i++)
+    for(size_t i=0;i<commands_.size();i++)
     {
         auto command = commands_[i].get();
         if(auto segment = aobject_cast<Segment*>(command))

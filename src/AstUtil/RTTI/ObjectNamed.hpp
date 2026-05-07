@@ -40,7 +40,7 @@ public:
 
     /// @brief 构造函数
     /// @param name 对象名称
-    ObjectNamed(StringView name)
+    explicit ObjectNamed(StringView name)
         : name_(name)
     {}
 

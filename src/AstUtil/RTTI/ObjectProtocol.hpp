@@ -33,7 +33,6 @@ AST_NAMESPACE_BEGIN
 
 #define _AST_OBJ_CALL static
 
-using ObjectId = uint32_t;
 
 /// @brief 对象协议
 class AST_UTIL_API ObjectProtocol

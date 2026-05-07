@@ -44,7 +44,7 @@ public:
     /// @brief 构造函数
     /// @details 允许指定脚本引擎 (如 L"JScript" / L"VBScript")
     /// @param progId 脚本引擎 ProgID
-    ActiveScriptExecutor(const wchar_t* progId); 
+    explicit ActiveScriptExecutor(const wchar_t* progId); 
     ~ActiveScriptExecutor() override;
 
     errc_t initialize() override;

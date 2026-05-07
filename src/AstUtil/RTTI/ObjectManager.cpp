@@ -139,7 +139,7 @@ Object *ObjectManager::getAncestorScope(Object *obj, Class*cls)
     while(parentNode)
     {
         auto parentObject = parentNode->getObject();
-        if(cls == nullptr || cls->cast(parentObject))
+        if(cls->cast(parentObject))
         {
             return parentObject;
         }

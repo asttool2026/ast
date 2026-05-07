@@ -23,7 +23,8 @@
 #include "AstGlobal.h"
 #include "AstMath/MathOperator.hpp"
 #include "AstMath/Vector.hpp"
- 
+#include <string.h>
+
 AST_NAMESPACE_BEGIN
 
 /*!
@@ -91,7 +92,17 @@ inline Matrix<_Scalar>::Matrix(const Matrix& other)
 {
     if (other.data_) {
         this->data_ = (_Scalar*)malloc(other.size() * sizeof(_Scalar));
-        memcpy(data_, other.data_, other.size() * sizeof(_Scalar));
+        if(this->data_)
+        {
+            memcpy(data_, other.data_, other.size() * sizeof(_Scalar));
+        }
+        else
+        {
+            // aError("failed to copy Matrix");
+            data_ = nullptr;
+            row_ = 0;
+            col_ = 0;
+        }
     }
 }
 

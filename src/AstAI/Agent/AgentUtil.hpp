@@ -40,13 +40,16 @@ AST_AI_API JsonValue aObjectToBriefJson(Object* obj);
 
 /// @brief 将对象转换为JSON值
 /// @param object 对象
+/// @param maxDepth 最大递归深度
 /// @return JSON值
-AST_AI_API JsonValue aObjectToJson(Object* object);
+AST_AI_API JsonValue aObjectToJson(Object* object, int maxDepth = 20);
 
 
 /// @brief 获取类的JSON Schema
+/// @param cls 类指针
+/// @param maxDepth 最大递归深度
 /// @return 类的JSON Schema
-AST_AI_API JsonValue aClassJsonSchema(Class* cls);
+AST_AI_API JsonValue aClassJsonSchema(Class* cls, int maxDepth = 20);
 
 
 

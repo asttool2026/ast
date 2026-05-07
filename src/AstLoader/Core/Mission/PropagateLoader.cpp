@@ -207,7 +207,7 @@ errc_t aLoadPropagate(const Value& value, Propagate& propagate)
     }
     // 加载公共属性
     rc = aLoadSegment(value, propagate);
-    
+    A_UNUSED(rc);
     return eNoError;
 }
 
