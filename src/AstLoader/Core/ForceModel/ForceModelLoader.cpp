@@ -49,22 +49,26 @@ errc_t aLoadGravityForce(const Value& value, GravityForce& gravityForce)
             gravityForce.model_ = gravityFile;
         }
     }
-    gravityForce.useSecularVariations_ = value["UseSecularVariations"];
+    value["UseSecularVariations"] >> gravityForce.useSecularVariations_;
 
     // 固体潮汐配置参数
-    gravityForce.truncateSolidTides_ = value["TruncateSolidTides"];
+    value["TruncateSolidTides"] >> gravityForce.truncateSolidTides_;
     gravityForce.includeTimeDependentSolidTides_ = value["IncludeTimeDependentSolidTides"];
     gravityForce.minAmplitudeSolidTides_ = value["SolidTideMinAmp"];
-    std::string solidTideType = value["SolidTideType"];
-    if(solidTideType == "Permanent tide only")
-        gravityForce.solidTideType_ = ESolidTideType::ePermanentOnly;
-    else if(solidTideType == "None")
-        gravityForce.solidTideType_ = ESolidTideType::eNone;
-    else if(solidTideType == "Full tide")
-        gravityForce.solidTideType_ = ESolidTideType::eFull;
-    else{
-        aError("unsupported solid tide type '%s', default to None", solidTideType.c_str());
-        gravityForce.solidTideType_ = ESolidTideType::eNone;
+    auto& valSolidTideType = value["SolidTideType"];
+    if(!valSolidTideType.isNull())
+    {
+        std::string solidTideType = valSolidTideType;
+        if(solidTideType == "Permanent tide only")
+            gravityForce.solidTideType_ = ESolidTideType::ePermanentOnly;
+        else if(solidTideType == "None")
+            gravityForce.solidTideType_ = ESolidTideType::eNone;
+        else if(solidTideType == "Full tide")
+            gravityForce.solidTideType_ = ESolidTideType::eFull;
+        else{
+            aError("unsupported solid tide type '%s', default to None", solidTideType.c_str());
+            gravityForce.solidTideType_ = ESolidTideType::eNone;
+        }
     }
 
     // 海洋潮汐配置参数
@@ -85,16 +89,21 @@ errc_t aLoadPointMassForce(const Value& value, PointMassForce& pointMassForce)
         return eErrorInvalidParam;
     }
     pointMassForce.specifiedGM_ = value["Mu"];
-    const std::string gravSource = value["GravSource"];
-    if(gravSource == "Cb File")
-        pointMassForce.gmSource_ = EGMSource::eBodyGravity;
-    else if(gravSource == "DE File")
-        pointMassForce.gmSource_ = EGMSource::eJplDE;
-    else if(gravSource == "User Specified")
-        pointMassForce.gmSource_ = EGMSource::eSpecifiedValue;
-    else{
-        aWarning("unsupported grav source '%s', default to body gravity", gravSource.c_str());
-        pointMassForce.gmSource_ = EGMSource::eBodyGravity;
+    
+    auto& valGravSource = value["GravSource"];
+    if(!valGravSource.isNull())
+    {
+        const std::string gravSource = valGravSource;
+        if(gravSource == "Cb File")
+            pointMassForce.gmSource_ = EGMSource::eBodyGravity;
+        else if(gravSource == "DE File")
+            pointMassForce.gmSource_ = EGMSource::eJplDE;
+        else if(gravSource == "User Specified")
+            pointMassForce.gmSource_ = EGMSource::eSpecifiedValue;
+        else{
+            aWarning("unsupported grav source '%s', default to body gravity", gravSource.c_str());
+            pointMassForce.gmSource_ = EGMSource::eBodyGravity;
+        }
     }
     return eNoError;
 }
@@ -118,45 +127,59 @@ errc_t aLoadThirdBodyForce(const Value& value, ThirdBodyForce& thirdBodyForce)
     }
 
     // 三体星历来源
-    const std::string ephemerisSource = value["EphemerisSource"];
-    if(ephemerisSource == "Cb File")
-        thirdBodyForce.setEphemerisSource(EEphemerisSource::eBodyEphemeris);
-    else if(ephemerisSource == "DE File")
-        thirdBodyForce.setEphemerisSource(EEphemerisSource::eJplDE);
-    else if(ephemerisSource == "SPICE Body Centered")
-        thirdBodyForce.setEphemerisSource(EEphemerisSource::eJplSpice);
-    else{
-        aWarning("unsupported ephemeris source '%s', default to Body Ephemeris", ephemerisSource.c_str());
-        thirdBodyForce.setEphemerisSource(EEphemerisSource::eBodyEphemeris);
-    }
-
-    // 三体引力模式
-    std::string mode = value["Mode"];
-    EBodyAttractionType attractionType = EBodyAttractionType::eUnknown;
-    if(mode == "Point Mass")
+    auto& valEphemerisSource = value["EphemerisSource"];
+    if(!valEphemerisSource.isNull())
     {
-        attractionType = EBodyAttractionType::ePointMass;
-    }
-    else if(mode == "Gravity Field")
-    {
-        attractionType = EBodyAttractionType::eGravity;
-    }
-    else
-    {
-        aWarning("unsupported attraction type '%s', default to point mass", mode.c_str());
-        attractionType = EBodyAttractionType::ePointMass;
-    }
-    thirdBodyForce.setAttractionType(attractionType);
-
-    // 引力场模式的配置参数
-    errc_t rc = aLoadGravityForce(value["GravityField"], thirdBodyForce.gravity());
-    if(rc != eNoError)
-    {
-        aWarning("failed to load gravity force model");
+        const std::string ephemerisSource = valEphemerisSource;
+        if(ephemerisSource == "Cb File")
+            thirdBodyForce.setEphemerisSource(EEphemerisSource::eBodyEphemeris);
+        else if(ephemerisSource == "DE File")
+            thirdBodyForce.setEphemerisSource(EEphemerisSource::eJplDE);
+        else if(ephemerisSource == "SPICE Body Centered")
+            thirdBodyForce.setEphemerisSource(EEphemerisSource::eJplSpice);
+        else{
+            aWarning("unsupported ephemeris source '%s', default to Body Ephemeris", ephemerisSource.c_str());
+            thirdBodyForce.setEphemerisSource(EEphemerisSource::eBodyEphemeris);
+        }
     }
     
+
+    // 三体引力模式
+    auto& valMode = value["Mode"];
+    if(!valMode.isNull())
+    {
+        std::string mode = valMode;
+        EBodyAttractionType attractionType = EBodyAttractionType::eUnknown;
+        if(mode == "Point Mass")
+        {
+            attractionType = EBodyAttractionType::ePointMass;
+        }
+        else if(mode == "Gravity Field")
+        {
+            attractionType = EBodyAttractionType::eGravity;
+        }
+        else
+        {
+            aWarning("unsupported attraction type '%s', default to point mass", mode.c_str());
+            attractionType = EBodyAttractionType::ePointMass;
+        }
+        thirdBodyForce.setAttractionType(attractionType);
+    }
+
+    // 引力场模式的配置参数
+    auto& dictGravityField = value["GravityField"];
+    if(!dictGravityField.isNull())
+    {
+        errc_t rc = aLoadGravityForce(dictGravityField, thirdBodyForce.gravity());
+        if(rc != eNoError)
+        {
+            aWarning("failed to load gravity force model");
+        }
+    }
+
+    
     // 点质量模式的配置参数
-    rc = aLoadPointMassForce(value, thirdBodyForce.pointMass());
+    errc_t rc = aLoadPointMassForce(value, thirdBodyForce.pointMass());
     if(rc != eNoError)
     {
         aWarning("failed to load point mass force model");

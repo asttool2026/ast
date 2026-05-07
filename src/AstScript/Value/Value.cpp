@@ -262,4 +262,28 @@ Value::operator bool() const
     return toBool();
 }
 
+const Value& Value::operator>>(bool& val) const
+{
+    if(!isNull()){
+        val = toBool();
+    }
+    return *this;
+}
+
+const Value& Value::operator>>(int& val) const
+{
+    if(!isNull()){
+        val = toInt();
+    }
+    return *this;
+}
+
+const Value& Value::operator>>(double& val) const
+{
+    if(!isNull()){
+        val = toDouble();
+    }
+    return *this;
+}
+
 AST_NAMESPACE_END

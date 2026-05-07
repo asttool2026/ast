@@ -112,7 +112,7 @@ TEST(MissionLoaderTest, LoadPropagator)
 
 TEST(MissionLoaderTest, LoadHohmannTransfer)
 {
-    std::string file = aTestGetConfigValue("STK_HOHMANNTRANSFER_FILE").toString();
+    std::string file = aTestGetConfigValue("STK_HOHMANNT_RANSFER_FILE").toString();
     {
         errc_t rc;
         printf("loading file: %s\n", file.c_str());

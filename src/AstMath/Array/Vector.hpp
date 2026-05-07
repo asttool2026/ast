@@ -148,15 +148,15 @@ inline double VectorN<_Scalar, 3>::Angle(const Self& v1, const Self & v2)
 
 template<typename _Scalar>
 inline VectorX<_Scalar>::VectorX()
-    : size_{0}
-    , data_{nullptr}
+    : data_{nullptr}
+    , size_{0}
 {
 }
 
 template<typename _Scalar>
 inline VectorX<_Scalar>::VectorX(size_t size)
-    : size_{ size }
-    , data_((_Scalar*)malloc(sizeof(_Scalar)* size))
+    : data_((_Scalar*)malloc(sizeof(_Scalar)* size))
+    , size_{size}
 {
     setZero();
 }
