@@ -64,8 +64,25 @@ errc_t PropertyObject::setValueInt(void* container, int value)
 
 errc_t PropertyObject::getValueString(const void* container, std::string& value)
 {
-    aError("failed to get string value from property object");
-    return -1;
+    Object* object = nullptr;
+    errc_t rc = getValue(container, &object);
+    if(rc != 0)
+        return rc;
+    if(object->isOfType(A_STR(Frame)))
+    {
+        auto parent = object->getParentScope();
+        if(parent)
+            value = parent->getName() + " ";
+        value += object->getName();
+        return 0;
+    }
+    value = object->getExpression();
+    if(value.empty())
+    {
+        aError("failed to get string value from property object");
+        return -1;
+    }
+    return 0;
 }
 
 errc_t PropertyObject::setValueString(void* container, StringView value)

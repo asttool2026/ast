@@ -18,6 +18,7 @@ void SpacecraftState::ClassInit(Class* cls)
     cls->setParent<ObjectNamed>();
     cls->setConstructor<SpacecraftState>();
 
+    cls->addProperty("Frame", aNewPropertyObject<SpacecraftState, Frame, &SpacecraftState::getFrame, &SpacecraftState::setFrame>());
     cls->addProperty("Mass", aNewPropertyDouble<SpacecraftState, &SpacecraftState::getMass>());
     cls->addProperty("FuelMass", aNewPropertyDouble<SpacecraftState, &SpacecraftState::getFuelMass, &SpacecraftState::setFuelMass>());
     cls->addProperty("DryMass", aNewPropertyDouble<SpacecraftState, &SpacecraftState::getDryMass, &SpacecraftState::setDryMass>());

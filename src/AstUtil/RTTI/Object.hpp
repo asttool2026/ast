@@ -118,6 +118,10 @@ public:
     /// @return Class* 类型元信息指针
     virtual Class* getType() const;
 
+    /// @brief 获取对象的表达式
+    /// @return 对象的表达式
+    virtual std::string getExpression() const;
+
     /// @brief 获取对象的名称
     virtual const std::string& getName() const;
 

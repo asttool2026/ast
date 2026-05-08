@@ -155,7 +155,7 @@ errc_t aLoadParameter(const Value& value, Variable& var)
     }
     else if(paramType == "Date")
     {
-        aWarning("date type is not supported yet, use string instead");
+        aWarning("type 'Date' is not supported yet, use string instead");
         var.setExpr(value["ParamValue"].toString());
     }
     else if(paramType == "String")

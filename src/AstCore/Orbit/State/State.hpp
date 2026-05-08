@@ -151,13 +151,12 @@ public:
     void setStateEpoch(const TimePoint& stateEpoch);
 
     /// @brief 获取状态历元时间
+    TimePoint getStateEpoch_TimePoint() const;
+
+    /// @brief 获取状态历元时间
     /// @param stateEpoch 状态历元时间
     /// @return errc_t 错误码
     errc_t getStateEpoch(TimePoint& stateEpoch) const;
-
-    /// @brief 获取状态历元时间
-    /// @return TimePoint 状态历元时间
-    TimePoint getStateEpoch_TimePoint() const;
 
     /// @brief 获取状态历元时间句柄
     /// @return SharedPtr<EventTime>& 状态历元时间句柄

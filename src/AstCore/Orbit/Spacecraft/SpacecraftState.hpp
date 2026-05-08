@@ -38,6 +38,7 @@ class AST_CORE_API SpacecraftState: public ObjectNamed
 {
 public:
     AST_OBJECT(SpacecraftState)
+    AST_PROPERT(Frame)
     AST_PROPERT(Mass)
     AST_PROPERT(FuelMass)
     AST_PROPERT(DryMass)
@@ -60,6 +61,9 @@ public:
     SpacecraftState() = default;
     ~SpacecraftState() = default;
 PROPERTIES:
+    Frame* getFrame() const;
+    void setFrame(Frame* frame);
+    
     /// @brief 获取质量
     /// @return 质量
     double getMass() const{return fuelMass_ + dryMass_;}
@@ -114,7 +118,14 @@ PROPERTIES:
     /// @param orbitState 轨道状态
     void setOrbitState(State* orbitState){orbitState_ = orbitState;}
 public:
-    Frame* getFrame() const;
+    /// @brief 设置轨道状态类型
+    /// @param stateType 轨道状态类型
+    void setStateType(EStateType stateType);
+
+    /// @brief 获取轨道状态类型
+    /// @return 轨道状态类型
+    EStateType getStateType() const;
+public:
     errc_t getState(ModOrbElem& orbElem) const;
     errc_t getState(CartState& state) const;
     errc_t getStateIn(Frame* frame, CartState& state) const;
