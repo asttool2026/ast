@@ -54,6 +54,8 @@ AST_NAMESPACE_END
 #else
 
 #include "AstUtil/Encode.hpp"
+#include "AstUtil/LibraryLoader.hpp"
+#include "AstCOM/COMAPI.hpp"
 #include <comdef.h>
 #include <unordered_map>
 #include <Windows.h>
@@ -81,13 +83,18 @@ bool getScriptVariable(IDispatch* pDisp, const std::wstring& name, VARIANT& resu
 bool setScriptVariable(IDispatch* pDisp, const std::wstring& name, const VARIANT& value);
 // 使用 IDispatchEx 设置全局变量，若不存在会自动创建
 bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, const VARIANT& value);
-
+// 获取根对象的Dispatch接口
+IDispatch* rootDispatch();
 }
 
 #define _AST_ACTIVE_SCRIPT_NOT_INITIALIZED "script executor is not initialized."
 
+constexpr const wchar_t* kRootItemName = L"root";   ///< 根命名项名称
 
-// 站点实现（简化版，完整版需包含 IActiveScriptSite 所有方法）
+AST_NAMESPACE_BEGIN
+
+
+// 站点实现（简化版，仅实现IActiveScriptSite的部分方法）
 
 class SimpleActiveScriptSite final: public IActiveScriptSite
 {
@@ -115,9 +122,19 @@ public:
     STDMETHODIMP GetItemInfo(LPCOLESTR pstrName, DWORD dwReturnMask,
                              IUnknown** ppunkItem, ITypeInfo** ppti) override
     {
-        // 未使用命名项，直接返回未找到
-        if (ppunkItem) *ppunkItem = nullptr;
+        if (ppunkItem == nullptr) return E_POINTER;
         if (ppti) *ppti = nullptr;
+        if (wcscmp(pstrName, kRootItemName) == 0)
+        {
+            if(auto rootDisp = rootDispatch())
+            {
+                rootDisp->AddRef();
+                *ppunkItem = rootDisp;
+                return S_OK;
+            }
+        }
+        // 未找到命名项，返回未找到
+        *ppunkItem = nullptr;
         return TYPE_E_ELEMENTNOTFOUND;
     }
     STDMETHODIMP GetDocVersionString(BSTR* pbstrVersion) override
@@ -159,9 +176,6 @@ private:
 
 
 
-AST_NAMESPACE_BEGIN
-
-
 /// COM 初始化和释放守卫
 class CoInitializeGuard
 {
@@ -198,7 +212,7 @@ public:
         HRESULT hr = aEnsureCoInitialized();
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 1. 创建脚本引擎
+        // 创建脚本引擎
         CLSID clsid;
         hr = CLSIDFromProgID(progId.c_str(), &clsid);
         if (FAILED(hr)) return ERR_FAIL;
@@ -207,21 +221,31 @@ public:
                             IID_IActiveScript, (void**)&pScript);
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 2. 获取解析接口
+        // 获取解析接口
         hr = pScript->QueryInterface(IID_IActiveScriptParse, (void**)&pParse);
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 3. 创建并设置站点
+        // 创建并设置站点
         pSite = new SimpleActiveScriptSite();
         // pSite->AddRef(); // 创建时已经在构造函数里将引用计数设置为 1，这里不需要再增加
         hr = pScript->SetScriptSite(pSite);
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 4. 初始化解析器
+        // 初始化解析器
         hr = pParse->InitNew();
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 5. 连接到执行状态（第一次需要调用，后续保持在 CONNECTED 即可）
+        // 添加根命名项
+        if(auto rootDisp = rootDispatch())
+        {
+            pScript->AddNamedItem(kRootItemName, SCRIPTITEM_ISVISIBLE);
+        }
+        else
+        {
+            aWarning("failed to add item `root` for script.");
+        }
+
+        // 连接到执行状态（第一次需要调用，后续保持在 CONNECTED 即可）
         SCRIPTSTATE state;
         pScript->GetScriptState(&state);
         if (state != SCRIPTSTATE_CONNECTED)
@@ -234,7 +258,7 @@ public:
             }
         }
 
-        // 6. 获取全局 IDispatch（此时为空，但可用于预先设置变量）
+        // 获取全局 IDispatch（此时为空，但可用于预先设置变量）
         hr = pScript->GetScriptDispatch(nullptr, &pGlobal);
         if (FAILED(hr)) pGlobal = nullptr; // 非致命
         return ERR_OK;
@@ -598,6 +622,25 @@ bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, con
     pDispEx->Release();
     return SUCCEEDED(hr);
 }
+
+// 解析根对象Dispatch接口
+IDispatch* _resolveRootDispatch()
+{
+    AST_USING_NAMESPACE
+    using FuncType = decltype(&aRootDispatch);
+    FuncType func = (FuncType)aResolveProcAddress(AST_APPEND_DEBUG("AstCOM"), A_STR(aRootDispatch));
+    if (func)
+        return func();
+    return nullptr;
+}
+
+// 获取根对象的Dispatch接口
+IDispatch* rootDispatch()
+{
+    static IDispatch* pRootDisp = _resolveRootDispatch();
+    return pRootDisp;
+}
+
 
 } // anonymous namespace
 
