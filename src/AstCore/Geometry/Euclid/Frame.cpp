@@ -29,6 +29,15 @@
 AST_NAMESPACE_BEGIN
 
 
+std::string Frame::getExpression() const
+{
+    auto parent = getParentScope();
+    if(parent)
+        return parent->getExpression() + " " + getName();
+    return getName();
+}
+
+
 
 Frame* Frame::Resolve(StringView value)
 {
