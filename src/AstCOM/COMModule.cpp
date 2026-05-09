@@ -1,5 +1,5 @@
 ///
-/// @file      COMAPI.hpp
+/// @file      COMModule.cpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,26 +18,19 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#pragma once
-
 #include "AstGlobal.h"
+#include "ObjectRoot.h"
+#include <unknwn.h>
+#include <oaidl.h>
+#include <atlbase.h>
+#include <atlcom.h>
 
-struct IDispatch;
 
 AST_NAMESPACE_BEGIN
 
-/*!
-    @addtogroup 
-    @{
-*/
+// #import "ObjectRoot.tlb" no_namespace named_guids no_registry
 
-/// @brief 获取根对象的Dispatch接口
-/// @details 用于获取根对象的Dispatch接口，用于调用根对象的方法
-/// @return IDispatch* 根对象的Dispatch接口指针
-/// @note 调用者负责释放返回的Dispatch接口指针
-/// @sa CObjectRoot
-AST_COM_CAPI IDispatch* aComObjectRoot();
-
-/*! @} */
+class CAstCOMModule : public CAtlDllModuleT<CAstCOMModule> {};
+CAstCOMModule _AtlModule;   
 
 AST_NAMESPACE_END

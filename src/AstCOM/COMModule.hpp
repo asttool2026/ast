@@ -1,5 +1,5 @@
 ///
-/// @file      COMAPI.hpp
+/// @file      COMModule.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -22,8 +22,6 @@
 
 #include "AstGlobal.h"
 
-struct IDispatch;
-
 AST_NAMESPACE_BEGIN
 
 /*!
@@ -31,13 +29,9 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 获取根对象的Dispatch接口
-/// @details 用于获取根对象的Dispatch接口，用于调用根对象的方法
-/// @return IDispatch* 根对象的Dispatch接口指针
-/// @note 调用者负责释放返回的Dispatch接口指针
-/// @sa CObjectRoot
-AST_COM_CAPI IDispatch* aComObjectRoot();
+
 
 /*! @} */
 
 AST_NAMESPACE_END
+

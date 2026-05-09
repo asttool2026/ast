@@ -1,7 +1,7 @@
 ///
-/// @file      RootDispatch.cpp
-/// @brief     根对象Dispatch接口实现
-/// @details   COM自动化接口的具体实现
+/// @file      CObject.cpp
+/// @brief     对象Dispatch接口实现
+/// @details   COM自动化接口的具体实现，作为脚本访问对象的基础类
 /// @author    axel
 /// @date      2026-05-09
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
@@ -18,27 +18,20 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "RootDispatch.hpp"
-#include <cassert>
+#include "AstCOM/Object.hpp"
 
 AST_NAMESPACE_BEGIN
 
-RootDispatch* RootDispatch::Instance()
-{
-    static RootDispatch s_instance;
-    return &s_instance;
-}
-
-RootDispatch::RootDispatch()
+CObject::CObject()
     : refcnt_(1)
 {
 }
 
-RootDispatch::~RootDispatch()
+CObject::~CObject()
 {
 }
 
-HRESULT __stdcall RootDispatch::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT __stdcall CObject::QueryInterface(REFIID riid, void** ppvObject)
 {
     if (ppvObject == nullptr)
         return E_POINTER;
@@ -55,20 +48,22 @@ HRESULT __stdcall RootDispatch::QueryInterface(REFIID riid, void** ppvObject)
     return E_NOINTERFACE;
 }
 
-ULONG __stdcall RootDispatch::AddRef()
+ULONG __stdcall CObject::AddRef()
 {
     return InterlockedIncrement(&refcnt_);
 }
 
-ULONG __stdcall RootDispatch::Release()
+ULONG __stdcall CObject::Release()
 {
     ULONG ref = InterlockedDecrement(&refcnt_);
     if (ref == 0)
+    {
         delete this;
+    }
     return ref;
 }
 
-HRESULT __stdcall RootDispatch::GetTypeInfoCount(UINT* pctinfo)
+HRESULT __stdcall CObject::GetTypeInfoCount(UINT* pctinfo)
 {
     if (pctinfo == nullptr)
         return E_POINTER;
@@ -77,7 +72,7 @@ HRESULT __stdcall RootDispatch::GetTypeInfoCount(UINT* pctinfo)
     return S_OK;
 }
 
-HRESULT __stdcall RootDispatch::GetTypeInfo(UINT /*iTInfo*/, LCID /*lcid*/, ITypeInfo** ppTInfo)
+HRESULT __stdcall CObject::GetTypeInfo(UINT /*iTInfo*/, LCID /*lcid*/, ITypeInfo** ppTInfo)
 {
     if (ppTInfo == nullptr)
         return E_POINTER;
@@ -86,25 +81,24 @@ HRESULT __stdcall RootDispatch::GetTypeInfo(UINT /*iTInfo*/, LCID /*lcid*/, ITyp
     return E_NOTIMPL;
 }
 
-HRESULT __stdcall RootDispatch::GetIDsOfNames(REFIID /*riid*/, LPOLESTR* rgszNames, UINT cNames, 
-                                              LCID /*lcid*/, DISPID* rgDispId)
+HRESULT __stdcall CObject::GetIDsOfNames(REFIID /*riid*/, LPOLESTR* rgszNames, UINT cNames, 
+                                                LCID /*lcid*/, DISPID* rgDispId)
 {
     if (rgszNames == nullptr || rgDispId == nullptr)
         return E_POINTER;
 
     for (UINT i = 0; i < cNames; ++i)
     {
-        // TODO: 根据名称查找对应的DISPID
         rgDispId[i] = DISPID_UNKNOWN;
     }
 
     return S_OK;
 }
 
-HRESULT __stdcall RootDispatch::Invoke(DISPID dispIdMember, REFIID /*riid*/, LCID /*lcid*/, 
-                                       WORD wFlags, DISPPARAMS* pDispParams, 
-                                       VARIANT* pVarResult, EXCEPINFO* /*pExcepInfo*/, 
-                                       UINT* /*puArgErr*/)
+HRESULT __stdcall CObject::Invoke(DISPID dispIdMember, REFIID /*riid*/, LCID /*lcid*/, 
+                                        WORD wFlags, DISPPARAMS* pDispParams, 
+                                        VARIANT* pVarResult, EXCEPINFO* /*pExcepInfo*/, 
+                                        UINT* /*puArgErr*/)
 {
     if (pDispParams == nullptr)
         return E_POINTER;
@@ -125,12 +119,12 @@ HRESULT __stdcall RootDispatch::Invoke(DISPID dispIdMember, REFIID /*riid*/, LCI
     return E_INVALIDARG;
 }
 
-HRESULT RootDispatch::invokeMethod(DISPID /*dispId*/, DISPPARAMS* /*pDispParams*/, VARIANT* /*pVarResult*/)
+HRESULT CObject::invokeMethod(DISPID /*dispId*/, DISPPARAMS* /*pDispParams*/, VARIANT* /*pVarResult*/)
 {
     return DISP_E_MEMBERNOTFOUND;
 }
 
-HRESULT RootDispatch::invokeProperty(DISPID /*dispId*/, WORD /*wFlags*/, VARIANT* /*pVarResult*/)
+HRESULT CObject::invokeProperty(DISPID /*dispId*/, WORD /*wFlags*/, VARIANT* /*pVarResult*/)
 {
     return DISP_E_MEMBERNOTFOUND;
 }

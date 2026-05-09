@@ -1,7 +1,7 @@
 ///
-/// @file      COMAPI.cpp
-/// @brief     
-/// @details   
+/// @file      CObjectRoot.cpp
+/// @brief     根对象Dispatch接口实现
+/// @details   COM自动化接口的具体实现
 /// @author    axel
 /// @date      2026-05-09
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
@@ -18,14 +18,38 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "COMAPI.hpp"
 #include "AstCOM/ObjectRoot.hpp"
+#include <cassert>
+#include <stdio.h>
 
 AST_NAMESPACE_BEGIN
 
-IDispatch* aComObjectRoot()
+CObjectRoot* CObjectRoot::Instance()
 {
-    return CObjectRoot::Instance();
+    static CComObject<CObjectRoot>* pInstance = nullptr;
+
+    if (pInstance == nullptr)
+    {
+        HRESULT hr = CComObject<CObjectRoot>::CreateInstance(&pInstance);
+        if (FAILED(hr))
+        {
+            return nullptr;
+        }
+
+        pInstance->AddRef();
+    }
+
+    return pInstance;
+}
+
+
+HRESULT __stdcall CObjectRoot::ExecuteCommand( 
+    /* [in] */ BSTR command,
+    /* [retval][out] */ BSTR *result
+)
+{
+    wprintf(L"ExecuteCommand: %s\n", command);
+    return S_OK;
 }
 
 AST_NAMESPACE_END

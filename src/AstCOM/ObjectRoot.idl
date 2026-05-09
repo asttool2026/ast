@@ -1,0 +1,34 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+    object,
+    uuid(54aae7ce-92e2-4b0a-a302-d72c98d75456),
+    dual,
+    nonextensible,
+    pointer_default(unique)
+]
+interface IObjectRoot : IDispatch
+{
+    [id(1)] HRESULT ExecuteCommand([in] BSTR command, [out, retval] BSTR* result);
+};
+
+[
+    uuid(4e024359-7e30-4db6-8d36-27738c7c4042),
+    version(1.0),
+    helpstring("AstCOM ObjectRoot Type Library")
+]
+library AstCOMLib
+{
+    importlib("stdole32.tlb");
+    importlib("stdole2.tlb");
+
+    [
+        uuid(79f41ac7-0247-452b-b157-ee7b803ef687),
+        helpstring("ObjectRoot Class")
+    ]
+    coclass CObjectRoot
+    {
+        [default] interface IObjectRoot;
+    };
+};

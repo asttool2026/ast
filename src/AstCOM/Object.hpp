@@ -1,7 +1,7 @@
 ///
-/// @file      RootDispatch.hpp
-/// @brief     根对象Dispatch接口
-/// @details   提供COM自动化接口，作为脚本访问的入口点
+/// @file      ObjectDispatch.hpp
+/// @brief     对象Dispatch接口
+/// @details   提供COM自动化接口，作为脚本访问对象的基础类
 /// @author    axel
 /// @date      2026-05-09
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
@@ -31,20 +31,16 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 根对象Dispatch接口
-/// @details 作为COM自动化的根对象，提供类型创建和全局方法访问
-class RootDispatch : public IDispatch
+/// @brief 对象Dispatch接口
+/// @details 作为COM自动化的对象基类，提供属性和方法访问能力
+class CObject : public IDispatch
 {
 public:
-    /// @brief 获取单例实例
-    /// @return RootDispatch* 单例指针
-    static RootDispatch* Instance();
-
     /// @brief 构造函数
-    RootDispatch();
+    CObject();
     
     /// @brief 析构函数
-    ~RootDispatch();
+    ~CObject();
 
     // IUnknown 接口方法
     HRESULT __stdcall QueryInterface(REFIID riid, void** ppvObject) override;
@@ -76,7 +72,7 @@ protected:
     HRESULT invokeProperty(DISPID dispId, WORD wFlags, VARIANT* pVarResult);
 
 private:
-    volatile long refcnt_{1};      ///< 引用计数
+    volatile long refcnt_;      ///< 引用计数
 };
 
 /*! @} */

@@ -627,8 +627,8 @@ bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, con
 IDispatch* _resolveRootDispatch()
 {
     AST_USING_NAMESPACE
-    using FuncType = decltype(&aRootDispatch);
-    FuncType func = (FuncType)aResolveProcAddress(AST_APPEND_DEBUG("AstCOM"), A_STR(aRootDispatch));
+    using FuncType = decltype(&aComObjectRoot);
+    FuncType func = (FuncType)aResolveProcAddress(AST_APPEND_DEBUG("AstCOM"), A_STR(aComObjectRoot));
     if (func)
         return func();
     return nullptr;
