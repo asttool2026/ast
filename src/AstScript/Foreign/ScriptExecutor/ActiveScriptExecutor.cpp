@@ -84,7 +84,7 @@ bool setScriptVariable(IDispatch* pDisp, const std::wstring& name, const VARIANT
 // 使用 IDispatchEx 设置全局变量，若不存在会自动创建
 bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, const VARIANT& value);
 // 获取根对象的Dispatch接口
-IDispatch* rootDispatch();
+IUnknown* rootDispatch();
 }
 
 #define _AST_ACTIVE_SCRIPT_NOT_INITIALIZED "script executor is not initialized."
@@ -624,7 +624,7 @@ bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, con
 }
 
 // 解析根对象Dispatch接口
-IDispatch* _resolveRootDispatch()
+IUnknown* _resolveRootDispatch()
 {
     AST_USING_NAMESPACE
     using FuncType = decltype(&aComObjectRoot);
@@ -635,9 +635,9 @@ IDispatch* _resolveRootDispatch()
 }
 
 // 获取根对象的Dispatch接口
-IDispatch* rootDispatch()
+IUnknown* rootDispatch()
 {
-    static IDispatch* pRootDisp = _resolveRootDispatch();
+    static IUnknown* pRootDisp = _resolveRootDispatch();
     return pRootDisp;
 }
 

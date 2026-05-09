@@ -39,6 +39,11 @@ Scenario::~Scenario()
 
 }
 
+SharedPtr<EventInterval>& Scenario::getIntervalHandle()
+{
+    return interval_;
+}
+
 errc_t Scenario::getEpoch(TimePoint &epoch) const
 {
     if(epoch_)

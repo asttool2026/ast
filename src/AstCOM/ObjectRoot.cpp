@@ -20,6 +20,7 @@
 
 #include "AstCOM/ObjectRoot.hpp"
 #include "AstCOM/ExecCmdResult.hpp"
+#include "AstCOM/Scenario.hpp"
 #include <cassert>
 #include <stdio.h>
 
@@ -68,6 +69,28 @@ HRESULT __stdcall CObjectRoot::ExecuteCommand(
     pResult->addResult(L"command executed successfully");
     
     *result = pResult;
+    return S_OK;
+}
+
+HRESULT __stdcall CObjectRoot::get_CurrentScenario(
+    /* [retval][out] */ IObject** ppRetVal
+)
+{
+    if (!ppRetVal)
+        return E_POINTER;
+    
+    *ppRetVal = nullptr;
+    
+    CComObject<CScenario>* pScenario = nullptr;
+    HRESULT hr = CComObject<CScenario>::CreateInstance(&pScenario);
+    
+    if (FAILED(hr))
+        return hr;
+    
+    pScenario->AddRef();
+    pScenario->SetToCurrentScenario();
+    
+    *ppRetVal = pScenario;
     return S_OK;
 }
 

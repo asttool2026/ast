@@ -1,7 +1,7 @@
 ///
-/// @file      ObjectDispatch.hpp
-/// @brief     对象Dispatch接口
-/// @details   提供COM自动化接口，作为脚本访问对象的基础类
+/// @file      Scenario.hpp
+/// @brief     场景对象接口
+/// @details   提供场景对象的COM自动化接口
 /// @author    axel
 /// @date      2026-05-09
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
@@ -21,12 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "AstCOM.h"
-#include "ObjectImpl.hpp"
-#include <unknwn.h>
-#include <oaidl.h>
-#include <atlbase.h>
-#include <atlcom.h>
+#include "ScenarioImpl.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -35,23 +30,30 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+class Scenario;
 
-class CObject :
+/// @brief 场景对象
+/// @details 作为COM自动化的场景对象，继承自IObject
+class CScenario :
     public CComObjectRootEx<CComSingleThreadModel>,
-    public CComCoClass<CObject, &CLSID_CObject>,
-    public IObjectImpl<IObject, &IID_IObject> 
+    public CComCoClass<CScenario, &CLSID_CScenario>,
+    public IScenarioImpl<IScenario, &IID_IScenario> 
 {
 public:
-    CObject() = default;
-    ~CObject() = default;
-    // COM 映射表
-    BEGIN_COM_MAP(CObject)
-        COM_INTERFACE_ENTRY(IObject)       // 主接口
-        COM_INTERFACE_ENTRY(IDispatch)     // 自动化接口
-        COM_INTERFACE_ENTRY(IUnknown)      // 标准COM接口
+    CScenario() = default;
+    ~CScenario() = default;
+
+    BEGIN_COM_MAP(CScenario)
+        COM_INTERFACE_ENTRY(IScenario)
+        COM_INTERFACE_ENTRY(IObject)
+        COM_INTERFACE_ENTRY(IDispatch)
+        COM_INTERFACE_ENTRY(IUnknown)
     END_COM_MAP()
-    
-    DECLARE_PROTECT_FINAL_CONSTRUCT();
+
+    Scenario* GetScenario() const;
+    void SetToCurrentScenario();
+private:
+    WeakPtr<Scenario> scenario_;
 };
 
 /*! @} */

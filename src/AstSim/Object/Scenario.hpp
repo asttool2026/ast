@@ -23,9 +23,9 @@
 #include "AstGlobal.h"
 #include "AstUtil/Object.hpp"
 #include "AstUtil/StringView.hpp"
-// #include "AstCore/EventTime.hpp"
-// #include "AstCore/EventInterval.hpp"
-// #include "AstCore/CelestialBody.hpp"
+#include "AstCore/EventTime.hpp"
+#include "AstCore/EventInterval.hpp"
+#include "AstCore/CelestialBody.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -66,7 +66,7 @@ public:
 
     /// @brief 获取场景时间间隔
     /// @return SharedPtr<EventInterval>& 场景时间间隔句柄
-    SharedPtr<EventInterval>& getIntervalHandle() { return interval_; }
+    SharedPtr<EventInterval>& getIntervalHandle();
 
     /// @brief 获取场景时间间隔
     /// @param interval 场景时间间隔
@@ -91,12 +91,12 @@ public:
 
     void setPrimaryBody(CelestialBody* body);
 protected:
-    std::string name_;                      ///< 场景名称
-    SharedPtr<EventTime> epoch_;            ///< 场景历元时间
-    SharedPtr<EventInterval> interval_;     ///< 场景时间间隔
-    std::string eopFileName_;               ///< EOP文件名
+    std::string name_;                        ///< 场景名称
+    SharedPtr<EventTime> epoch_;              ///< 场景历元时间
+    SharedPtr<EventInterval> interval_;       ///< 场景时间间隔
+    std::string eopFileName_;                 ///< EOP文件名
     bool inheritEOPSource_{};                 ///< 是否继承EOP来源设置
-    SharedPtr<CelestialBody> primaryBody_;                  ///< 场景天体
+    SharedPtr<CelestialBody> primaryBody_;    ///< 场景天体
 };
 
 /*! @} */

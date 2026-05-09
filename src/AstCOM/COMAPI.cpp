@@ -23,7 +23,7 @@
 
 AST_NAMESPACE_BEGIN
 
-IDispatch* aComObjectRoot()
+IUnknown* aComObjectRoot()
 {
     return CObjectRoot::Instance();
 }

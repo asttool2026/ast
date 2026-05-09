@@ -1,7 +1,7 @@
 ///
-/// @file      CObject.cpp
-/// @brief     对象Dispatch接口实现
-/// @details   COM自动化接口的具体实现，作为脚本访问对象的基础类
+/// @file      ScenarioImpl.hpp
+/// @brief     
+/// @details   
 /// @author    axel
 /// @date      2026-05-09
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
@@ -18,11 +18,27 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "AstCOM/Object.hpp"
-#include "AstCOM.h"
+#pragma once
+
+#include "AstGlobal.h"
+#include "ObjectImpl.hpp"
 
 AST_NAMESPACE_BEGIN
 
+/*!
+    @addtogroup 
+    @{
+*/
 
+template <typename T, const IID* piid = &__uuidof(T)>
+class IScenarioImpl : public IObjectImpl<T, piid>
+{
+public:
+    IScenarioImpl() = default;
+    ~IScenarioImpl() = default;
+};
+
+
+/*! @} */
 
 AST_NAMESPACE_END

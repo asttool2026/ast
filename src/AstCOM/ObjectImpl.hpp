@@ -1,5 +1,5 @@
 ///
-/// @file      COMAPI.hpp
+/// @file      ObjectImpl.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -21,9 +21,12 @@
 #pragma once
 
 #include "AstGlobal.h"
-
-struct IDispatch;
-struct IUnknown;
+#include "AstCOM.h"
+#include "AstUtil/Object.hpp"
+#include <unknwn.h>
+#include <oaidl.h>
+#include <atlbase.h>
+#include <atlcom.h>
 
 AST_NAMESPACE_BEGIN
 
@@ -32,12 +35,29 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 获取根对象的Dispatch接口
-/// @details 用于获取根对象的Dispatch接口，用于调用根对象的方法
-/// @return IDispatch* 根对象的Dispatch接口指针
-/// @note 调用者负责释放返回的Dispatch接口指针
-/// @sa CObjectRoot
-AST_COM_CAPI IUnknown* aComObjectRoot();
+template <typename T, const IID* piid = &__uuidof(T)>
+class IObjectImpl : 
+    public IDispatchImpl<T, piid, &IID_NULL, 0xFFFF, 0xFFFF>
+    // 使用 &IID_NULL, 0xFFFF, 0xFFFF时，会直接从当前动态库加载TypeLib，避免了注册COM组件
+{
+public:
+
+    /// @brief 获取原始对象指针
+    Object* GetNativeObject()
+    {
+        return object_.get();
+    }
+
+    /// @brief 将对象转换为指定类型
+    template<typename U>
+    U CastTo()
+    {
+        return aobject_cast<U>(object_.get());
+    }
+private:
+    WeakPtr<Object> object_;        ///< 原始对象指针
+};
+
 
 /*! @} */
 

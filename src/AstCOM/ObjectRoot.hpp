@@ -47,6 +47,7 @@ public:
     BEGIN_COM_MAP(CObjectRoot)
         COM_INTERFACE_ENTRY(IObjectRoot)       // 主接口
         COM_INTERFACE_ENTRY(IDispatch)         // 自动化接口
+        COM_INTERFACE_ENTRY(IUnknown)          // 标准COM接口
     END_COM_MAP()
     
     DECLARE_PROTECT_FINAL_CONSTRUCT();
@@ -68,6 +69,13 @@ public:
     HRESULT __stdcall ExecuteCommand( 
         /* [in] */ BSTR command,
         /* [retval][out] */ IExecCmdResult **result
+    ) override;
+
+    /// @brief 获取当前场景对象
+    /// @param ppRetVal 当前场景对象
+    /// @return HRESULT 获取结果
+    HRESULT __stdcall get_CurrentScenario(
+        /* [retval][out] */ IObject** ppRetVal
     ) override;
 };
 
