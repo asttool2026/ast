@@ -19,7 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "AstGlobal.h"
-#include "ObjectRoot.h"
+#include "AstCOM.h"
 #include <unknwn.h>
 #include <oaidl.h>
 #include <atlbase.h>
@@ -28,7 +28,7 @@
 
 AST_NAMESPACE_BEGIN
 
-// #import "ObjectRoot.tlb" no_namespace named_guids no_registry
+// #import "AstCOM.tlb" no_namespace named_guids no_registry
 
 class CAstCOMModule : public CAtlDllModuleT<CAstCOMModule> {};
 CAstCOMModule _AtlModule;   

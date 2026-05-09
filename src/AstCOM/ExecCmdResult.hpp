@@ -1,7 +1,7 @@
 ///
-/// @file      CObjectRoot.hpp
-/// @brief     根对象Dispatch接口
-/// @details   提供COM自动化接口，作为脚本访问的入口点
+/// @file      ExecCmdResult.hpp
+/// @brief     命令执行结果集合类
+/// @details   封装ExecuteCommand返回的字符串集合
 /// @author    axel
 /// @date      2026-05-09
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
@@ -26,6 +26,8 @@
 #include <oaidl.h>
 #include <atlbase.h>
 #include <atlcom.h>
+#include <vector>
+#include <string>
 
 AST_NAMESPACE_BEGIN
 
@@ -34,41 +36,37 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 根对象Dispatch接口
-/// @details 作为COM自动化的根对象，提供类型创建和全局方法访问
-class CObjectRoot : 
+class CExecCmdResult : 
     public CComObjectRootEx<CComSingleThreadModel>,
-    public CComCoClass<CObjectRoot, &CLSID_CObjectRoot>,
-    public IDispatchImpl<IObjectRoot, &IID_IObjectRoot, &IID_NULL, 0xFFFF, 0xFFFF> 
+    public CComCoClass<CExecCmdResult, &CLSID_CExecCmdResult>,
+    public IDispatchImpl<IExecCmdResult, &IID_IExecCmdResult, &IID_NULL, 0xFFFF, 0xFFFF> 
     // 使用 &IID_NULL, 0xFFFF, 0xFFFF时，会直接从当前动态库加载TypeLib，避免了注册COM组件
 {
 public:
-    // COM 映射表
-    BEGIN_COM_MAP(CObjectRoot)
-        COM_INTERFACE_ENTRY(IObjectRoot)       // 主接口
-        COM_INTERFACE_ENTRY(IDispatch)         // 自动化接口
+    BEGIN_COM_MAP(CExecCmdResult)
+        COM_INTERFACE_ENTRY(IExecCmdResult)
+        COM_INTERFACE_ENTRY(IDispatch)
     END_COM_MAP()
-    
+
     DECLARE_PROTECT_FINAL_CONSTRUCT();
 
 public:
-    /// @brief 获取单例实例
-    /// @return CObjectRoot* 单例指针
-    static CObjectRoot* Instance();
+    CExecCmdResult() : isSucceeded_(VARIANT_TRUE) {}
+    ~CExecCmdResult() = default;
 
-    CObjectRoot() = default;
-    ~CObjectRoot() = default;
-
+    void setSucceeded(VARIANT_BOOL value) { isSucceeded_ = value; }
+    void addResult(const std::wstring& result) { results_.push_back(result); }
+    void clearResults() { results_.clear(); }
 
 public:
-    /// @brief 执行命令
-    /// @param command 命令字符串
-    /// @param result 执行结果对象
-    /// @return HRESULT 执行结果
-    HRESULT __stdcall ExecuteCommand( 
-        /* [in] */ BSTR command,
-        /* [retval][out] */ IExecCmdResult **result
-    ) override;
+    HRESULT __stdcall get_Count(long* pVal) override;
+    HRESULT __stdcall get_IsSucceeded(VARIANT_BOOL* pVal) override;
+    HRESULT __stdcall get_Item(long Index, BSTR* pVal) override;
+    HRESULT __stdcall Range(long StartIndex, long EndIndex, SAFEARRAY** pVal) override;
+
+private:
+    VARIANT_BOOL isSucceeded_;
+    std::vector<std::wstring> results_;
 };
 
 /*! @} */

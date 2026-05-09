@@ -58,7 +58,7 @@ Class *Object::getType() const
 
 const std::string empty;
 
-std::string Object::getExpression() const
+std::string Object::getRepresentation() const
 {
     return empty;
 }

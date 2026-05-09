@@ -14,7 +14,7 @@ add_deps(
     "AstTest"
 )
 
-if is_plat("windows", "mingw") then
+if is_plat("windows") then
     add_deps("AstCOM")
 end
 

@@ -19,6 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "AstCOM/ObjectRoot.hpp"
+#include "AstCOM/ExecCmdResult.hpp"
 #include <cassert>
 #include <stdio.h>
 
@@ -45,10 +46,28 @@ CObjectRoot* CObjectRoot::Instance()
 
 HRESULT __stdcall CObjectRoot::ExecuteCommand( 
     /* [in] */ BSTR command,
-    /* [retval][out] */ BSTR *result
+    /* [retval][out] */ IExecCmdResult **result
 )
 {
-    wprintf(L"ExecuteCommand: %s\n", command);
+    if (!result)
+        return E_POINTER;
+    
+    *result = nullptr;
+    
+    wprintf(L"ExecuteCommand: '%s'\n", command);
+    
+    CComObject<CExecCmdResult>* pResult = nullptr;
+    HRESULT hr = CComObject<CExecCmdResult>::CreateInstance(&pResult);
+    
+    if (FAILED(hr))
+        return hr;
+    
+    pResult->AddRef();
+    pResult->setSucceeded(VARIANT_TRUE);
+    pResult->addResult(L"hello world");
+    pResult->addResult(L"command executed successfully");
+    
+    *result = pResult;
     return S_OK;
 }
 

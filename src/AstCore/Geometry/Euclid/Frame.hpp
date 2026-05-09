@@ -69,8 +69,8 @@ public:
     Frame() = default;
     ~Frame() override= default;
 
-    /// @brief 获取当前坐标系的表达式
-    std::string getExpression() const override;
+    /// @brief 获取当前坐标系的表示
+    std::string getRepresentation() const override;
 
     /// @brief 获取当前坐标系中心对应的天体
     /// @return 天体

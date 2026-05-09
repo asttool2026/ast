@@ -236,7 +236,7 @@ public:
         if (FAILED(hr)) return ERR_FAIL;
 
         // 添加根命名项
-        if(auto rootDisp = rootDispatch())
+        if(rootDispatch())
         {
             pScript->AddNamedItem(kRootItemName, SCRIPTITEM_ISVISIBLE);
         }

@@ -76,7 +76,7 @@ errc_t PropertyObject::getValueString(const void* container, std::string& value)
         value += object->getName();
         return 0;
     }
-    value = object->getExpression();
+    value = object->getRepresentation();
     if(value.empty())
     {
         aError("failed to get string value from property object");

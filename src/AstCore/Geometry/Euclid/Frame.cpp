@@ -29,11 +29,11 @@
 AST_NAMESPACE_BEGIN
 
 
-std::string Frame::getExpression() const
+std::string Frame::getRepresentation() const
 {
     auto parent = getParentScope();
     if(parent)
-        return parent->getExpression() + " " + getName();
+        return parent->getRepresentation() + " " + getName();
     return getName();
 }
 

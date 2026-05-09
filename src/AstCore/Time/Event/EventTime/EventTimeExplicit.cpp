@@ -51,7 +51,7 @@ void EventTimeExplicit::setTime(const TimePoint &time)
     time_ = time;
 }
 
-std::string EventTimeExplicit::getExpression() const
+std::string EventTimeExplicit::getRepresentation() const
 {
     return time_.toString();
 }

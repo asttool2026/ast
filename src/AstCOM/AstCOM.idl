@@ -1,0 +1,58 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+    object,
+    uuid(d4a8b7e1-8c3d-4f2a-9e1b-6c5d7a8e9b0c),
+    dual,
+    nonextensible,
+    pointer_default(unique)
+]
+interface IExecCmdResult : IDispatch
+{
+    [propget, id(1)] HRESULT Count([out, retval] long* pVal);
+    [propget, id(2)] HRESULT IsSucceeded([out, retval] VARIANT_BOOL* pVal);
+    [propget, id(3)] HRESULT Item([in] long Index, [out, retval] BSTR* pVal);
+    [id(4)] HRESULT Range([in] long StartIndex, [in] long EndIndex, [out, retval] SAFEARRAY(BSTR)* pVal);
+};
+
+[
+    object,
+    uuid(54aae7ce-92e2-4b0a-a302-d72c98d75456),
+    dual,
+    nonextensible,
+    pointer_default(unique)
+]
+interface IObjectRoot : IDispatch
+{
+    [id(1)] HRESULT ExecuteCommand([in] BSTR command, [out, retval] IExecCmdResult** result);
+};
+
+[
+    uuid(4e024359-7e30-4db6-8d36-27738c7c4042),
+    version(1.0),
+    helpstring("AstCOM ObjectRoot Type Library")
+]
+library AstCOMLib
+{
+    importlib("stdole32.tlb");
+    importlib("stdole2.tlb");
+
+    [
+        uuid(79f41ac7-0247-452b-b157-ee7b803ef687),
+        helpstring("ObjectRoot Class")
+    ]
+    coclass CObjectRoot
+    {
+        [default] interface IObjectRoot;
+    };
+
+    [
+        uuid(1a2b3c4d-5e6f-7890-abcd-ef1234567890),
+        helpstring("ExecCmdResult Class")
+    ]
+    coclass CExecCmdResult
+    {
+        [default] interface IExecCmdResult;
+    };
+};
