@@ -25,6 +25,7 @@ interface IExecCmdResult : IDispatch
 ]
 interface IObject : IDispatch
 {
+    [id(1)] HRESULT Children([in] BSTR name, [out, retval] IObject** ppRetVal);
 };
 
 [
@@ -35,6 +36,17 @@ interface IObject : IDispatch
     pointer_default(unique)
 ]
 interface IScenario : IObject
+{
+};
+
+[
+    object,
+    uuid(6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f901a2b),
+    dual,
+    nonextensible,
+    pointer_default(unique)
+]
+interface ISatellite : IObject
 {
 };
 
@@ -86,6 +98,15 @@ library AstCOMLib
     coclass CScenario
     {
         [default] interface IScenario;
+    };
+
+    [
+        uuid(8b9c0d1e-2f3a-4b5c-6d7e-8f901a2b3c4d),
+        helpstring("Satellite Class")
+    ]
+    coclass CSatellite
+    {
+        [default] interface ISatellite;
     };
 
     [

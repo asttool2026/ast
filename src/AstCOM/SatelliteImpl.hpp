@@ -1,9 +1,9 @@
 ///
-/// @file      Scenario.cpp
-/// @brief     场景对象实现
-/// @details   COM自动化接口的具体实现
+/// @file      SatelliteImpl.hpp
+/// @brief     
+/// @details   
 /// @author    axel
-/// @date      2026-05-09
+/// @date      2026-05-10
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,22 +18,35 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "AstCOM/Scenario.hpp"
-#include "AstSim/Scenario.hpp"
-#include "AstSim/SimAPI.hpp"
+#pragma once
+
+#include "AstGlobal.h"
+#include "ObjectImpl.hpp"
+#include "AstSim/Satellite.hpp"
 
 AST_NAMESPACE_BEGIN
 
+/*!
+    @addtogroup AstCOM
+    @{
+*/
 
-Scenario* CScenario::GetScenario() const
+class Satellite;
+
+template <typename T, const IID* piid = &__uuidof(T)>
+class ISatelliteImpl : public IObjectImpl<T, piid>
 {
-    return aobject_cast<Scenario*>(scenario_.get());
-}
+public:
+    ISatelliteImpl() = default;
+    ~ISatelliteImpl() = default;
 
-void CScenario::SetToCurrentScenario()
-{
-    scenario_ = aCurrentScenario();
-}
+    Satellite* GetSatellite() const
+    {
+        return this->GetNative<Satellite*>();
+    }
+};
 
+
+/*! @} */
 
 AST_NAMESPACE_END

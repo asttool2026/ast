@@ -40,17 +40,30 @@ class IObjectImpl :
     public IDispatchImpl<T, piid, &IID_NULL, 0xFFFF, 0xFFFF>
     // 使用 &IID_NULL, 0xFFFF, 0xFFFF时，会直接从当前动态库加载TypeLib，避免了注册COM组件
 {
-public:
+public: // 接口重写
+    HRESULT __stdcall Children( 
+    /* [in] */ BSTR name,
+    /* [retval][out] */ IObject **ppRetVal) override
+    {
+        return E_NOTIMPL;
+    }
+public: // 辅助函数
 
     /// @brief 获取原始对象指针
     Object* GetNativeObject()
     {
         return object_.get();
     }
+    
+    /// @brief 设置原始对象指针
+    void SetNativeObject(Object* object)
+    {
+        object_ = object;
+    }
 
-    /// @brief 将对象转换为指定类型
+    /// @brief 获取原始对象指针
     template<typename U>
-    U CastTo()
+    U GetNative()
     {
         return aobject_cast<U>(object_.get());
     }

@@ -22,6 +22,8 @@
 
 #include "AstGlobal.h"
 #include "ObjectImpl.hpp"
+#include "AstSim/SimAPI.hpp"
+#include "AstSim/Scenario.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,12 +32,24 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+class Scenario;
+
 template <typename T, const IID* piid = &__uuidof(T)>
 class IScenarioImpl : public IObjectImpl<T, piid>
 {
 public:
     IScenarioImpl() = default;
     ~IScenarioImpl() = default;
+
+    Scenario* GetScenario() const
+    {
+        return GetNative<Scenario>();
+    }
+    void SetToCurrentScenario()
+    {
+        SetNativeObject(aCurrentScenario());
+    }
+    
 };
 
 

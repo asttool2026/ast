@@ -1,9 +1,9 @@
 ///
-/// @file      Scenario.hpp
-/// @brief     场景对象接口
-/// @details   提供场景对象的COM自动化接口
+/// @file      Satellite.hpp
+/// @brief     卫星对象接口
+/// @details   提供卫星对象的COM自动化接口
 /// @author    axel
-/// @date      2026-05-09
+/// @date      2026-05-10
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,7 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "ScenarioImpl.hpp"
+#include "SatelliteImpl.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,21 +30,21 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-class Scenario;
+class Satellite;
 
-/// @brief 场景对象
-/// @details 作为COM自动化的场景对象，继承自IObject
-class CScenario :
+/// @brief 卫星对象
+/// @details 作为COM自动化的卫星对象，继承自IObject
+class CSatellite :
     public CComObjectRootEx<CComSingleThreadModel>,
-    public CComCoClass<CScenario, &CLSID_CScenario>,
-    public IScenarioImpl<IScenario, &IID_IScenario> 
+    public CComCoClass<CSatellite, &CLSID_CSatellite>,
+    public ISatelliteImpl<ISatellite, &IID_ISatellite> 
 {
 public:
-    CScenario() = default;
-    ~CScenario() = default;
+    CSatellite() = default;
+    ~CSatellite() = default;
 
-    BEGIN_COM_MAP(CScenario)
-        COM_INTERFACE_ENTRY(IScenario)
+    BEGIN_COM_MAP(CSatellite)
+        COM_INTERFACE_ENTRY(ISatellite)
         COM_INTERFACE_ENTRY(IObject)
         COM_INTERFACE_ENTRY(IDispatch)
         COM_INTERFACE_ENTRY(IUnknown)
