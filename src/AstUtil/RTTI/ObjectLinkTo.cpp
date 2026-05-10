@@ -1,9 +1,9 @@
 ///
-/// @file      COMAPI.cpp
+/// @file      ObjectLinkTo.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-05-09
+/// @date      2026-05-10
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,21 +18,37 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "COMAPI.hpp"
-#include "AstCOM/ObjectRoot.hpp"
-#include "AstCOM/ComObjectManager.hpp"
+#include "ObjectLinkTo.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 
 AST_NAMESPACE_BEGIN
 
-IUnknown* aComObjectRoot()
+void ObjectLinkTo::setResolvedName(const std::string& name)
 {
-    return CObjectRoot::Instance();
+    resolvedName_ = name;
+    resolvedObject_.reset();
 }
 
-IObject* aComGetObject(Object* obj)
+
+
+void ObjectLinkTo::setResolvedType(Class* type)
 {
-    return ComObjectManager::Instance().getComObject(obj);
+    if(type == resolvedType_)
+        return;
+    resolvedType_ = type;
+    resolvedObject_.reset();
 }
 
+
+
+Object* ObjectLinkTo::resolve() const
+{
+    if(auto object = resolvedObject_.get())
+        return object;
+    auto object = aResolveObject(getResolvedName(), getResolvedType());
+    resolvedObject_ = object;
+    return object;
+}
 
 AST_NAMESPACE_END
+

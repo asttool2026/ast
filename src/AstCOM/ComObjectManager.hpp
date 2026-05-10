@@ -1,9 +1,9 @@
 ///
-/// @file      COMAPI.cpp
+/// @file      ObjectPool.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-05-09
+/// @date      2026-05-10
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,21 +18,37 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "COMAPI.hpp"
-#include "AstCOM/ObjectRoot.hpp"
-#include "AstCOM/ComObjectManager.hpp"
+#pragma once
+
+#include "AstGlobal.h"
+#include <unordered_map>
+#include "AstUtil/Object.hpp"
+#include "AstCOM/Object.hpp"
 
 AST_NAMESPACE_BEGIN
 
-IUnknown* aComObjectRoot()
-{
-    return CObjectRoot::Instance();
-}
+/*!
+    @addtogroup 
+    @{
+*/
 
-IObject* aComGetObject(Object* obj)
+/// @brief COM对象池
+class ComObjectManager
 {
-    return ComObjectManager::Instance().getComObject(obj);
-}
+public:
+    ComObjectManager() = default;
+    ~ComObjectManager() = default;
+    static ComObjectManager& Instance();
+public:
+    void clear(){objects_.clear();}
+    IObject* getComObject(Object* object);
+    void clearDestroyed();
+private:
+    std::unordered_map<WeakPtr<Object>, CComPtr<IObject>> objects_;
+};
 
+/*! @} */
 
 AST_NAMESPACE_END
+
+

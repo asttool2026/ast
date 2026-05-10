@@ -24,8 +24,11 @@
 #include "AstCore/OrbitElement.hpp"
 #include "AstCore/RunTime.hpp"
 #include "AstCore/EOP.hpp"
+#include "AstSim/Scenario.hpp"
+#include "AstSim/Satellite.hpp"
 #include "AstUtil/ObjectLinker.hpp"
 #include "AstUtil/Literals.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 #include "AstMath/MathOperator.hpp"
 #include "AstTest/Test.h"
 
@@ -36,6 +39,12 @@ using namespace math;
 
 TEST(RPOTest, Set_Initial_State)
 {
+    SharedPtr<Scenario> scenario = aNewObject<Scenario>();
+    SharedPtr<Satellite> rpo = aNewObject<Satellite>(scenario.get());
+    rpo->setName("RPO");
+    SharedPtr<Satellite> target = aNewObject<Satellite>(scenario.get());
+    target->setName("Target");
+
     errc_t rc;
     std::string filepath = aTestGetConfigValue("STK_RPO_SET_INITIAL_STATE_FILE").toString();
     printf("loading file: %s\n", filepath.c_str());

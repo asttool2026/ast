@@ -22,8 +22,9 @@
 
 #include "AstGlobal.h"
 
-struct IDispatch;
 struct IUnknown;
+struct IDispatch;
+struct IObject;
 
 AST_NAMESPACE_BEGIN
 
@@ -32,12 +33,17 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
-/// @brief 获取根对象的Dispatch接口
-/// @details 用于获取根对象的Dispatch接口，用于调用根对象的方法
-/// @return IDispatch* 根对象的Dispatch接口指针
-/// @note 调用者负责释放返回的Dispatch接口指针
+/// @brief 获取根对象的COM接口
+/// @details 用于获取根对象的COM接口，用于调用根对象的方法
+/// @return IUnknown* 根对象的COM接口指针
+/// @note 调用者负责释放返回的COM接口指针
 /// @sa CObjectRoot
 AST_COM_CAPI IUnknown* aComObjectRoot();
+
+
+/// @brief 获取对象的COM接口
+AST_COM_CAPI IObject* aComGetObject(Object* obj);
+
 
 /*! @} */
 

@@ -20,8 +20,44 @@
 
 #include "SpaceObject.hpp"
 #include "AstUtil/Class.hpp"
+#include "AstUtil/ObjectLinkTo.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 
 AST_NAMESPACE_BEGIN
+
+
+SpaceObject* aSpaceObject_GetReferenceVehicle(SpaceObject* spaceObject)
+{
+    if(!spaceObject)
+        return nullptr;
+    auto linkTo = aFindChild<ObjectLinkTo*>(spaceObject, "ReferenceVehicle");
+    if(!linkTo)
+        return nullptr;
+    return aobject_cast<SpaceObject*>(linkTo->resolve());
+}
+
+
+void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, SpaceObject* referenceVehicle)
+{
+    if(!spaceObject)
+        return;
+    auto linkTo = aFindChild<ObjectLinkTo*>(spaceObject, "ReferenceVehicle");
+    if(!linkTo)
+    {
+        linkTo = aNewObject<ObjectLinkTo>(spaceObject);
+        linkTo->setName("ReferenceVehicle");
+    }
+    if(referenceVehicle){
+        linkTo->setResolvedName(referenceVehicle->getName());
+        linkTo->setResolvedType(referenceVehicle->getType());
+    }
+    else
+    {
+        linkTo->setResolvedName({});
+        linkTo->setResolvedType(nullptr);
+    }
+    linkTo->setResolvedObject(referenceVehicle);
+}
 
 
 AST_NAMESPACE_END

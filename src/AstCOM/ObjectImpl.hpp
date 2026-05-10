@@ -22,7 +22,10 @@
 
 #include "AstGlobal.h"
 #include "AstCOM.h"
+#include "AstCOM/COMAPI.hpp"
 #include "AstUtil/Object.hpp"
+#include "AstUtil/Encode.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 #include <unknwn.h>
 #include <oaidl.h>
 #include <atlbase.h>
@@ -45,7 +48,20 @@ public: // 接口重写
     /* [in] */ BSTR name,
     /* [retval][out] */ IObject **ppRetVal) override
     {
-        return E_NOTIMPL;
+        if(ppRetVal == nullptr)
+            return E_POINTER;
+        std::string nameStr = aWideToUtf8(name);
+        Object* child = aFindChild(GetNativeObject(), nullptr, nameStr);
+        if (child == nullptr)
+        {
+            *ppRetVal = nullptr;
+            return S_OK;
+        }
+        auto comObject = aComGetObject(child);
+        if(comObject)
+            comObject->AddRef();
+        *ppRetVal = comObject;
+        return S_OK;
     }
 public: // 辅助函数
 

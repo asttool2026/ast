@@ -38,6 +38,13 @@ public:
     ~SpaceObject() override = default;
 };
 
+/// @brief 获取参考航天器
+AST_SIM_CAPI SpaceObject* aSpaceObject_GetReferenceVehicle(SpaceObject* spaceObject);
+
+/// @brief 设置参考航天器
+AST_SIM_CAPI void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, SpaceObject* referenceVehicle);
+
+
 /*! @} */
 
 AST_NAMESPACE_END

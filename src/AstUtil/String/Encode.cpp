@@ -174,6 +174,14 @@ errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8)
     return eErrorInvalidParam;
 }
 
+std::string aWideToUtf8(const wchar_t* wide)
+{
+    std::string str;
+    aWideToUtf8(wide, str);
+    return str;
+}
+
+
 #else
 
 #if defined(__wasm__)
