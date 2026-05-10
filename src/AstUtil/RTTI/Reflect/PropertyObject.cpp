@@ -88,6 +88,8 @@ errc_t PropertyObject::getValueString(const void* container, std::string& value)
 errc_t PropertyObject::setValueString(void* container, StringView value)
 {
     Object* object = aResolveObject(value, class_);
+    if(!object)
+        aWarning("failed to resolve object: '%.*s'", value.size(), value.data());
     return setValue(container, object);
 }
 
@@ -107,7 +109,10 @@ errc_t PropertyObject::setValueDouble(void* container, double value)
 errc_t PropertyObject::setValue(void* container, const InputType* value)
 {
     if(!value)
+    {
+        aError("null input value for property object");
         return eErrorNullInput;
+    }
     if(class_ && !value->isOfType(class_))
     {
         aError("invalid type for property object, expect '%s', but given '%s'", class_->name().c_str(), value->getType()->name().c_str());

@@ -29,6 +29,12 @@ void ObjectLinkTo::setResolvedName(const std::string& name)
     resolvedObject_.reset();
 }
 
+const std::string& ObjectLinkTo::getResolvedName() const
+{
+    if(resolvedObject_.get())
+        return resolvedObject_->getName();
+    return resolvedName_;
+}
 
 
 void ObjectLinkTo::setResolvedType(Class* type)
@@ -39,7 +45,12 @@ void ObjectLinkTo::setResolvedType(Class* type)
     resolvedObject_.reset();
 }
 
-
+Class* ObjectLinkTo::getResolvedType() const
+{
+    if(resolvedObject_.get())
+        return resolvedObject_->getType();
+    return resolvedType_;
+}
 
 Object* ObjectLinkTo::resolve() const
 {

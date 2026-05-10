@@ -25,12 +25,22 @@
 
 AST_NAMESPACE_BEGIN
 
-
-SpaceObject* aSpaceObject_GetReferenceVehicle(SpaceObject* spaceObject)
+ObjectLinkTo* aSpaceObject_GetReferenceVehicleLink(SpaceObject* spaceObject)
 {
     if(!spaceObject)
         return nullptr;
     auto linkTo = aFindChild<ObjectLinkTo*>(spaceObject, "ReferenceVehicle");
+    if(!linkTo)
+    {
+        linkTo = aNewObject<ObjectLinkTo>(spaceObject);
+        linkTo->setName("ReferenceVehicle");
+    }
+    return linkTo;
+}
+
+SpaceObject* aSpaceObject_GetReferenceVehicle(SpaceObject* spaceObject)
+{
+    auto linkTo = aSpaceObject_GetReferenceVehicleLink(spaceObject);
     if(!linkTo)
         return nullptr;
     return aobject_cast<SpaceObject*>(linkTo->resolve());
@@ -39,14 +49,9 @@ SpaceObject* aSpaceObject_GetReferenceVehicle(SpaceObject* spaceObject)
 
 void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, SpaceObject* referenceVehicle)
 {
-    if(!spaceObject)
-        return;
-    auto linkTo = aFindChild<ObjectLinkTo*>(spaceObject, "ReferenceVehicle");
+    auto linkTo = aSpaceObject_GetReferenceVehicleLink(spaceObject);
     if(!linkTo)
-    {
-        linkTo = aNewObject<ObjectLinkTo>(spaceObject);
-        linkTo->setName("ReferenceVehicle");
-    }
+        return;
     if(referenceVehicle){
         linkTo->setResolvedName(referenceVehicle->getName());
         linkTo->setResolvedType(referenceVehicle->getType());
@@ -59,5 +64,12 @@ void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, SpaceObject* ref
     linkTo->setResolvedObject(referenceVehicle);
 }
 
+void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, StringView referenceVehiclePath)
+{
+    auto referenceVehicle = aResolveObject<SpaceObject*>(referenceVehiclePath);
+    if(!referenceVehicle)
+        return;
+    return aSpaceObject_SetReferenceVehicle(spaceObject, referenceVehicle);
+}
 
 AST_NAMESPACE_END

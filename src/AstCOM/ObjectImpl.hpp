@@ -66,7 +66,7 @@ public: // 接口重写
 public: // 辅助函数
 
     /// @brief 获取原始对象指针
-    Object* GetNativeObject()
+    Object* GetNativeObject() const
     {
         return object_.get();
     }
@@ -79,7 +79,7 @@ public: // 辅助函数
 
     /// @brief 获取原始对象指针
     template<typename U>
-    U GetNative()
+    U GetNative() const
     {
         return aobject_cast<U>(object_.get());
     }

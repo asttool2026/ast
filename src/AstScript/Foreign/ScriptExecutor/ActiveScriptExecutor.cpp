@@ -68,6 +68,7 @@ AST_NAMESPACE_END
 // #pragma comment(lib, "ole32.lib")
 // #pragma comment(lib, "uuid.lib")
 
+// #define AST_DEBUG_SCRIPT_EXECUTOR
 
 #define ERR_FAIL -1
 #define ERR_OK 0
@@ -332,6 +333,10 @@ errc_t ActiveScriptExecutor::execute(StringView script, std::string* errorOut)
         // 注意：若想每次执行前重新初始化全局变量环境，需额外处理。
         // 此处假设脚本可累积执行，即引擎状态保持。
         std::wstring wscript = aUtf8ToWide(script);
+
+        #ifdef AST_DEBUG_SCRIPT_EXECUTOR
+        aInfo("executing script: \n%.*s", (int)script.size(), script.data());
+        #endif
 
         EXCEPINFO ei = {};
         HRESULT hr = impl_->pParse->ParseScriptText(

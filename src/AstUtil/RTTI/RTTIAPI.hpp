@@ -122,6 +122,14 @@ AST_UTIL_API SharedPtr<Object> aMakeObject(StringView name, Object* parentScope=
 AST_UTIL_API Object* aResolveObject(StringView value, Class* cls = nullptr);
 
 
+template<typename T>
+T aResolveObject(StringView value)
+{
+    using ObjectType = typename std::decay<typename std::remove_pointer<T>::type>::type;
+    static_assert(has_own_getType<ObjectType>::value, "aResolveObject requires the type to has a AST_OBJECT macro");
+    return static_cast<T>(aResolveObject(value, ObjectType::StaticType()));
+}
+
 // -----------
 // 对象管理
 // -----------

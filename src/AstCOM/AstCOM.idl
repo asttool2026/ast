@@ -28,6 +28,24 @@ interface IObject : IDispatch
     [id(1)] HRESULT Children([in] BSTR name, [out, retval] IObject** ppRetVal);
 };
 
+
+[
+    object,
+    uuid(7a8b9c0d-1e2f-3a4b-5c6d-7e8f901a2b3c),
+    dual,
+    nonextensible,
+    pointer_default(unique)
+]
+interface ILinkToObject : IDispatch
+{
+    [id(1)] HRESULT BindTo([in] BSTR objectPath);
+    [propget, id(2)] HRESULT AvailableObjects([out, retval] SAFEARRAY(BSTR)* pVal);
+    [propget, id(3)] HRESULT IsIntrinsic([out, retval] VARIANT_BOOL* pVal);
+    [propget, id(4)] HRESULT LinkedObject([out, retval] IObject** ppRetVal);
+    [propget, id(5)] HRESULT Name([out, retval] BSTR* pVal);
+};
+
+
 [
     object,
     uuid(3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f),
@@ -48,6 +66,7 @@ interface IScenario : IObject
 ]
 interface ISatellite : IObject
 {
+    [propget, id(2)] HRESULT ReferenceVehicle([out, retval] ILinkToObject** ppRetVal);
 };
 
 [
@@ -116,5 +135,14 @@ library AstCOMLib
     coclass CExecCmdResult
     {
         [default] interface IExecCmdResult;
+    };
+
+    [
+        uuid(901a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c),
+        helpstring("LinkToObject Class")
+    ]
+    coclass CLinkToObject
+    {
+        [default] interface ILinkToObject;
     };
 };

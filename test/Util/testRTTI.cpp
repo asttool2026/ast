@@ -19,12 +19,13 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "AstUtil/RTTIAPI.hpp"
+#include "AstUtil/IO.hpp"
 #include "AstCore/RunTime.hpp"
 #include "AstCore/StateCartesian.hpp"
 #include "AstCore/StateKeplerian.hpp"
 #include "AstCore/CelestialBody.hpp"
 #include "AstCore/FrameAssembly.hpp"
-
+#include "AstSim/Satellite.hpp"
 #include "AstTest/Test.h"
 #include <vector>
 #include <string>
@@ -58,6 +59,20 @@ TEST_F(RTTITest, NewObject)
             auto obj = aMakeObject(className);
             EXPECT_TRUE(obj != nullptr);
         }
+    }
+}
+
+TEST_F(RTTITest, ClassNames)
+{
+    {Satellite sat;};
+    std::vector<std::string> classNames;
+    aGetAllClassNames(classNames);
+    EXPECT_TRUE(!classNames.empty());
+    for(auto className: classNames)
+    {
+        Class* cls = aGetClass(className);
+        std::string desc = cls->desc();
+        ast_printf("%s: %s\n", className.c_str(), desc.c_str());
     }
 }
 

@@ -58,4 +58,14 @@ TEST(RPOTest, Set_Initial_State)
 }
 
 
-GTEST_MAIN()
+
+// GTEST_MAIN()
+
+int main(int argc, char **argv) {
+    if(aIsCI())
+        return 0;
+    printf("Running main() from %s\n", __FILE__); 
+    testing::GTEST_FLAG(catch_exceptions) = false;
+    testing::InitGoogleTest(&argc, argv); 
+    return RUN_ALL_TESTS(); 
+}

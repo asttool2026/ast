@@ -38,7 +38,7 @@ AST_NAMESPACE_BEGIN
 /// @return IUnknown* 根对象的COM接口指针
 /// @note 调用者负责释放返回的COM接口指针
 /// @sa CObjectRoot
-AST_COM_CAPI IUnknown* aComObjectRoot();
+AST_COM_CAPI IDispatch* aComObjectRoot();
 
 
 /// @brief 获取对象的COM接口

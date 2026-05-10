@@ -22,7 +22,10 @@
 
 #include "AstGlobal.h"
 #include "ObjectImpl.hpp"
+#include "AstCOM/COMAPI.hpp"
+#include "AstCOM/LinkToObject.hpp"
 #include "AstSim/Satellite.hpp"
+#include "AstSim/SpaceObject.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -32,6 +35,7 @@ AST_NAMESPACE_BEGIN
 */
 
 class Satellite;
+class CLinkToObject;
 
 template <typename T, const IID* piid = &__uuidof(T)>
 class ISatelliteImpl : public IObjectImpl<T, piid>
@@ -40,7 +44,31 @@ public:
     ISatelliteImpl() = default;
     ~ISatelliteImpl() = default;
 
-    Satellite* GetSatellite() const
+
+
+    HRESULT __stdcall get_ReferenceVehicle(ILinkToObject** ppRetVal) override
+    {
+        if (ppRetVal == nullptr)
+            return E_POINTER;
+        *ppRetVal = nullptr;
+
+        Satellite* sat = GetNativeSatellite();
+        if (sat == nullptr)
+            return S_OK;
+
+        CComObject<CLinkToObject>* linkToObject = nullptr;
+        HRESULT hr = CComObject<CLinkToObject>::CreateInstance(&linkToObject);
+        if (FAILED(hr))
+            return hr;
+        linkToObject->SetNativeParentObject(sat);
+        linkToObject->AddRef();
+        *ppRetVal = linkToObject;
+
+        return S_OK;
+    }
+
+public: // 辅助函数
+    Satellite* GetNativeSatellite() const
     {
         return this->GetNative<Satellite*>();
     }

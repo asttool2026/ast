@@ -42,10 +42,10 @@ public:
     ~ObjectLinkTo() = default;
 
     void setResolvedName(const std::string& name);
-    const std::string& getResolvedName() const { return resolvedName_; }
+    const std::string& getResolvedName() const;
 
     void setResolvedType(Class* type);
-    Class* getResolvedType() const { return resolvedType_; }
+    Class* getResolvedType() const;
     
     void setResolvedObject(Object* object){resolvedObject_ = object;}
     
