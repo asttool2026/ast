@@ -56,6 +56,7 @@ AST_NAMESPACE_END
 #include "AstUtil/Encode.hpp"
 #include "AstUtil/LibraryLoader.hpp"
 #include "AstCOM/COMAPI.hpp"
+#include "ActiveScriptGlobalFunctions.hpp"
 #include <comdef.h>
 #include <unordered_map>
 #include <Windows.h>
@@ -91,6 +92,7 @@ IUnknown* rootDispatch();
 #define _AST_ACTIVE_SCRIPT_NOT_INITIALIZED "script executor is not initialized."
 
 constexpr const wchar_t* kRootItemName = L"root";   ///< 根命名项名称
+constexpr const wchar_t* kGlobalFunctionsItemName = L"GlobalFunctions"; ///< 命名项名称
 
 AST_NAMESPACE_BEGIN
 
@@ -100,6 +102,19 @@ AST_NAMESPACE_BEGIN
 class SimpleActiveScriptSite final: public IActiveScriptSite
 {
 public:
+    SimpleActiveScriptSite()
+    {
+        globalFunctions_ = new ActiveScriptGlobalFunctions();
+        // globalFunctions_->AddRef(); // 已在ActiveScriptGlobalFunctions构造函数中设置引用计数为1
+    }
+    ~SimpleActiveScriptSite()
+    {
+        if(globalFunctions_)
+        {
+            globalFunctions_->Release();
+            globalFunctions_ = nullptr;
+        }
+    }
     STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override
     {
         if (riid == IID_IUnknown || riid == IID_IActiveScriptSite)
@@ -133,6 +148,12 @@ public:
                 *ppunkItem = rootDisp;
                 return S_OK;
             }
+        }
+        else if (wcscmp(pstrName, kGlobalFunctionsItemName) == 0)
+        {
+            globalFunctions_->AddRef();
+            *ppunkItem = globalFunctions_;
+            return S_OK;
         }
         // 未找到命名项，返回未找到
         *ppunkItem = nullptr;
@@ -173,6 +194,7 @@ public:
 private:
     LONG ref_ = 1;
     std::string lastError_;
+    ActiveScriptGlobalFunctions* globalFunctions_ = nullptr;
 };
 
 
@@ -236,6 +258,9 @@ public:
         hr = pParse->InitNew();
         if (FAILED(hr)) return ERR_FAIL;
 
+        // 添加全局函数提供者
+        pScript->AddNamedItem(kGlobalFunctionsItemName, SCRIPTITEM_GLOBALMEMBERS | SCRIPTITEM_ISVISIBLE);
+        
         // 添加根命名项
         if(rootDispatch())
         {

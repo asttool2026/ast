@@ -36,6 +36,20 @@
 AST_USING_NAMESPACE
 using namespace math;
 
+TEST(RPOTest, Set_Reference_Vehicle)
+{
+    errc_t rc;
+    std::string filepath = aTestGetConfigValue("STK_RPO_SET_REFERENCE_VEHICLE_FILE").toString();
+    printf("loading file: %s\n", filepath.c_str());
+    SharedPtr<MissionCommand> missionCommand;
+    rc = aLoadMissionCommand(filepath, missionCommand);
+    EXPECT_EQ(rc, eNoError);
+    rc = aResolveAllLinks();
+    EXPECT_EQ(rc, eNoError);
+    rc = missionCommand->execute();
+    EXPECT_EQ(rc, eNoError);
+}
+
 
 TEST(RPOTest, Set_Initial_State)
 {
