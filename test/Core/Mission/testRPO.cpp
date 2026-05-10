@@ -38,6 +38,13 @@ using namespace math;
 
 TEST(RPOTest, Set_Reference_Vehicle)
 {
+    // GTEST_SKIP();
+    SharedPtr<Scenario> scenario = aNewObject<Scenario>();
+    SharedPtr<Satellite> rpo = aNewObject<Satellite>(scenario.get());
+    rpo->setName("RPO");
+    SharedPtr<Satellite> target = aNewObject<Satellite>(scenario.get());
+    target->setName("Target");
+
     errc_t rc;
     std::string filepath = aTestGetConfigValue("STK_RPO_SET_REFERENCE_VEHICLE_FILE").toString();
     printf("loading file: %s\n", filepath.c_str());

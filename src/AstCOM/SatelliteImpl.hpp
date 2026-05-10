@@ -24,6 +24,7 @@
 #include "ObjectImpl.hpp"
 #include "AstCOM/COMAPI.hpp"
 #include "AstCOM/LinkToObject.hpp"
+#include "AstCOM/SaVO.hpp"
 #include "AstSim/Satellite.hpp"
 #include "AstSim/SpaceObject.hpp"
 
@@ -36,6 +37,7 @@ AST_NAMESPACE_BEGIN
 
 class Satellite;
 class CLinkToObject;
+class CSaVO;
 
 template <typename T, const IID* piid = &__uuidof(T)>
 class ISatelliteImpl : public IObjectImpl<T, piid>
@@ -64,6 +66,21 @@ public:
         linkToObject->AddRef();
         *ppRetVal = linkToObject;
 
+        return S_OK;
+    }
+
+    HRESULT __stdcall get_VO(ISaVO** ppRetVal) override
+    {
+        if (ppRetVal == nullptr)
+            return E_POINTER;
+        *ppRetVal = nullptr;
+
+        CComObject<CSaVO>* vo = nullptr;
+        HRESULT hr = CComObject<CSaVO>::CreateInstance(&vo);
+        if (FAILED(hr))
+            return hr;
+        vo->AddRef();
+        *ppRetVal = vo;
         return S_OK;
     }
 
