@@ -20,6 +20,7 @@
 
 #include "AstCOM/ObjectRoot.hpp"
 #include "AstCOM/ExecCmdResult.hpp"
+#include "AstCmd/CommandAPI.hpp"
 #include "AstCOM/Scenario.hpp"
 #include <cassert>
 #include <stdio.h>
@@ -54,21 +55,30 @@ HRESULT __stdcall CObjectRoot::ExecuteCommand(
         return E_POINTER;
     
     *result = nullptr;
-    
-    wprintf(L"ExecuteCommand: '%s'\n", command);
-    
     CComObject<CExecCmdResult>* pResult = nullptr;
     HRESULT hr = CComObject<CExecCmdResult>::CreateInstance(&pResult);
-    
     if (FAILED(hr))
         return hr;
     
     pResult->AddRef();
-    pResult->setSucceeded(VARIANT_TRUE);
-    pResult->addResult(L"hello world");
-    pResult->addResult(L"command executed successfully");
-    
     *result = pResult;
+    
+    CommandResult cmdResult;
+    errc_t rc = aExecuteCommand(aWideToUtf8(command), cmdResult);
+    if(rc)
+        aWarning("failed to execute command");
+    
+    // 设置是否成功
+    if(rc)
+        pResult->setSucceeded(VARIANT_FALSE);
+    else
+        pResult->setSucceeded(VARIANT_TRUE);
+    
+    // 添加执行结果
+    for(const auto& line : cmdResult)
+    {
+        pResult->addResult(aUtf8ToWide(line));
+    }
     return S_OK;
 }
 

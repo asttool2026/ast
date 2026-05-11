@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include <vector>
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
@@ -111,6 +112,10 @@ public:
     template <typename U, std::size_t N>
     constexpr explicit Span(const std::array<U, N>& arr) noexcept
         : storage_(arr.data(), N) {}
+
+    template <typename U>
+    constexpr explicit Span(const std::vector<U>& span) noexcept
+        : storage_(span.data(), span.size()) {}
 
 #if 0 // 暂时不支持其他容器类型，因为无法确定其内存是否连续
     template <typename Container>
