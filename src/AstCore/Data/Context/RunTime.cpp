@@ -285,17 +285,17 @@ errc_t aInitializeByConfig(DataContext* context)
 {
     auto config = context->config();
     InitalizeConfig initalizeConfig;
-    fs::path libdir = aLibDir();
-    initalizeConfig.dataDir_ = aRelPathToAbs(config->getConfig("DATA_DIR").toString(), libdir);
-    initalizeConfig.leapSecondFile_ = aRelPathToAbs(config->getConfig("LSK_FILE").toString(), libdir);
-    initalizeConfig.jplDeFile_ = aRelPathToAbs(config->getConfig("JPLDE_FILE").toString(), libdir);
-    initalizeConfig.eopFile_ = aRelPathToAbs(config->getConfig("EOP_FILE").toString(), libdir);
-    initalizeConfig.spaceWeatherFile_ = aRelPathToAbs(config->getConfig("SPACEWEATHER_FILE").toString(), libdir);
-    initalizeConfig.iauxFile_ = aRelPathToAbs(config->getConfig("IAUX_FILE").toString(), libdir);
-    initalizeConfig.iauyFile_ = aRelPathToAbs(config->getConfig("IAUY_FILE").toString(), libdir);
-    initalizeConfig.iausFile_ = aRelPathToAbs(config->getConfig("IAUS_FILE").toString(), libdir);
-    initalizeConfig.iauXYSPrecomputedFile_ = aRelPathToAbs(config->getConfig("IAUXYS_PRECOMPUTED_FILE").toString(), libdir);
-    initalizeConfig.solarSystemDir_ = aRelPathToAbs(config->getConfig("SOLARSYSTEM_DIR").toString(), libdir);
+    fs::path configDir = std::string(config->dirpath());
+    initalizeConfig.dataDir_ = aRelPathToAbs(config->getConfig("DATA_DIR").toString(), configDir);
+    initalizeConfig.leapSecondFile_ = aRelPathToAbs(config->getConfig("LSK_FILE").toString(), configDir);
+    initalizeConfig.jplDeFile_ = aRelPathToAbs(config->getConfig("JPLDE_FILE").toString(), configDir);
+    initalizeConfig.eopFile_ = aRelPathToAbs(config->getConfig("EOP_FILE").toString(), configDir);
+    initalizeConfig.spaceWeatherFile_ = aRelPathToAbs(config->getConfig("SPACEWEATHER_FILE").toString(), configDir);
+    initalizeConfig.iauxFile_ = aRelPathToAbs(config->getConfig("IAUX_FILE").toString(), configDir);
+    initalizeConfig.iauyFile_ = aRelPathToAbs(config->getConfig("IAUY_FILE").toString(), configDir);
+    initalizeConfig.iausFile_ = aRelPathToAbs(config->getConfig("IAUS_FILE").toString(), configDir);
+    initalizeConfig.iauXYSPrecomputedFile_ = aRelPathToAbs(config->getConfig("IAUXYS_PRECOMPUTED_FILE").toString(), configDir);
+    initalizeConfig.solarSystemDir_ = aRelPathToAbs(config->getConfig("SOLARSYSTEM_DIR").toString(), configDir);
     initalizeConfig.spkFiles_ = config->getStringVector("SPK_FILES");  /// @todo 这里获取到的路径可能是相对路径，要处理相对路径问题!
     return aInitializeByConfig(context, initalizeConfig);
 }

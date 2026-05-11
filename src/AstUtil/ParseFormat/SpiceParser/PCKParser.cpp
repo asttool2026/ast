@@ -81,7 +81,7 @@ errc_t PCKParser::getNext(BKVItemView &item)
                 // 继续读取，直到找到完整的括号表达式
                 StringView lineStrip;
                 constexpr size_t maxmem = 20 * 1024 * 1024; // 20 MB
-                const size_t maxsize = std::min(valueBuffer_.max_size(), maxmem);
+                const size_t maxsize = (std::min)(valueBuffer_.max_size(), maxmem);
                 do{
                     StringView line = getLineWithNewline();
                     if(valueBuffer_.size() + line.size() >= maxsize)

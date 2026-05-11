@@ -57,19 +57,19 @@ errc_t aLoadShooterResult(const Value& value, ShooterResult& result)
             aError("failed to find parent sequence '%s'", parentSegmentName.c_str());
             return -1;
         }
-        auto command = sequence->getCommandByPath(parentSegmentName);
-        if(!command)
+        auto segment = sequence->getSegmentByPath(parentSegmentName);
+        if(!segment)
         {
-            aError("failed to get command '%s' for result '%s'", parentSegmentName.c_str(), resultName.c_str());
+            aError("failed to get segment '%s' for result '%s'", parentSegmentName.c_str(), resultName.c_str());
             return -1;
         }
-        auto calculation = aFindChild<ObjectCalculation*>(command, resultName);
+        auto calculation = aFindChild<ObjectCalculation*>(segment, resultName);
         if(calculation == nullptr)
         {
             aError("failed to find result object '%s'", resultName.c_str());
             return -1;
         }
-        Expr* expr = new ExprCalculation(command, calculation);
+        Expr* expr = new ExprCalculation(segment->getOutputState(), calculation);
         expr->setParentScope(&result);
         result.setExpr(expr);
     }

@@ -69,7 +69,11 @@ errc_t aLoadSegment(const Value& dict, Segment& segment)
     // 一般来说，输出状态就是最终状态
     if(auto outputState = segment.getOutputState())
     {
-        aLoadSpacecraftState(dict["FinalState"], *outputState);
+        auto& dictFinalState = dict["FinalState"];
+        if(!dictFinalState.isNull())
+        {
+            aLoadSpacecraftState(dictFinalState, *outputState);
+        }
     }
     // 加载 Results
     {

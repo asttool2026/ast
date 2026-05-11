@@ -418,14 +418,29 @@ private:
     // uint32_t                 flags_{0};                                 ///< 对象标志位，用于存储对象的额外信息
 };
 
-// 主模板：默认 false
-template <typename T, typename = void>
-struct has_own_getType : std::false_type {};
-
-// 特化：仅当 &T::getType 的类型严格为 Class* (T::*)()const 时匹配
+// 定义：检测 T 是否拥有 “Class* (T::*)() const” 签名的成员函数 getType
 template <typename T>
-struct has_own_getType<T, typename std::enable_if<
-    std::is_same<decltype(&T::getType), Class* (T::*)()const>::value>::type> : std::true_type {};
+struct has_own_getType {
+private:
+    typedef char yes;
+    typedef long no;
+
+    // 仅当 U 具有 Class* (U::*)() const 的成员时，此辅助模板才能实例化
+    template <typename U, Class* (U::*)() const>
+    struct Check;
+
+    // 如果能匹配 &U::getType，则返回 yes
+    template <typename U>
+    static yes test(Check<U, &U::getType>*);
+
+    // 否则走 ...
+    template <typename>
+    static no test(...);
+
+public:
+    static const bool value = (sizeof(test<T>(0)) == sizeof(yes));
+};
+
 
 template<typename T>
 T aobject_cast(Object* obj)

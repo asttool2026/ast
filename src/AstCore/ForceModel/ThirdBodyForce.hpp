@@ -54,15 +54,15 @@ public:
     {}
 
     /// @brief 获取引力场模型
-    /// @warning 调用该接口后，三体引力模型将被设置为引力场模型
     /// @return 引力场模型
-    GravityForce& gravity();
+    GravityForce& gravity(){return gravity_;}
+    const GravityForce& gravity() const {return gravity_;}
 
     /// @brief 获取点质量引力模型
-    /// @warning 调用该接口后，三体引力模型将被设置为点质量引力模型
     /// @return 点质量引力模型
-    PointMassForce& pointMass();
-    
+    PointMassForce& pointMass(){return pointMass_;}
+    const PointMassForce& pointMass() const {return pointMass_;}
+
     /// @brief 获取三体引力模型
     /// @return 三体引力模型
     BodyAttraction& bodyAttraction();

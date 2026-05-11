@@ -33,7 +33,8 @@ ZIP_NAME = 'ast-nt.zip'
 
 # 排除的目录
 EXCLUDE_DIRS = ['data', 'docs', '.git', 'build', '.xmake', ".trae", ".vscode", ".github", 
-                ".vs", "thirdparty", "vs2015", "vs2026", "vsxmake2022", "vsxmake2026"]
+                ".vs", "thirdparty", "vs2015", "vs2026", "vsxmake2022", "vsxmake2026",
+                "node_modules"]
 
 # 空行替换内容（可配置）
 EMPTY_LINE_REPLACEMENT = '// 请不要修改此文件(do not modify this file)'  # 默认替换为空字符串，即删除空行
@@ -65,7 +66,7 @@ def merge_module_sources():
             print(f"Merging {len(cpp_files)} .cpp files in {module_name} to {merged_file_path}")
             
             # 合并文件内容
-            with open(merged_file_path, 'w', encoding='utf-8') as merged_file:
+            with open(merged_file_path, 'w', encoding='utf-8-sig') as merged_file:
                 for cpp_file in cpp_files:
                     with open(cpp_file, 'r', encoding='utf-8', errors='ignore') as f:
                         content = f.read()

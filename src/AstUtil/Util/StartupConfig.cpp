@@ -21,6 +21,7 @@
 #include "StartupConfig.hpp"
 #include "AstUtil/KVParser.hpp"
 #include "AstUtil/IO.hpp"
+#include "AstUtil/FileSystem.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -30,6 +31,7 @@ errc_t StartupConfig::load(StringView filepath)
     parser.open(filepath);
     if(!parser.isOpen())
         return eErrorInvalidFile;
+    this->filepath_ = std::string(filepath);
     this->configMap_.clear();
     BKVItemView item;
     while(1)
@@ -46,6 +48,18 @@ errc_t StartupConfig::load(StringView filepath)
         }
     }
     return eNoError;
+}
+
+
+StringView StartupConfig::dirpath() const
+{
+    #ifdef _WIN32
+    auto pos = filepath_.find_last_of("/\\");
+    #else
+    auto pos = filepath_.find_last_of('/');
+    #endif
+    if(pos == std::string::npos) return ".";
+    return filepath_.substr(0, pos);
 }
 
 ValueView StartupConfig::getConfig(StringView key) const

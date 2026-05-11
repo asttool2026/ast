@@ -1010,7 +1010,7 @@ Expr* Parser::parsePrimaryExpr()
                 }
                 
                 // 检查是否超出int范围
-                if (value < std::numeric_limits<int>::min() || value > std::numeric_limits<int>::max()) {
+                if (value < (std::numeric_limits<int>::min)() || value > (std::numeric_limits<int>::max)()) {
                     // 超出int范围
                     return nullptr;
                 }

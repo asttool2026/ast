@@ -61,6 +61,9 @@ PROPERTIES:
     
     double weight() const { return weight_; }
     void setWeight(double weight) { weight_ = weight; }
+
+    /// @brief 获取变量的值
+    errc_t getValue(double& value) const;
     
     Expr* expr() const { return expr_.get(); }
     void setExpr(Expr* expr) { expr_ = expr; }

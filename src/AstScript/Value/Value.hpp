@@ -87,6 +87,11 @@ public:
 
     ValDict* toValDict() const;
     const NamedValueVector& items() const;
+
+    const Value& operator>>(bool& val) const;
+    const Value& operator>>(int& val) const;
+    const Value& operator>>(double& val) const;
+
 private:
 
 };

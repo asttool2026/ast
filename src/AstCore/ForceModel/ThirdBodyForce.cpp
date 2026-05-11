@@ -25,15 +25,7 @@
 AST_NAMESPACE_BEGIN
 
 
-GravityForce& ThirdBodyForce::gravity()
-{
-    return gravity_;
-}
 
-PointMassForce& ThirdBodyForce::pointMass()
-{
-    return pointMass_;
-}
 
 BodyAttraction& ThirdBodyForce::bodyAttraction()
 {

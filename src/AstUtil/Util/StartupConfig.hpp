@@ -45,6 +45,12 @@ public:
     /// @return 
     errc_t load(StringView filepath);
 
+    /// @brief  获取加载的配置文件路径
+    const std::string& filepath() const{return filepath_;}
+
+    /// @brief  获取加载的配置文件所在目录
+    StringView dirpath() const;
+
     /// @brief  检查配置是否为空
     /// @return 
     bool empty() const{return configMap_.empty();}
@@ -106,6 +112,7 @@ protected:
 protected:
     using ConfigMap = std::unordered_map<std::string, GenericValue>;
     ConfigMap configMap_;
+    std::string filepath_;
 };
 
 

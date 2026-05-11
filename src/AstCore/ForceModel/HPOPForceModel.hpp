@@ -69,9 +69,11 @@ public:
 
     /// @brief 获取阻力模型
     DragForce& drag(){return drag_;}
+    const DragForce& drag() const {return drag_;}
 
     /// @brief 获取太阳辐射压模型
     SolarRadiationPressure& srp(){return srp_;}
+    const SolarRadiationPressure& srp() const {return srp_;}
 
     /// @brief 获取中心天体引力场模型
     /// @warning 调用该接口后，中心天体引力模型将被设置为引力场模型
