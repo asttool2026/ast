@@ -208,7 +208,7 @@ errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Obj
     {
         auto calculation = aNewObject<ScStateCalcVBScript>(scope);
         result = calculation;
-        aLoadCalculation(value, *calculation);
+        // aLoadCalculation(value, *calculation);
     }
     else
     {

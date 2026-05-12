@@ -31,6 +31,10 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+class ScStateCalculation;
+
+using HScStateCalculation = SharedPtr<ScStateCalculation>;
+
 class AST_CORE_API ScStateCalculation: public ObjectCalculation
 {
 public:

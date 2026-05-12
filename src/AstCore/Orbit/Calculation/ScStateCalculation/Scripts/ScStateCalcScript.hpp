@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstCore/ScStateCalculation.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -29,6 +30,20 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+class ScriptExecutor;
+
+class AST_CORE_API ScStateCalcScript: public ScStateCalculation
+{
+public:
+    errc_t calculate(const SpacecraftState& scState, double& result) override;
+protected:
+
+    /// @brief 创建脚本执行器
+    virtual ScriptExecutor* newScriptExecutor() const = 0;
+private:
+    std::string statement_;                          ///< 脚本语句
+    std::vector<HScStateCalculation> arguments_;     ///< 脚本参数列表
+};
 
 
 /*! @} */

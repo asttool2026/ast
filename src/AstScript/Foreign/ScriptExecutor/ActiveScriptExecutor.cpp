@@ -97,6 +97,107 @@ constexpr const wchar_t* kGlobalFunctionsItemName = L"GlobalFunctions"; ///< 命
 AST_NAMESPACE_BEGIN
 
 
+
+void VariantToValue(const VARIANT& v, SharedPtr<Value>& value)
+{
+    switch (v.vt)
+    {
+    case VT_EMPTY:
+        break;
+    
+    case VT_NULL:
+        value = aValueNull();
+        break;
+    
+    case VT_BOOL:
+        value = aNewValueBool(v.boolVal != 0);
+        break;
+    
+    case VT_I1:
+        value = aNewValueInt(static_cast<int>(v.cVal));
+        break;
+    
+    case VT_I2:
+        value = aNewValueInt(static_cast<int>(v.iVal));
+        break;
+    
+    case VT_I4:
+        value = aNewValueInt(static_cast<int>(v.lVal));
+        break;
+    
+    case VT_I8:
+        value = aNewValueDouble(static_cast<double>(v.llVal));
+        break;
+    
+    case VT_UI1:
+        value = aNewValueInt(static_cast<int>(v.bVal));
+        break;
+    
+    case VT_UI2:
+        value = aNewValueInt(static_cast<int>(v.uiVal));
+        break;
+    
+    case VT_UI4:
+        value = aNewValueDouble(static_cast<double>(v.ulVal));
+        break;
+    
+    case VT_UI8:
+        value = aNewValueDouble(static_cast<double>(v.ullVal));
+        break;
+    
+    case VT_R4:
+        value = aNewValueDouble(static_cast<double>(v.fltVal));
+        break;
+    
+    case VT_R8:
+        value = aNewValueDouble(v.dblVal);
+        break;
+    
+    case VT_CY:
+        value = aNewValueDouble(static_cast<double>(v.cyVal.int64) / 10000.0);
+        break;
+    
+    case VT_DATE:
+        aWarning("VT_DATE type not supported in VariantToValue");
+        // value = aValueNull();
+        break;
+    
+    case VT_BSTR:
+        value = aNewValueString(fromBSTR(v.bstrVal));
+        break;
+    
+    case VT_DISPATCH:
+        aWarning("VT_DISPATCH type not supported in VariantToValue");
+        // value = aValueNull();
+        break;
+    
+    case VT_VARIANT | VT_ARRAY:
+        aWarning("VT_ARRAY type not supported in VariantToValue");
+        // value = aValueNull();
+        break;
+    
+    default:
+    {
+        VARIANT v2; 
+        VariantInit(&v2);
+        HRESULT hr = VariantChangeType(&v2, const_cast<VARIANTARG*>(&v), 0, VT_BSTR);
+        if (SUCCEEDED(hr) && v2.vt == VT_BSTR)
+        {
+            value = aNewValueString(fromBSTR(v2.bstrVal));
+        }
+        else
+        {
+            aWarning("failed to convert variant type %d to value", v.vt);
+            // value = aValueNull();
+        }
+        VariantClear(&v2);
+        break;
+    }
+    }
+}
+
+
+
 // 站点实现（简化版，仅实现IActiveScriptSite的部分方法）
 
 class SimpleActiveScriptSite final: public IActiveScriptSite
@@ -226,6 +327,14 @@ public:
     SimpleActiveScriptSite*     pSite = nullptr;            ///< 脚本站点
     std::wstring                progId = L"JScript";        ///< 默认脚本引擎
     
+public:
+    Impl() = default;
+    
+    ~Impl()
+    {
+        finalize();
+    }
+
     errc_t initialize()
     {
         // 避免重复初始化
@@ -305,11 +414,53 @@ public:
         return _AST_ACTIVE_SCRIPT_NOT_INITIALIZED;
     }
 
-    Impl() = default;
-    ~Impl()
+    errc_t run(StringView script, bool isExpression, ScriptResult* resultOut=nullptr)
     {
-        finalize();
+        // 伪循环用于执行正常逻辑，如果中途有失败则break跳出循环，在末尾进行错误处理
+        do{
+            if (!pParse || !pSite)
+                break;
+            // 清除上一次的错误信息
+            pSite->clearLastError();
+
+            // 注意：若想每次执行前重新初始化全局变量环境，需额外处理。
+            // 此处假设脚本可累积执行，即引擎状态保持。
+            std::wstring wscript = aUtf8ToWide(script);
+
+            #ifdef AST_DEBUG_SCRIPT_EXECUTOR
+            aInfo("executing script: \n%.*s", (int)script.size(), script.data());
+            #endif
+
+            EXCEPINFO ei = {};
+            VARIANT v; VariantInit(&v);
+            DWORD flags = SCRIPTTEXT_ISVISIBLE;
+            if(isExpression)
+                flags |= SCRIPTTEXT_ISEXPRESSION;
+
+            HRESULT hr = pParse->ParseScriptText(
+                wscript.c_str(),
+                nullptr,               // 项名
+                nullptr,               // 宿主对象
+                nullptr,               // 分隔符
+                0,                     // 行号
+                0,                     // 偏移
+                flags,
+                &v,               // 返回结果
+                &ei);
+            if(resultOut)
+                VariantToValue(v, resultOut->value_);
+            VariantClear(&v);
+            if (FAILED(hr))  break;
+            
+            if (pSite->hasError())
+                break;
+            return ERR_OK;
+        }while(false);
+        if(resultOut)
+            resultOut->error_ = getLastError();
+        return ERR_FAIL;
     }
+
 };
 
 // ---------- ActiveScriptExecutor 公共接口实现 ----------
@@ -346,45 +497,20 @@ void ActiveScriptExecutor::finalize()
     impl_->finalize();
 }
 
-errc_t ActiveScriptExecutor::execute(StringView script, std::string* errorOut)
+
+errc_t ActiveScriptExecutor::execute(StringView script, ScriptResult* resultOut)
 {
-    // 伪循环用于执行正常逻辑，如果中途有失败则break跳出循环，在末尾进行错误处理
-    do{
-        if (!impl_ || !impl_->pParse || !impl_->pSite)
-            break;
-        // 清除上一次的错误信息
-        impl_->pSite->clearLastError();
-
-        // 注意：若想每次执行前重新初始化全局变量环境，需额外处理。
-        // 此处假设脚本可累积执行，即引擎状态保持。
-        std::wstring wscript = aUtf8ToWide(script);
-
-        #ifdef AST_DEBUG_SCRIPT_EXECUTOR
-        aInfo("executing script: \n%.*s", (int)script.size(), script.data());
-        #endif
-
-        EXCEPINFO ei = {};
-        HRESULT hr = impl_->pParse->ParseScriptText(
-            wscript.c_str(),
-            nullptr,               // 项名
-            nullptr,               // 宿主对象
-            nullptr,               // 分隔符
-            0,                     // 行号
-            0,                     // 偏移
-            SCRIPTTEXT_ISVISIBLE,
-            nullptr,               // 返回结果
-            &ei);
-
-        if (FAILED(hr))  break;
-        
-        if (impl_->pSite->hasError())
-            break;
-        return ERR_OK;
-    }while(false);
-    if(errorOut)
-        *errorOut = impl_->getLastError();
-    return ERR_FAIL;
+    if(!impl_) return eErrorNotInit;
+    return impl_->run(script, false, resultOut);
 }
+
+
+errc_t ActiveScriptExecutor::eval(StringView expression, ScriptResult* resultOut)
+{
+    if(!impl_) return eErrorNotInit;
+    return impl_->run(expression, true, resultOut);
+}
+
 
 std::string ActiveScriptExecutor::getLastError() const
 {
@@ -678,4 +804,3 @@ IUnknown* rootDispatch()
 #undef ERR_OK
 
 #endif
-

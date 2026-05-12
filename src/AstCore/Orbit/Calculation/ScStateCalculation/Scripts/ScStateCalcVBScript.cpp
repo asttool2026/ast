@@ -19,6 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ScStateCalcVBScript.hpp"
+#include "AstScript/ScriptExecutor.hpp"
 #include "AstUtil/Logger.hpp"
 
 AST_NAMESPACE_BEGIN
@@ -28,6 +29,11 @@ errc_t ScStateCalcVBScript::calculate(const SpacecraftState& state, double& resu
     // TODO: Implement VBScript calculation
     aError("not implemented");
     return -1;
+}
+
+ScriptExecutor* ScStateCalcVBScript::newScriptExecutor() const
+{
+    return aNewScriptExecutor(EScriptLanguage::eVBScript);
 }
 
 AST_NAMESPACE_END

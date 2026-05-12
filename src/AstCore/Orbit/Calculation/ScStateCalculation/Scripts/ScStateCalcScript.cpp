@@ -19,9 +19,38 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "ScStateCalcScript.hpp"
+#include "AstUtil/ScopedPtr.hpp"
+#include "AstUtil/Logger.hpp"
+#include "AstScript/ScriptExecutor.hpp"
 
 AST_NAMESPACE_BEGIN
 
+errc_t ScStateCalcScript::calculate(const SpacecraftState& scState, double& result)
+{
+    ScopedPtr<ScriptExecutor> executor(newScriptExecutor());
+    if (executor == nullptr)
+    {
+        aError("failed to create script executor");
+        return eErrorNullPtr;
+    }
+    for(auto& arg : arguments_)
+    {
+        double value;
+        errc_t rc = arg->calculate(scState, value);
+        if (rc != eNoError)
+        {
+            aError("failed to calculate argument '%s'", arg->getName().c_str());
+            return rc;
+        }
+        rc = executor->setVariable(arg->getName(), value);
+        if (rc != eNoError)
+        {
+            aError("failed to set variable '%s'", arg->getName().c_str());
+            return rc;
+        }
+    }
+    return eNoError;
+}
 
 
 AST_NAMESPACE_END

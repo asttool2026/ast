@@ -107,6 +107,26 @@ errc_t ScriptExecutor::getVariable(Variable* var)
 }
 
 
+errc_t ScriptExecutor::eval(StringView expression, ScriptResult* resultOut)
+{
+    // 一些脚本语言的语句执行也有返回值，此时能直接通过执行语句来计算表达式的值
+    return this->execute(expression, resultOut);
+}
+
+errc_t ScriptExecutor::execute(StringView script, std::string* error)
+{
+    if(!error)
+    {
+        return this->execute(script);
+    }
+    else{
+        ScriptResult result;
+        errc_t rc = execute(script, &result);
+        *error = std::move(result.error_);
+        return rc;
+    }
+}
+
 
 std::string toString(EScriptLanguage type)
 {

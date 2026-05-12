@@ -22,13 +22,15 @@
 
 #include "AstGlobal.h"
 #include "ScStateCalculation.hpp"
+#include "ScStateCalcScript.hpp"
 
 AST_NAMESPACE_BEGIN
 
-class ScStateCalcVBScript : public ScStateCalculation
+class AST_CORE_API ScStateCalcVBScript : public ScStateCalcScript
 {
 public:
     errc_t calculate(const SpacecraftState& scState, double& result) override;
+    ScriptExecutor* newScriptExecutor() const override;
 };
 
 AST_NAMESPACE_END
