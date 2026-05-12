@@ -26,10 +26,68 @@
 AST_NAMESPACE_BEGIN
 
 
-void aCommandDispatcherInit(CommandDispatcher& dispatcher)
+void aCommandInitMover(CommandDispatcher& dispatcher)
 {
     REGISTER_COMMAND(dispatcher,
-        "Test1 <string> <quoted>",
+        "SetState <object> Cartesian <string> <string> <string> "
+        "<double> <string> <string> "
+        "<double> <double> <double> <double> <double> <double>",
+        [](Object* obj, StringView propagator, StringView start, StringView stop,
+        double stepSize, StringView coordSys, StringView epoch,
+        double x, double y, double z, double vx, double vy, double vz) 
+        {
+            // 业务逻辑...
+            printf("SetState Cartesian:\n");
+            printf("object = %p\n", obj);
+            printf("propagator = %.*s\n", propagator.size(), propagator.data());
+            printf("start = %.*s\n", start.size(), start.data());
+            printf("stop = %.*s\n", stop.size(), stop.data());
+            printf("stepSize = %f\n", stepSize);
+            printf("coordSys = %.*s\n", coordSys.size(), coordSys.data());
+            printf("epoch = %.*s\n", epoch.size(), epoch.data());
+            printf("x = %lf\n", x);
+            printf("y = %lf\n", y);
+            printf("z = %lf\n", z);
+            printf("vx = %lf\n", vx);
+            printf("vy = %lf\n", vy);
+            printf("vz = %lf\n", vz);
+            return 0;
+        }
+    );
+
+    REGISTER_COMMAND(dispatcher,
+        "SetState <object> Classical <string> <string> <string> "
+        "<double> <string> <string> "
+        "<double> <double> <double> <double> <double> <double>",
+        [](Object* obj, StringView propagator, StringView start, StringView stop,
+        double stepSize, StringView coordSys, StringView epoch,
+        double a, double ecc, double inc, double arg, double raan, double M) 
+        {
+            // 业务逻辑...
+            printf("SetState Classical:\n");
+            printf("object = %p\n", obj);
+            printf("propagator = %.*s\n", propagator.size(), propagator.data());
+            printf("start = %.*s\n", start.size(), start.data());
+            printf("stop = %.*s\n", stop.size(), stop.data());
+            printf("stepSize = %f\n", stepSize);
+            printf("coordSys = %.*s\n", coordSys.size(), coordSys.data());
+            printf("epoch = %.*s\n", epoch.size(), epoch.data());
+            printf("a = %lf\n", a);
+            printf("ecc = %lf\n", ecc);
+            printf("inc = %lf\n", inc);
+            printf("arg = %lf\n", arg);
+            printf("raan = %lf\n", raan);
+            printf("M = %lf\n", M);
+            return 0;
+        }
+    );
+
+}
+
+void aCommandInitBasic(CommandDispatcher& dispatcher)
+{
+    REGISTER_COMMAND(dispatcher,
+        "Test1 <string> <string>",
         [](StringView scenario, StringView filePath) {
             ast_printf("Test1: Scenario = '%.*s', FilePath = '%.*s'\n", 
                 scenario.size(), scenario.data(), 
@@ -77,6 +135,13 @@ void aCommandDispatcherInit(CommandDispatcher& dispatcher)
             return 0;
         }
     );
+}
+
+
+void aCommandDispatcherInit(CommandDispatcher& dispatcher)
+{
+    aCommandInitBasic(dispatcher);
+    aCommandInitMover(dispatcher);
 }
 
 AST_NAMESPACE_END

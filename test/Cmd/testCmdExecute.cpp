@@ -29,5 +29,24 @@ TEST(CmdExecuteTest, Test1)
     EXPECT_EQ(aExecuteCommand("Test1 123 \"456\""), eNoError);
 }
 
-GTEST_MAIN();
+
+TEST(CmdExecuteTest, SetState)
+{
+    EXPECT_EQ(
+        aExecuteCommand(
+            R"(SetState */Satellite/ERS1 Cartesian J4Perturbation "1 Nov 2000 00:00:00.00" "1 Nov 2000 08:00:00.00" 60 
+            J2000 "1 Nov 2000 00:00:00.00" -5465000.513055 4630000.194365 0.0 712.713627 841.292034 7377.687805)"
+        ), 
+        eNoError
+    );
+}
+
+// GTEST_MAIN()
+
+int main(int argc, char **argv) {
+    printf("Running main() from %s\n", __FILE__); 
+    testing::GTEST_FLAG(catch_exceptions) = false;
+    testing::InitGoogleTest(&argc, argv); 
+    return RUN_ALL_TESTS(); 
+}
 

@@ -1,5 +1,5 @@
 ///
-/// @file      CommandHandler.hpp
+/// @file      CommandUtil.cpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,35 +18,11 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#pragma once
-
-#include "AstGlobal.h"
-#include "AstUtil/StringView.hpp"
-#include "AstUtil/Span.hpp"
-#include "CommandAPI.hpp"
-#include <vector>
-#include <string>
+#include "CommandUtil.hpp"
 
 AST_NAMESPACE_BEGIN
 
-/*!
-    @addtogroup 
-    @{
-*/
 
-
-/// 命令处理接口
-class CommandHandler {
-public:
-    /// 处理命令
-    virtual errc_t handle(const Span<StringView> tokens, CommandResult& result) const = 0;
-    virtual ~CommandHandler() = default;
-};
-
-
-/*! @} */
 
 AST_NAMESPACE_END
-
-
 

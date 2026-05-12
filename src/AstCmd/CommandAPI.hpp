@@ -40,7 +40,10 @@ using CommandResult = std::vector<std::string>;
 /// @return 错误码
 AST_CMD_API errc_t aExecuteCommand(StringView cmd);
 
-
+/// @brief 执行命令并返回结果
+/// @param cmd 命令字符串
+/// @param result 命令执行结果
+/// @return 错误码
 AST_CMD_API errc_t aExecuteCommand(StringView cmd, CommandResult& result);
 
 

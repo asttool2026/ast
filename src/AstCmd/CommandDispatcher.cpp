@@ -33,23 +33,23 @@ CommandDispatcher::CommandDispatcher(bool whetherInit)
     }
 }
 
+void CommandDispatcher::registerHandler(StringView tmpl, std::shared_ptr<CommandHandler> handler)
+{
+    trie_.insert(tmpl, handler);
+}
+
 errc_t CommandDispatcher::execute(StringView command, CommandResult& result) const 
 {
-    auto tokens = detail::split(command);
-    if (tokens.empty()) 
+    RoutingHandleResult handleResult;
+    errc_t rc = trie_.find(command, handleResult);
+    auto handler = handleResult.handler();
+    if(rc || !handler)
     {
-        aError("empty command");
-        return eErrorInvalidParam;
+        aError("failed to find match handle for input command: '%.*s'", command.size(), command.data());
+        return rc;
     }
-    StringView first_token = tokens[0];
-    auto it = commands_.find(std::string(first_token));
-    if (it != commands_.end()) {
-        Span<StringView> args(tokens.data() + 1, tokens.size() - 1);
-        return it->second->handle(args, result);
-    } else {
-        aError("unsupported command: '%.*s'", first_token.size(), first_token.data());
-        return eErrorInvalidParam;
-    }
+    return handler->handle(handleResult.params(), result);
 }
+
 
 AST_NAMESPACE_END
