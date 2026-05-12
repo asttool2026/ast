@@ -20,9 +20,16 @@
 
 #include "CommandAPI.hpp"
 #include "CommandDispatcher.hpp"
+#include "AstUtil/IO.hpp"
 
 AST_NAMESPACE_BEGIN
 
+
+void CommandResult::debugPrint() const
+{
+    for(auto& line : *this)
+        ast_printf("%s\n", line.c_str());
+}
 
 static CommandDispatcher& aCommandDispatcherGet()
 {

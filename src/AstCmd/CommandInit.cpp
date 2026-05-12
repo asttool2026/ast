@@ -190,7 +190,27 @@ void aCommandInitBasic(CommandDispatcher& dispatcher)
         "New <string> <string> <string>"
     )
     ([](StringView applicationPath, StringView classPath, StringView newObjectName){
-        // @todo: create new object
+        auto pos = classPath.find_last_of('/');
+        if(pos == std::string::npos)
+        {
+            Object* obj = aNewObject(classPath);
+            if(obj){
+                aAddObject(obj);
+                obj->setName(newObjectName);
+                return 0;
+            }
+            throw std::string("failed to create object: ") + std::string(classPath);
+        }
+        StringView className = classPath.substr(pos + 1);
+        StringView parentObjectPath = classPath.substr(0, pos);
+        Object* parentObject = aResolveObject(parentObjectPath);
+        if(!parentObject)
+            throw std::string("failed to find parent object: ") + std::string(parentObjectPath);
+        Object* newObject = aNewObject(className, parentObject);
+        if(!newObject)
+            throw std::string("failed to create object: ") + std::string(className);
+        newObject->setName(newObjectName);
+        aAddObject(newObject);
         return 0;
     });
 }

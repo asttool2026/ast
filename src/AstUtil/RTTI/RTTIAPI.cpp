@@ -107,6 +107,10 @@ Object *aResolveObject(StringView value, Class* cls)
             }while(cls);
             return aFindObject(cls, value);
         }
+        else if(value == "*")
+        {
+            return aFindObject(aGetClass("Scenario"));
+        }
         else
             return aGetClass(value);
     }

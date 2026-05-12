@@ -33,7 +33,15 @@ AST_NAMESPACE_BEGIN
 
 
 // class CommandResult: public std::vector<std::string>{};
-using CommandResult = std::vector<std::string>;
+class CommandResult: public std::vector<std::string>
+{
+public:
+    using Parent = std::vector<std::string>;
+    using Parent::Parent;
+    using Parent::operator=;
+
+    AST_CMD_API void debugPrint() const;
+};
 
 /// @brief 执行命令
 /// @param cmd 命令字符串
