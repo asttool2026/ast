@@ -210,28 +210,37 @@ T convert_token(StringView s);
 
 template <>
 inline bool convert_token<bool>(StringView s) {
-    return aParseBool(s);
+    bool value;
+    if (aParseBool(s, value))
+        throw std::string("invalid bool value: ") + std::string(s);
+    return value;
 }
 
 template <>
 inline int convert_token<int>(StringView s) {
-    return aParseInt(s);
+    int value;
+    if (aParseInt(s, value))
+        throw std::string("invalid int value: ") + std::string(s);
+    return value;
 }
 
 
 template <>
 inline double convert_token<double>(StringView s) {
-    return aParseDouble(s);
+    double value;
+    if (aParseDouble(s, value))
+        throw std::string("invalid double value: ") + std::string(s);
+    return value;
 }
 
 template<>
 inline Object* convert_token<Object*>(StringView s) {
-    return aResolveObject(s);
+    Object* value = aResolveObject(s);
+    return value;
 }
 
 template <>
-inline StringView convert_token<StringView>(StringView s) 
-{
+inline StringView convert_token<StringView>(StringView s) {
     return s;
 }
 
@@ -256,18 +265,15 @@ inline errc_t fill_result(CommandResult& result, std::vector<std::string> vec) {
 
 // 处理 std::string
 inline errc_t fill_result(CommandResult& result, const std::string& str) {
-    result.clear();
     result.push_back(str);
     return 0;
 }
 inline errc_t fill_result(CommandResult& result, std::string&& str) {
-    result.clear();
     result.push_back(std::move(str));
     return 0;
 }
 // 处理 const char*
 inline errc_t fill_result(CommandResult& result, const char* str) {
-    result.clear();
     result.push_back(str);
     return 0;
 }

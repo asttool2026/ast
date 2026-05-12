@@ -71,11 +71,17 @@ private:
     // 展开 tuple<arg_pair<Pos,Type>...>
     template <typename... Args>
     errc_t call(const CommandParams& params, CommandResult& result, std::tuple<Args...>) const {
+        result.clear();
         try {
             // 调用 handler，并通过 fill_result 自动分发返回值
             return detail::fill_result(result, 
                 handler_(detail::convert_token<typename Args::type>(params[Args::pos])...));
-        } catch (...) {
+        }
+        catch(const std::string& e) {
+            result.push_back(e);
+            return eErrorInvalidParam;
+        }
+        catch (...) {
             return static_cast<errc_t>(-1);  // 异常统一返回 -1
         }
     }
