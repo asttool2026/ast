@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcCloseApproachMag.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Formation/ScStateCalcCloseApproachMag.hpp"

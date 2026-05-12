@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcAtmosDensity.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Environment/ScStateCalcAtmosDensity.hpp"

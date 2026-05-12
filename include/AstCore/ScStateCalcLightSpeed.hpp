@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcLightSpeed.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Constants/ScStateCalcLightSpeed.hpp"

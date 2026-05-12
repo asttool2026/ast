@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcDragArea.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/SpacecraftProperties/ScStateCalcDragArea.hpp"

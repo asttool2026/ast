@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcBetaAngle.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/MultiBody/ScStateCalcBetaAngle.hpp"

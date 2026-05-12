@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcAppSolTime.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Time/ScStateCalcAppSolTime.hpp"
