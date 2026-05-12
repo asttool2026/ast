@@ -22,62 +22,121 @@
 #include "CommandDispatcher.hpp"
 #include "AstUtil/Logger.hpp"
 #include "AstUtil/IO.hpp"
+#include "AstSim/Mover.hpp"
+#include "AstSim/MotionJ2Analytical.hpp"
+#include "AstSim/MotionJ4Analytical.hpp"
+#include "AstSim/MotionTwoBody.hpp"
+#include "AstCore/StateCartesian.hpp"
+#include "AstCore/StateKeplerian.hpp"
+#include "AstCore/Resolve.hpp"
+#include "AstCore/CelestialBody.hpp"
+
 
 AST_NAMESPACE_BEGIN
 
 
+MotionOrbitDynamics* aNewPropagator(StringView propagator)
+{
+    if(propagator == "J2Perturbation")
+        return new MotionJ2Analytical();
+    else if(propagator == "J4Perturbation")
+        return new MotionJ4Analytical();
+    else if(propagator == "TwoBody")
+        return new MotionTwoBody();
+    else
+        return nullptr;
+}
+
+Frame* aResolveFrame(CelestialBody* body, StringView coordSys)
+{
+    Frame* frame = aResolveFrame(coordSys);
+    if(!frame)
+    {
+        frame = aObject_GetFrame(body, coordSys);
+    }
+    return frame;
+}
+
+
 void aCommandInitMover(CommandDispatcher& dispatcher)
 {
-    REGISTER_COMMAND(dispatcher,
+    COMMAND_RULE(dispatcher,
         "SetState <object> Cartesian <string> <string> <string> "
         "<double> <string> <string> "
-        "<double> <double> <double> <double> <double> <double>",
+        "<double> <double> <double> <double> <double> <double>"
+    )
+    (
         [](Object* obj, StringView propagator, StringView start, StringView stop,
         double stepSize, StringView coordSys, StringView epoch,
         double x, double y, double z, double vx, double vy, double vz) 
         {
-            // 业务逻辑...
-            printf("SetState Cartesian:\n");
-            printf("object = %p\n", obj);
-            printf("propagator = %.*s\n", propagator.size(), propagator.data());
-            printf("start = %.*s\n", start.size(), start.data());
-            printf("stop = %.*s\n", stop.size(), stop.data());
-            printf("stepSize = %f\n", stepSize);
-            printf("coordSys = %.*s\n", coordSys.size(), coordSys.data());
-            printf("epoch = %.*s\n", epoch.size(), epoch.data());
-            printf("x = %lf\n", x);
-            printf("y = %lf\n", y);
-            printf("z = %lf\n", z);
-            printf("vx = %lf\n", vx);
-            printf("vy = %lf\n", vy);
-            printf("vz = %lf\n", vz);
+            Mover* mover = aobject_cast<Mover*>(obj);
+            if(!mover)
+                throw "failed to find object as Mover";
+            Body* body = mover->getBody();
+            if(!body)
+                body = aGetEarth();
+            SharedPtr<MotionOrbitDynamics> motion = aNewPropagator(propagator);
+            if(!motion)
+                throw std::string("unsupported propagator: ") + std::string(propagator);
+            motion->setInterval(TimeInterval::Parse(start, stop));
+            motion->setStepSize(stepSize);
+            SharedPtr<StateCartesian> state = aNewObject<StateCartesian>();
+            Frame* frame = aResolveFrame(body, coordSys);
+            if(!frame)
+                throw std::string("failed to find frame: ") + std::string(coordSys);
+            state->setFrame(frame);
+            state->setStateEpoch(TimePoint::Parse(epoch));
+            state->setX(x);
+            state->setY(y);
+            state->setZ(z);
+            state->setVx(vx);
+            state->setVy(vy);
+            state->setVz(vz);
+            motion->setInitialState(state);
+            motion->setPropagationFrame(body->makeFrameInertial());
+            mover->setMotionProfile(motion);
             return 0;
         }
     );
 
-    REGISTER_COMMAND(dispatcher,
+    COMMAND_RULE(dispatcher,
         "SetState <object> Classical <string> <string> <string> "
         "<double> <string> <string> "
-        "<double> <double> <double> <double> <double> <double>",
+        "<double> <double> <double> <double> <double> <double>"
+    )
+    (
         [](Object* obj, StringView propagator, StringView start, StringView stop,
         double stepSize, StringView coordSys, StringView epoch,
         double a, double ecc, double inc, double arg, double raan, double M) 
         {
-            // 业务逻辑...
-            printf("SetState Classical:\n");
-            printf("object = %p\n", obj);
-            printf("propagator = %.*s\n", propagator.size(), propagator.data());
-            printf("start = %.*s\n", start.size(), start.data());
-            printf("stop = %.*s\n", stop.size(), stop.data());
-            printf("stepSize = %f\n", stepSize);
-            printf("coordSys = %.*s\n", coordSys.size(), coordSys.data());
-            printf("epoch = %.*s\n", epoch.size(), epoch.data());
-            printf("a = %lf\n", a);
-            printf("ecc = %lf\n", ecc);
-            printf("inc = %lf\n", inc);
-            printf("arg = %lf\n", arg);
-            printf("raan = %lf\n", raan);
-            printf("M = %lf\n", M);
+            Mover* mover = aobject_cast<Mover*>(obj);
+            if(!mover)
+                throw "failed to find object as Mover";
+            Body* body = mover->getBody();
+            if(!body)
+                body = aGetEarth();
+
+            SharedPtr<MotionOrbitDynamics> motion = aNewPropagator(propagator);
+            if(!motion)
+                throw std::string("unsupported propagator: ") + std::string(propagator);
+            motion->setInterval(TimeInterval::Parse(start, stop));
+            motion->setStepSize(stepSize);
+            SharedPtr<StateKeplerian> state = aNewObject<StateKeplerian>();
+            Frame* frame = aResolveFrame(body, coordSys);
+            if(!frame)
+                throw std::string("failed to find frame: ") + std::string(coordSys);
+            state->setFrame(frame);
+            state->setStateEpoch(TimePoint::Parse(epoch));
+            state->setSMA(a);
+            state->setEcc(ecc);
+            state->setInc(inc);
+            state->setArgPeri(arg);
+            state->setRAAN(raan);
+            state->setMeanAnomaly(M);
+            motion->setInitialState(state);
+            motion->setPropagationFrame(body->makeFrameInertial());
+            mover->setMotionProfile(motion);
             return 0;
         }
     );
@@ -86,9 +145,10 @@ void aCommandInitMover(CommandDispatcher& dispatcher)
 
 void aCommandInitBasic(CommandDispatcher& dispatcher)
 {
-    REGISTER_COMMAND(dispatcher,
-        "Test1 <string> <string>",
-        [](StringView scenario, StringView filePath) {
+    COMMAND_RULE(dispatcher,
+        "Test1 <string> <string>"
+    )
+    ([](StringView scenario, StringView filePath) {
             ast_printf("Test1: Scenario = '%.*s', FilePath = '%.*s'\n", 
                 scenario.size(), scenario.data(), 
                 filePath.size(), filePath.data());
@@ -96,45 +156,43 @@ void aCommandInitBasic(CommandDispatcher& dispatcher)
         }
     );
 
-    REGISTER_COMMAND(dispatcher,
-        "Test2 <string> <string>",
-        [](StringView appPath, StringView unit) {
-            ast_printf("Test2: Application = '%.*s', Unit = '%.*s'\n", 
-                appPath.size(), appPath.data(), 
-                unit.size(), unit.data());
-            return 0;
-        }
-    );
+    COMMAND_RULE(dispatcher,
+        "Test2 <string> <string>"
+    )
+    ([](StringView appPath, StringView unit) {
+        ast_printf("Test2: Application = '%.*s', Unit = '%.*s'\n", 
+            appPath.size(), appPath.data(), 
+            unit.size(), unit.data());
+        return 0;
+    });
 
-    REGISTER_COMMAND(dispatcher,
-        "Test3 <string> <string>",
-        [](StringView objectPath, StringView style) {
-            ast_printf("Test3: Object = '%.*s', Style = '%.*s'\n", 
-                objectPath.size(), objectPath.data(), 
-                style.size(), style.data());
-            return 0;
-        }
-    );
+    COMMAND_RULE(dispatcher,
+        "Test3 <string> <string>"
+    )
+    ([](StringView objectPath, StringView style) {
+        ast_printf("Test3: Object = '%.*s', Style = '%.*s'\n", 
+            objectPath.size(), objectPath.data(), 
+            style.size(), style.data());
+        return 0;
+    });
 
-    REGISTER_COMMAND(dispatcher,
-        "DoesObjExist <string> <object>",
-        [](StringView applicationPath, Object* object) 
-        {
-            if(object)
-                return "1";
-            else
-                return "0";
-        }
-    );
+    COMMAND_RULE(dispatcher,
+        "DoesObjExist <string> <object>"
+    )
+    ([](StringView applicationPath, Object* object) {
+        if(object)
+            return "1";
+        else
+            return "0";
+    });
 
-    REGISTER_COMMAND(dispatcher,
-        "New <string> <string> <string>",
-        [](StringView applicationPath, StringView classPath, StringView newObjectName) 
-        {
-            // @todo: create new object
-            return 0;
-        }
-    );
+    COMMAND_RULE(dispatcher,
+        "New <string> <string> <string>"
+    )
+    ([](StringView applicationPath, StringView classPath, StringView newObjectName){
+        // @todo: create new object
+        return 0;
+    });
 }
 
 

@@ -41,27 +41,6 @@ AST_NAMESPACE_BEGIN
 */
 
 
-/// @brief 命令参数
-class CommandParams: public std::vector<ValueView>
-{
-public:
-    // todo 
-};
-
-
-/// 命令处理接口
-class CommandHandler
-{
-public:
-    /// 处理命令
-    /// @param params 命令参数
-    /// @param result 命令结果
-    /// @return 错误码
-    virtual errc_t handle(const CommandParams& params, CommandResult& result) const = 0;
-    
-    virtual ~CommandHandler() = default;
-};
-
 
 
 namespace detail{

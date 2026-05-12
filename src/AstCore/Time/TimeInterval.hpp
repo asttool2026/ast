@@ -59,6 +59,13 @@ AST_CORE_CAPI errc_t aTimeIntervalParse(StringView strStart, StringView strEnd, 
 class TimeInterval
 {
 public:
+    static TimeInterval Parse(StringView strStart, StringView strEnd)
+    {
+        TimeInterval interval;
+        aTimeIntervalParse(strStart, strEnd, interval);
+        return interval;
+    }
+
     TimeInterval() = default;
     ~TimeInterval() = default;
 

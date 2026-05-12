@@ -78,7 +78,7 @@ StringView getNextToken(StringView& text) {
     }
 }
 
-void CommandTrie::insert(StringView tmpl, std::shared_ptr<CommandHandler> handler)
+CommandTrie::Node& CommandTrie::addRule(StringView tmpl)
 {
     const char* p = tmpl.data();
     const char* end = p + tmpl.size();
@@ -134,7 +134,12 @@ void CommandTrie::insert(StringView tmpl, std::shared_ptr<CommandHandler> handle
             node->numParams_ = 0;
         }
     }
-    node->handler_ = handler;
+    return *node;
+}
+
+void CommandTrie::addRule(StringView tmpl, std::shared_ptr<CommandHandler> handler)
+{
+    addRule(tmpl).handler_ = handler;
 }
 
 errc_t CommandTrie::find(StringView text, RoutingHandleResult& result) const

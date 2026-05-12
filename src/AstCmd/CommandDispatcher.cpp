@@ -33,10 +33,16 @@ CommandDispatcher::CommandDispatcher(bool whetherInit)
     }
 }
 
-void CommandDispatcher::registerHandler(StringView tmpl, std::shared_ptr<CommandHandler> handler)
+void CommandDispatcher::addRuleHandler(StringView tmpl, std::shared_ptr<CommandHandler> handler)
 {
-    trie_.insert(tmpl, handler);
+    trie_.addRule(tmpl, handler);
 }
+
+CommandTrie::Node& CommandDispatcher::addRule(StringView tmpl)
+{
+    return trie_.addRule(tmpl);
+}
+
 
 errc_t CommandDispatcher::execute(StringView command, CommandResult& result) const 
 {

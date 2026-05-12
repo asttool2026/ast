@@ -43,7 +43,8 @@ public:
     CommandDispatcher() = default;
     ~CommandDispatcher() = default;
     errc_t execute(StringView command, CommandResult& result) const;
-    void registerHandler(StringView tmpl, std::shared_ptr<CommandHandler> handler);
+    void addRuleHandler(StringView tmpl, std::shared_ptr<CommandHandler> handler);
+    CommandTrie::Node& addRule(StringView tmpl);
 private:
     CommandTrie trie_;  ///< 命令路由树
 };
@@ -66,7 +67,6 @@ public:
         }
         return call(params, result, Tuple{});
     }
-
 private:
     // 展开 tuple<arg_pair<Pos,Type>...>
     template <typename... Args>
@@ -76,6 +76,11 @@ private:
             // 调用 handler，并通过 fill_result 自动分发返回值
             return detail::fill_result(result, 
                 handler_(detail::convert_token<typename Args::type>(params[Args::pos])...));
+        }
+        catch(const char* e)
+        {
+            result.push_back(e);
+            return eErrorInvalidParam;
         }
         catch(const std::string& e) {
             result.push_back(e);
@@ -103,13 +108,28 @@ std::shared_ptr<CommandHandler> makeCommandHandler(
     return std::make_shared<TaggedRule<F, ArgTuple>>(std::move(handler));
 }
 
+template<uint64_t Tag, int N>
+class CommandTrieNodeWrap
+{
+public:
+    CommandTrieNodeWrap(CommandTrie::Node& node) : node_(node) {}
+
+    template<typename F>
+    void operator()(F f)
+    {
+        node_.handler_ = makeCommandHandler(std::move(f), std::integral_constant<uint64_t, Tag>{}, std::integral_constant<int, N>{});
+    }
+private:
+    CommandTrie::Node& node_;
+};
+
 
 
 #define _AST_REGISTER_COMMAND(dispatcher, cmd_template, handler) \
     { \
         constexpr uint64_t tag = detail::get_parameter_tag(cmd_template);  \
         constexpr int n   = detail::count_args(cmd_template);         \
-        (dispatcher).registerHandler(cmd_template, makeCommandHandler(handler, \
+        (dispatcher).addRuleHandler(cmd_template, makeCommandHandler(handler, \
             std::integral_constant<uint64_t, tag>{}, \
             std::integral_constant<int, n>{})); \
     }
@@ -117,6 +137,9 @@ std::shared_ptr<CommandHandler> makeCommandHandler(
 
 #define REGISTER_COMMAND(dispatcher, cmd_template, handler) \
     _AST_REGISTER_COMMAND(dispatcher, cmd_template, handler)
+
+
+#define COMMAND_RULE(dispatcher, cmd_template) CommandTrieNodeWrap<detail::get_parameter_tag(cmd_template), detail::count_args(cmd_template)>(dispatcher.addRule(cmd_template))
 
 
 /*! @} */

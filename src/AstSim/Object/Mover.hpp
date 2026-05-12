@@ -64,6 +64,10 @@ public:
     /// @return 错误码
     errc_t generateEphemeris();
 
+    /// @brief 尝试获取对象的中心天体
+    /// @note 该函数目前效率不高，建议在只必要时使用，不要频繁调用
+    Body* getBody() const;
+
 public: // 从Point继承重写的函数
     Frame* getFrame() const final;
     errc_t getPos(const TimePoint& tp, Vector3d& pos) const final;

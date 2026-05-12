@@ -43,18 +43,53 @@ errc_t Mover::generateEphemeris()
 class Mover implements Point by ephemeris_
 */
 
+Body* Mover::getBody() const
+{
+    if(auto motion = aobject_cast<MotionOrbitDynamics*>(motionProfile_.get()))
+    {
+        auto frame = motion->getPropagationFrame();
+        if(frame)
+        {
+            auto body = frame->getBody();
+            if(body)
+                return body;
+        }
+        auto state = motion->getInitialState();
+        if(state)
+        {
+            auto body = state->getBody();
+            if(body)
+                return body;
+        }
+    }
+    if(Frame* frame = getFrame())
+    {
+        auto body = frame->getBody();
+        if(body)
+            return body;
+    }
+    return nullptr;
+}
+
+
 Frame *Mover::getFrame() const
 {
+    if(!ephemeris_)
+        return nullptr;
     return ephemeris_->getFrame();
 }
 
 errc_t Mover::getPos(const TimePoint &tp, Vector3d &pos) const
 {
+    if(!ephemeris_)
+        return eErrorNullPtr;
     return ephemeris_->getPos(tp, pos);
 }
 
 errc_t Mover::getPosVel(const TimePoint &tp, Vector3d &pos, Vector3d &vel) const
 {
+    if(!ephemeris_)
+        return eErrorNullPtr;
     return ephemeris_->getPosVel(tp, pos, vel);
 }
 
