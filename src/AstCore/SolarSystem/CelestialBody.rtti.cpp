@@ -17,6 +17,7 @@ void CelestialBody::ClassInit(Class* cls)
     cls->addToRegistry();
     cls->setParent<Point>();
     cls->setConstructor<CelestialBody>();
+    cls->setResolve<CelestialBody>();
 
 }
 

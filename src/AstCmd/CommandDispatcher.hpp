@@ -77,6 +77,11 @@ private:
             return detail::fill_result(result, 
                 handler_(detail::convert_token<typename Args::type>(params[Args::pos])...));
         }
+        catch(const std::vector<std::string>& e)
+        {
+            result = e;
+            return eErrorInvalidParam;
+        }
         catch(const char* e)
         {
             result.push_back(e);

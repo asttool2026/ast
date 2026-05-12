@@ -133,6 +133,12 @@ Object *aResolveObject(StringView value, Class* cls)
             auto cls = aGetClass(className);
             if(!cls)
             {
+                if(className == "CentralBody")
+                {
+                    auto bodyCls = aGetClass(A_STR(CelestialBody));
+                    if(bodyCls)
+                        return bodyCls->resolve(objName);
+                }
                 aError("class '%.*s' not found", className.size(), className.data());
                 return nullptr;
             }

@@ -79,6 +79,20 @@ TEST(RPOTest, Set_Initial_State)
 }
 
 
+TEST(RPOTest, Coast)
+{
+    errc_t rc;
+    std::string filepath = aTestGetConfigValue("STK_RPO_COAST_FILE").toString();
+    printf("loading file: %s\n", filepath.c_str());
+    SharedPtr<MissionCommand> missionCommand;
+    rc = aLoadMissionCommand(filepath, missionCommand);
+    EXPECT_EQ(rc, eNoError);
+    rc = aResolveAllLinks();
+    EXPECT_EQ(rc, eNoError);
+    rc = missionCommand->execute();
+    EXPECT_EQ(rc, eNoError);
+}
+
 
 // GTEST_MAIN()
 
