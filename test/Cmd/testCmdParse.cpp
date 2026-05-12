@@ -26,7 +26,13 @@ AST_USING_NAMESPACE
 
 TEST(CmdExecuteTest, Test1)
 {
-    EXPECT_EQ(aExecuteCommand("Test1 123 \"456\""), eNoError);
+    EXPECT_EQ(aExecuteCommand(R"(Test1 123 "456")"), eNoError);
+    EXPECT_EQ(aExecuteCommand(R"(Test1 123 "")"), eNoError);
+    EXPECT_EQ(aExecuteCommand(R"( Test1   ""  ""  )"), eNoError);
+    // 参数过多
+    EXPECT_NE(aExecuteCommand(R"(Test1 123 "456" 789)"), eNoError);
+    // 参数不足
+    EXPECT_NE(aExecuteCommand(R"(Test1 123)"), eNoError);
 }
 
 
@@ -42,6 +48,7 @@ TEST(CmdExecuteTest, SetState)
         eNoError
     );
 
+    // 参数解析失败
     EXPECT_NE(
         aExecuteCommand(
             R"(SetState */Satellite/ERS1 Cartesian J4Perturbation "1 Nov 2000 00:00:00.00" "1 Nov 2000 08:00:00.00" 60 

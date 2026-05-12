@@ -154,6 +154,12 @@ errc_t CommandTrie::find(StringView text, RoutingHandleResult& result) const
         for(int i=0;i<node->numParams_;i++)
         {
             token = getNextToken(text);
+            if(token.data() == nullptr)
+            {
+                // 参数不足
+                aError("parameter is not enough");
+                return eErrorInvalidParam;
+            }
             result.params().push_back(token);
         }
     };
