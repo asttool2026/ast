@@ -505,7 +505,7 @@ errc_t ActiveScriptExecutor::execute(StringView script, ScriptResult* resultOut)
 }
 
 
-errc_t ActiveScriptExecutor::eval(StringView expression, ScriptResult* resultOut)
+errc_t ActiveScriptExecutor::evaluate(StringView expression, ScriptResult* resultOut)
 {
     if(!impl_) return eErrorNotInit;
     return impl_->run(expression, true, resultOut);

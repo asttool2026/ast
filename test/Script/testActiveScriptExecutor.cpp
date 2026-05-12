@@ -423,7 +423,7 @@ TEST(ActiveScriptExecutorTest, EvalExpression)
     ASSERT_EQ(rc, eNoError);
 
     ScriptResult result;
-    rc = executor->eval(R"(8.0/2.0)", &result);
+    rc = executor->evaluate(R"(8.0/2.0)", &result);
     ASSERT_EQ(rc, eNoError);
     ASSERT_TRUE(result.value());
     EXPECT_EQ(result.value()->toDouble(), 4);

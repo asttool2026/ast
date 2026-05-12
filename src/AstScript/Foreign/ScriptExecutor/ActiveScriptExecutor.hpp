@@ -54,7 +54,7 @@ public:
     errc_t initialize() override;
     void finalize() override;
     errc_t execute(StringView script, ScriptResult* resultOut=nullptr) override;
-    errc_t eval(StringView expression, ScriptResult* resultOut=nullptr) override;
+    errc_t evaluate(StringView expression, ScriptResult* resultOut=nullptr) override;
     std::string getLastError() const override;
 
     errc_t setVariable(StringView name, StringView value) override;

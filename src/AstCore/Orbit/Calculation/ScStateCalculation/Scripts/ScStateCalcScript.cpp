@@ -27,28 +27,40 @@ AST_NAMESPACE_BEGIN
 
 errc_t ScStateCalcScript::calculate(const SpacecraftState& scState, double& result)
 {
+    // 创建脚本执行器
     ScopedPtr<ScriptExecutor> executor(newScriptExecutor());
     if (executor == nullptr)
     {
         aError("failed to create script executor");
         return eErrorNullPtr;
     }
-    for(auto& arg : arguments_)
+    // 设置变量值
+    for(auto& var : variables_)
     {
         double value;
-        errc_t rc = arg->calculate(scState, value);
+        errc_t rc = var->calculate(scState, value);
         if (rc != eNoError)
         {
-            aError("failed to calculate argument '%s'", arg->getName().c_str());
+            aError("failed to calculate variable '%s'", var->getName().c_str());
             return rc;
         }
-        rc = executor->setVariable(arg->getName(), value);
+        rc = executor->setVariable(var->getName(), value);
         if (rc != eNoError)
         {
-            aError("failed to set variable '%s'", arg->getName().c_str());
+            aError("failed to set variable '%s'", var->getName().c_str());
             return rc;
         }
     }
+    // 对脚本表达式求值
+    ScriptResult scriptResult;
+    errc_t rc = executor->evaluate(expression_, &scriptResult);
+    if (rc != eNoError || !scriptResult.value())
+    {
+        aError("failed to evaluate expression: '%s'", expression_.c_str());
+        return rc;
+    }
+    // 转换为double类型
+    result = scriptResult.value()->toDouble();
     return eNoError;
 }
 

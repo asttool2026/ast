@@ -107,7 +107,7 @@ errc_t ScriptExecutor::getVariable(Variable* var)
 }
 
 
-errc_t ScriptExecutor::eval(StringView expression, ScriptResult* resultOut)
+errc_t ScriptExecutor::evaluate(StringView expression, ScriptResult* resultOut)
 {
     // 一些脚本语言的语句执行也有返回值，此时能直接通过执行语句来计算表达式的值
     return this->execute(expression, resultOut);

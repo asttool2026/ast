@@ -74,8 +74,8 @@ public:
 /// @note 该类是一个抽象类，需要通过继承来实现具体的脚本执行器
 /// @details 用于执行外部脚本，如Python、MATLAB、JavaScript、JScript、VBScript、Julia、Lua 等
 /// 每个脚本执行器实例的生命周期由调用方负责管理，调用方需要在使用完成后调用析构函数释放资源
-/// 在脚本执行器实例的生命周期内，调用方可以调用execute函数执行执行外部脚本，
-/// 并调用setVariable函数设置脚本执行器的变量值，调用getVariable函数获取脚本执行器的变量值
+/// 在脚本执行器实例的生命周期内，调用方可以调用execute函数执行执行脚本语句，或者调用evaluate函数对脚本表达式进行求值
+/// 并且可以调用setVariable函数设置脚本执行器的全局变量值，调用getVariable函数获取脚本执行器的全局变量值
 class AST_SCRIPT_API ScriptExecutor
 {
 public:
@@ -103,7 +103,7 @@ public:
     /// @param expression 脚本表达式
     /// @param resultOut 执行结果指针，用于存储求值表达式时的结果
     /// @return 求值结果
-    virtual errc_t eval(StringView expression, ScriptResult* resultOut=nullptr);
+    virtual errc_t evaluate(StringView expression, ScriptResult* resultOut=nullptr);
 
 
     /// @brief 执行脚本(兼容旧版接口)
