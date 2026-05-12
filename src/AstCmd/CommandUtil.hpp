@@ -50,7 +50,7 @@ constexpr int find_closing(const char* s, int p) {
     return s[p] == '>' ? p : find_closing(s, p + 1);
 }
 
-
+#ifdef A_CXX14
 /// @brief 检查命令参数是否为指定类型
 constexpr bool is_type(const char* s, int p, const char* type) {
     int i = 0;
@@ -61,6 +61,19 @@ constexpr bool is_type(const char* s, int p, const char* type) {
     // 允许类型后紧跟 '>' 或 ':'（名称注释）
     return s[p + i] == '>' || s[p + i] == ':';
 }
+#else
+// 辅助递归函数，比较类型字符串并检查终止字符
+constexpr bool is_type_impl(const char* s, int p, const char* type, int i) {
+    return type[i] == '\0'
+               ? (s[p + i] == '>' || s[p + i] == ':')
+               : (s[p + i] == type[i] && is_type_impl(s, p, type, i + 1));
+}
+
+/// @brief 检查命令参数是否为指定类型（C++11 兼容）
+constexpr bool is_type(const char* s, int p, const char* type) {
+    return is_type_impl(s, p, type, 0);
+}
+#endif
 
 /// @brief 统计命令参数个数
 constexpr int count_args(const char* s, int p = 0) {

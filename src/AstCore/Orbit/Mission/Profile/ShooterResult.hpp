@@ -23,6 +23,7 @@
 #include "AstGlobal.h"
 #include "AstUtil/Object.hpp"
 #include "AstUtil/ObjectNamed.hpp"
+#include "AstScript/Expr.hpp"
 #include <string>
 
 AST_NAMESPACE_BEGIN

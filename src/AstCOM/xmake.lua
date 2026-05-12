@@ -1,3 +1,6 @@
+includes("rules")
+add_rules("platform.windows.idl.patch")
+
 target("AstCOM")
     add_files("**.cpp")
     add_files("**.idl")

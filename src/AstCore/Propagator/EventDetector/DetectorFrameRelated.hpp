@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "EventDetector.hpp"
+#include "AstCore/Frame.hpp"
 
 AST_NAMESPACE_BEGIN
 
