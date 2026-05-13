@@ -20,6 +20,7 @@
 
 #include "ScriptAPI.hpp"
 #include "AstScript/AllHeaders.hpp"
+#include "AstScript/IteratePredefined.hpp"
 #include "AstUtil/SharedPtr.hpp"
 #include "AstUtil/Quantity.hpp"
 

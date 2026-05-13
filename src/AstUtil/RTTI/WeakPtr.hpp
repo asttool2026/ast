@@ -108,6 +108,18 @@ public:
     {
         return !expired();
     }
+    bool operator==(const WeakPtr& other) const
+    {
+        return m_object == other.m_object;
+    }
+    bool operator!=(const WeakPtr& other) const
+    {
+        return m_object != other.m_object;
+    }
+    bool operator<(const WeakPtr& other) const
+    {
+        return m_object < other.m_object;
+    }
 private:
     void _incWeakRef()
     {
@@ -126,7 +138,15 @@ protected:
 
  
 AST_NAMESPACE_END
- 
 
-
-
+namespace std
+{
+    template<typename _Object>
+    struct hash<ast::WeakPtr<_Object>>
+    {
+        size_t operator()(const ast::WeakPtr<_Object>& ptr) const
+        {
+            return hash<_Object*>()(ptr.get());
+        }
+    };
+}

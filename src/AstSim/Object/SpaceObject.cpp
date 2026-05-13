@@ -20,8 +20,56 @@
 
 #include "SpaceObject.hpp"
 #include "AstUtil/Class.hpp"
+#include "AstUtil/ObjectLinkTo.hpp"
+#include "AstUtil/RTTIAPI.hpp"
 
 AST_NAMESPACE_BEGIN
 
+ObjectLinkTo* aSpaceObject_GetReferenceVehicleLink(SpaceObject* spaceObject)
+{
+    if(!spaceObject)
+        return nullptr;
+    auto linkTo = aFindChild<ObjectLinkTo*>(spaceObject, "ReferenceVehicle");
+    if(!linkTo)
+    {
+        linkTo = aNewObject<ObjectLinkTo>(spaceObject);
+        linkTo->setName("ReferenceVehicle");
+    }
+    return linkTo;
+}
+
+SpaceObject* aSpaceObject_GetReferenceVehicle(SpaceObject* spaceObject)
+{
+    auto linkTo = aSpaceObject_GetReferenceVehicleLink(spaceObject);
+    if(!linkTo)
+        return nullptr;
+    return aobject_cast<SpaceObject*>(linkTo->resolve());
+}
+
+
+void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, SpaceObject* referenceVehicle)
+{
+    auto linkTo = aSpaceObject_GetReferenceVehicleLink(spaceObject);
+    if(!linkTo)
+        return;
+    if(referenceVehicle){
+        linkTo->setResolvedName(referenceVehicle->getName());
+        linkTo->setResolvedType(referenceVehicle->getType());
+    }
+    else
+    {
+        linkTo->setResolvedName({});
+        linkTo->setResolvedType(nullptr);
+    }
+    linkTo->setResolvedObject(referenceVehicle);
+}
+
+void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, StringView referenceVehiclePath)
+{
+    auto referenceVehicle = aResolveObject<SpaceObject*>(referenceVehiclePath);
+    if(!referenceVehicle)
+        return;
+    return aSpaceObject_SetReferenceVehicle(spaceObject, referenceVehicle);
+}
 
 AST_NAMESPACE_END

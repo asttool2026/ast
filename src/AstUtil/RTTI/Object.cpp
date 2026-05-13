@@ -58,6 +58,12 @@ Class *Object::getType() const
 
 const std::string empty;
 
+std::string Object::getRepresentation() const
+{
+    return empty;
+}
+
+
 const std::string &Object::getName() const
 {
     return empty;

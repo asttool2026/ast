@@ -38,9 +38,10 @@ class AST_CORE_API InitialState: public Segment
 {
 public:
     AST_OBJECT(InitialState)
+    AST_PROPERT(InitialState)
     InitialState();
     ~InitialState() = default;
-public:
+PROPERTIES:
     /// @brief 获取初始状态
     /// @details 对于初始轨道段，其初始状态就是输出状态
     /// @return 初始状态

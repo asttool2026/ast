@@ -256,6 +256,23 @@
 #define AST_AI_CAPI A_DECL_EXTERN_C AST_AI_API
 
 
+// ast项目COM封装模块导出声明
+#ifdef AST_BUILD_LIB_COM
+#   define AST_COM_API A_DECL_EXPORT
+#else
+#   define AST_COM_API A_DECL_IMPORT
+#endif
+#define AST_COM_CAPI A_DECL_EXTERN_C AST_COM_API
+
+
+// ast项目命令模块导出声明
+#ifdef AST_BUILD_LIB_CMD
+#   define AST_CMD_API A_DECL_EXPORT
+#else
+#   define AST_CMD_API A_DECL_IMPORT
+#endif
+#define AST_CMD_CAPI A_DECL_EXTERN_C AST_CMD_API
+
 
 #ifndef AST_PROJECT_NAME
 #   define AST_PROJECT_NAME "ast"

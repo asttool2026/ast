@@ -117,7 +117,7 @@ Core modules will be carefully designed and developed, with test coverage improv
 - AstOpt: Nonlinear programming interface library
 - AstOCP: Optimal control problem solving
 
-The following modules will be developed with AI assistance (this README was also AI-assisted by https://www.deepseek.com/):
+The following modules will be developed with AI assistance: 
 
 - AstScript: Scripting system
 - AstInterp: Interactive console

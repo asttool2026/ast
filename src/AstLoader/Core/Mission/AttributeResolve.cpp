@@ -29,6 +29,7 @@
 #include "AstCore/BurnImpulsive.hpp"
 #include "AstCore/EventDetector.hpp"
 #include "AstCore/TargeterProfile.hpp"
+#include "AstCore/InitialState.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -57,6 +58,20 @@ Attribute aResolveAttributeByMap(Object* obj, StringView attrpath)
         {
             attrpath = aPropertyName(Variable, value);
             return obj->attr(attrpath);
+        }
+    }
+    else if(auto initialState = aobject_cast<InitialState*>(obj))
+    {
+        if(attrpath == "CoordinateSystem")
+        {
+            return initialState->getInitialState()->attr(aPropertyName(SpacecraftState, Frame));
+        }
+    }
+    else if(auto scState = aobject_cast<SpacecraftState*>(obj))
+    {
+        if(attrpath == "Epoch")
+        {
+            return scState->getOrbitState()->attr(aPropertyName(State, StateEpoch));
         }
     }
     aWarning("failed to resolve attribute '%.*s' for object '%s<%s>'", 
@@ -157,6 +172,14 @@ Attribute aResolveAttributeByMap(Object* obj, StringView subAttrPath, StringView
                 else
                     return Attribute();
             }
+        }
+    }
+    else if(auto scState = aobject_cast<SpacecraftState*>(obj))
+    {
+        if(subAttrPath == "Cartesian")
+        {
+            scState->setStateType(EStateType::eCartesian);
+            return scState->getOrbitState()->attr(remainingAttrPath);
         }
     }
 

@@ -38,6 +38,21 @@ public:
     ~SpaceObject() override = default;
 };
 
+class ObjectLinkTo;
+
+/// @brief 获取参考航天器链接
+AST_SIM_API ObjectLinkTo* aSpaceObject_GetReferenceVehicleLink(SpaceObject* spaceObject);
+
+/// @brief 获取参考航天器
+AST_SIM_API SpaceObject* aSpaceObject_GetReferenceVehicle(SpaceObject* spaceObject);
+
+/// @brief 设置参考航天器
+AST_SIM_API void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, SpaceObject* referenceVehicle);
+
+/// @brief 设置参考航天器(通过路径)
+AST_SIM_API void aSpaceObject_SetReferenceVehicle(SpaceObject* spaceObject, StringView referenceVehiclePath);
+
+
 /*! @} */
 
 AST_NAMESPACE_END

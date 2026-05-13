@@ -8,4 +8,5 @@ target("AstScript")
     add_deps("AstUtil")
     if is_plat("windows", "mingw") then
         add_syslinks("oleaut32", "ole32", "uuid")
+        -- add_deps("AstCOM", {inherit = false})
     end

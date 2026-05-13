@@ -18,6 +18,7 @@ void Stop::ClassInit(Class* cls)
     cls->setParent<MissionCommand>();
     cls->setConstructor<Stop>();
 
+    cls->addProperty("enabled", aNewPropertyBool<Stop, &Stop::enabled, &Stop::setEnabled>());
 }
 
 AST_NAMESPACE_END

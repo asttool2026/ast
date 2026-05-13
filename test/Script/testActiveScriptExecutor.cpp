@@ -20,6 +20,7 @@
 
 #include "AstScript/JScriptExecutor.hpp"
 #include "AstScript/VBScriptExecutor.hpp"
+#include "AstUtil/ScopedPtr.hpp"
 #include "AstUtil/IO.hpp"
 #include "AstTest/Test.h"
 
@@ -392,6 +393,27 @@ TEST(ActiveScriptExecutorTest, SetVariable_EdgeCases)
 
 
 }
+
+
+
+
+TEST(ActiveScriptExecutorTest, OutputMessage)
+{
+ #ifndef _WIN32
+    GTEST_SKIP();
+    #endif
+    ScopedPtr<ScriptExecutor> executor = aNewScriptExecutor(EScriptLanguage::eVBScript);
+    ASSERT_TRUE(executor);
+    errc_t rc = executor->initialize();
+    ASSERT_EQ(rc, eNoError);
+
+    rc = executor->execute(R"(
+        
+        OutputMessage 4, "hello world"
+    )");
+    ASSERT_EQ(rc, eNoError);
+}
+
 
 #endif
 

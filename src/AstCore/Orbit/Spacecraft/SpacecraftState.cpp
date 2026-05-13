@@ -36,6 +36,11 @@ Frame* SpacecraftState::getFrame() const
     return getOrbitState()->getFrame();
 }
 
+void SpacecraftState::setFrame(Frame* frame)
+{
+    getOrbitState()->setFrame(frame);
+}
+
 errc_t SpacecraftState::getState(ModOrbElem& orbElem) const
 {
     return getOrbitState()->getState(orbElem);
@@ -99,5 +104,21 @@ SpacecraftState* SpacecraftState::NewDefault()
     scState->setOrbitState(State::NewDefault());
     return scState;
 }
+
+
+void SpacecraftState::setStateType(EStateType stateType)
+{
+    auto orbitState = getOrbitState();
+    if(orbitState->getStateType() != stateType)
+    {
+        this->orbitState_ = State::New(*orbitState, stateType);
+    }
+}
+
+EStateType SpacecraftState::getStateType() const
+{
+    return getOrbitState()->getStateType();
+}
+
 
 AST_NAMESPACE_END

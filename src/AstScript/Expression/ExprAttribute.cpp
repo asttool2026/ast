@@ -50,6 +50,9 @@ Value *ExprAttribute::eval() const
     case EValueType::eTimePoint:
     case EValueType::eString:
         return aNewValueString(attribute_.getValueString());
+    // 如果是对象类型，尝试将其转换为字符串
+    case EValueType::eObject:
+        return aNewValueString(attribute_.getValueString());
     default:
         aWarning("invalid value type");
         return nullptr;

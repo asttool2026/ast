@@ -153,7 +153,8 @@ TimePoint State::getStateEpoch_TimePoint() const
 {
     TimePoint tp{};
     errc_t rc = getStateEpoch(tp);
-    A_UNUSED(rc);
+    if(rc)
+        aWarning("failed to get state epoch");
     return tp;
 }
 

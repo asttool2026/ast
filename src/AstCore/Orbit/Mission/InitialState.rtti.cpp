@@ -18,6 +18,7 @@ void InitialState::ClassInit(Class* cls)
     cls->setParent<Segment>();
     cls->setConstructor<InitialState>();
 
+    cls->addProperty("InitialState", aNewPropertyObject<InitialState, SpacecraftState, &InitialState::getInitialState>());
 }
 
 AST_NAMESPACE_END

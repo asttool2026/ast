@@ -35,10 +35,16 @@ class AST_CORE_API Stop : public MissionCommand
 {
 public:
     AST_OBJECT(Stop)
+    AST_PROPERT(enabled)
     Stop() = default;
     ~Stop() = default;
+PROPERTIES:
+    bool enabled() const { return enabled_; }
+    void setEnabled(bool enabled) { enabled_ = enabled; }
 public:
     errc_t execute() override;
+private:
+    bool enabled_{true};        ///< 是否启用
 };
 
 /*! @} */

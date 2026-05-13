@@ -61,8 +61,8 @@ AST_UTIL_API std::wstring aUtf8ToWide(StringView utf8);
 /// @param wide 输入宽字符编码的字符串
 /// @param utf8 输出UTF-8编码的字符串
 /// @return 错误码
-AST_UTIL_CAPI errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8);
-
+AST_UTIL_API errc_t aWideToUtf8(const wchar_t* wide, std::string& utf8);
+AST_UTIL_API std::string aWideToUtf8(const wchar_t* wide);
 
 
 

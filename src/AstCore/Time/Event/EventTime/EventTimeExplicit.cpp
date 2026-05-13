@@ -19,7 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "EventTimeExplicit.hpp"
-
+#include "AstCore/TimePoint.hpp"
 
 
 AST_NAMESPACE_BEGIN
@@ -50,6 +50,12 @@ void EventTimeExplicit::setTime(const TimePoint &time)
 {
     time_ = time;
 }
+
+std::string EventTimeExplicit::getRepresentation() const
+{
+    return time_.toString();
+}
+
 
 AST_NAMESPACE_END
 

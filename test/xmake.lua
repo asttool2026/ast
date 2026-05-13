@@ -13,6 +13,11 @@ add_deps(
     "AstAI",
     "AstTest"
 )
+
+if is_plat("windows") then
+    add_deps("AstCOM")
+end
+
 add_packages("gtest")
 add_packages("benchmark")
 

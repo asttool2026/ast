@@ -54,6 +54,9 @@ AST_NAMESPACE_END
 #else
 
 #include "AstUtil/Encode.hpp"
+#include "AstUtil/LibraryLoader.hpp"
+#include "AstCOM/COMAPI.hpp"
+#include "ActiveScriptGlobalFunctions.hpp"
 #include <comdef.h>
 #include <unordered_map>
 #include <Windows.h>
@@ -66,6 +69,7 @@ AST_NAMESPACE_END
 // #pragma comment(lib, "ole32.lib")
 // #pragma comment(lib, "uuid.lib")
 
+// #define AST_DEBUG_SCRIPT_EXECUTOR
 
 #define ERR_FAIL -1
 #define ERR_OK 0
@@ -81,17 +85,36 @@ bool getScriptVariable(IDispatch* pDisp, const std::wstring& name, VARIANT& resu
 bool setScriptVariable(IDispatch* pDisp, const std::wstring& name, const VARIANT& value);
 // 使用 IDispatchEx 设置全局变量，若不存在会自动创建
 bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, const VARIANT& value);
-
+// 获取根对象的Dispatch接口
+IUnknown* rootDispatch();
 }
 
 #define _AST_ACTIVE_SCRIPT_NOT_INITIALIZED "script executor is not initialized."
 
+constexpr const wchar_t* kRootItemName = L"root";   ///< 根命名项名称
+constexpr const wchar_t* kGlobalFunctionsItemName = L"GlobalFunctions"; ///< 命名项名称
 
-// 站点实现（简化版，完整版需包含 IActiveScriptSite 所有方法）
+AST_NAMESPACE_BEGIN
+
+
+// 站点实现（简化版，仅实现IActiveScriptSite的部分方法）
 
 class SimpleActiveScriptSite final: public IActiveScriptSite
 {
 public:
+    SimpleActiveScriptSite()
+    {
+        globalFunctions_ = new ActiveScriptGlobalFunctions();
+        // globalFunctions_->AddRef(); // 已在ActiveScriptGlobalFunctions构造函数中设置引用计数为1
+    }
+    ~SimpleActiveScriptSite()
+    {
+        if(globalFunctions_)
+        {
+            globalFunctions_->Release();
+            globalFunctions_ = nullptr;
+        }
+    }
     STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override
     {
         if (riid == IID_IUnknown || riid == IID_IActiveScriptSite)
@@ -115,9 +138,25 @@ public:
     STDMETHODIMP GetItemInfo(LPCOLESTR pstrName, DWORD dwReturnMask,
                              IUnknown** ppunkItem, ITypeInfo** ppti) override
     {
-        // 未使用命名项，直接返回未找到
-        if (ppunkItem) *ppunkItem = nullptr;
+        if (ppunkItem == nullptr) return E_POINTER;
         if (ppti) *ppti = nullptr;
+        if (wcscmp(pstrName, kRootItemName) == 0)
+        {
+            if(auto rootDisp = rootDispatch())
+            {
+                rootDisp->AddRef();
+                *ppunkItem = rootDisp;
+                return S_OK;
+            }
+        }
+        else if (wcscmp(pstrName, kGlobalFunctionsItemName) == 0)
+        {
+            globalFunctions_->AddRef();
+            *ppunkItem = globalFunctions_;
+            return S_OK;
+        }
+        // 未找到命名项，返回未找到
+        *ppunkItem = nullptr;
         return TYPE_E_ELEMENTNOTFOUND;
     }
     STDMETHODIMP GetDocVersionString(BSTR* pbstrVersion) override
@@ -155,11 +194,9 @@ public:
 private:
     LONG ref_ = 1;
     std::string lastError_;
+    ActiveScriptGlobalFunctions* globalFunctions_ = nullptr;
 };
 
-
-
-AST_NAMESPACE_BEGIN
 
 
 /// COM 初始化和释放守卫
@@ -198,7 +235,7 @@ public:
         HRESULT hr = aEnsureCoInitialized();
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 1. 创建脚本引擎
+        // 创建脚本引擎
         CLSID clsid;
         hr = CLSIDFromProgID(progId.c_str(), &clsid);
         if (FAILED(hr)) return ERR_FAIL;
@@ -207,21 +244,34 @@ public:
                             IID_IActiveScript, (void**)&pScript);
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 2. 获取解析接口
+        // 获取解析接口
         hr = pScript->QueryInterface(IID_IActiveScriptParse, (void**)&pParse);
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 3. 创建并设置站点
+        // 创建并设置站点
         pSite = new SimpleActiveScriptSite();
         // pSite->AddRef(); // 创建时已经在构造函数里将引用计数设置为 1，这里不需要再增加
         hr = pScript->SetScriptSite(pSite);
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 4. 初始化解析器
+        // 初始化解析器
         hr = pParse->InitNew();
         if (FAILED(hr)) return ERR_FAIL;
 
-        // 5. 连接到执行状态（第一次需要调用，后续保持在 CONNECTED 即可）
+        // 添加全局函数提供者
+        pScript->AddNamedItem(kGlobalFunctionsItemName, SCRIPTITEM_GLOBALMEMBERS | SCRIPTITEM_ISVISIBLE);
+        
+        // 添加根命名项
+        if(rootDispatch())
+        {
+            pScript->AddNamedItem(kRootItemName, SCRIPTITEM_ISVISIBLE);
+        }
+        else
+        {
+            aWarning("failed to add item `root` for script.");
+        }
+
+        // 连接到执行状态（第一次需要调用，后续保持在 CONNECTED 即可）
         SCRIPTSTATE state;
         pScript->GetScriptState(&state);
         if (state != SCRIPTSTATE_CONNECTED)
@@ -234,7 +284,7 @@ public:
             }
         }
 
-        // 6. 获取全局 IDispatch（此时为空，但可用于预先设置变量）
+        // 获取全局 IDispatch（此时为空，但可用于预先设置变量）
         hr = pScript->GetScriptDispatch(nullptr, &pGlobal);
         if (FAILED(hr)) pGlobal = nullptr; // 非致命
         return ERR_OK;
@@ -308,6 +358,10 @@ errc_t ActiveScriptExecutor::execute(StringView script, std::string* errorOut)
         // 注意：若想每次执行前重新初始化全局变量环境，需额外处理。
         // 此处假设脚本可累积执行，即引擎状态保持。
         std::wstring wscript = aUtf8ToWide(script);
+
+        #ifdef AST_DEBUG_SCRIPT_EXECUTOR
+        aInfo("executing script: \n%.*s", (int)script.size(), script.data());
+        #endif
 
         EXCEPINFO ei = {};
         HRESULT hr = impl_->pParse->ParseScriptText(
@@ -598,6 +652,25 @@ bool setScriptVariableByEx(IDispatch* pGlobalDisp, const std::wstring& name, con
     pDispEx->Release();
     return SUCCEEDED(hr);
 }
+
+// 解析根对象Dispatch接口
+IUnknown* _resolveRootDispatch()
+{
+    AST_USING_NAMESPACE
+    using FuncType = decltype(&aComObjectRoot);
+    FuncType func = (FuncType)aResolveProcAddress(AST_APPEND_DEBUG("AstCOM"), A_STR(aComObjectRoot));
+    if (func)
+        return func();
+    return nullptr;
+}
+
+// 获取根对象的Dispatch接口
+IUnknown* rootDispatch()
+{
+    static IUnknown* pRootDisp = _resolveRootDispatch();
+    return pRootDisp;
+}
+
 
 } // anonymous namespace
 

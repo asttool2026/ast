@@ -44,6 +44,7 @@ public:
     EventTimeExplicit() = default;
     explicit EventTimeExplicit(const TimePoint& time);
     ~EventTimeExplicit() override = default;
+    std::string getRepresentation() const override;
 PROPERTIES:
     errc_t getTime(TimePoint& time) const override;
     void setTime(const TimePoint& time);
