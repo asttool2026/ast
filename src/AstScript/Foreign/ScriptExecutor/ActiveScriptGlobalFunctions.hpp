@@ -113,8 +113,9 @@ public:
     }
 };
 
-#endif
 
 /*! @} */
 
 AST_NAMESPACE_END
+
+#endif
