@@ -15,13 +15,14 @@ constexpr int find_closing(const char* s, int p) {
     return s[p] == '>' ? p : find_closing(s, p + 1);
 }
 
+constexpr bool is_type_impl(const char* s, int p, const char* type, int i) {
+    return type[i] == '\0'
+               ? (s[p + i] == '>' || s[p + i] == ':')
+               : (s[p + i] == type[i] && is_type_impl(s, p, type, i + 1));
+}
+
 constexpr bool is_type(const char* s, int p, const char* type) {
-    int i = 0;
-    while (type[i] != '\0') {
-        if (s[p + i] != type[i]) return false;
-        ++i;
-    }
-    return s[p + i] == '>';
+    return is_type_impl(s, p, type, 0);
 }
 
 constexpr int count_args(const char* s, int p = 0) {
