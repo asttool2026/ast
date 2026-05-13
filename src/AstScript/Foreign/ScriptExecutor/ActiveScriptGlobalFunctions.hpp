@@ -42,12 +42,9 @@ AST_NAMESPACE_BEGIN
 class ActiveScriptGlobalFunctions final: public IDispatch {
 private:
     LONG m_ref;
-    std::ofstream m_log;
 
 public:
     ActiveScriptGlobalFunctions() : m_ref(1) {
-        // 打开日志文件，如果打开失败则静默
-        m_log.open("script_output.log", std::ios::app);
     }
 
     // IUnknown
@@ -99,17 +96,16 @@ public:
                 else if (arg1.vt == VT_I2) level = arg1.iVal;
 
                 std::wstring msg;
-                if (arg2.vt == VT_BSTR) msg = arg2.bstrVal;
-                else if (arg2.vt == VT_LPSTR || arg2.vt == VT_LPWSTR) msg = arg2.bstrVal;
-
-                // 实现功能：输出到控制台 + 写入日志
-                std::wcout << L"[" << level << L"] " << msg << std::endl;
-                if (m_log.is_open()) {
-                    // 简化处理：写入宽字符串（实际项目建议转 UTF-8）
-                    m_log << "[" << level << "] ";
-                    m_log.write((const char*)msg.c_str(), msg.size() * sizeof(wchar_t));
-                    m_log << std::endl;
+                VARIANT vMsg;
+                VariantInit(&vMsg);
+                if (SUCCEEDED(VariantChangeType(&vMsg, &arg2, 0, VT_BSTR))) {
+                    msg = vMsg.bstrVal ? vMsg.bstrVal : L"";
+                    VariantClear(&vMsg);
                 }
+
+                // 实现功能：输出到控制台
+                std::wcout << L"[" << level << L"] " << msg << std::endl;
+
                 return S_OK;
             }
         }
@@ -117,8 +113,9 @@ public:
     }
 };
 
-#endif
 
 /*! @} */
 
 AST_NAMESPACE_END
+
+#endif
