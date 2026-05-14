@@ -105,6 +105,9 @@
 #ifdef _WIN32
 #   define A_DECL_EXPORT __declspec(dllexport)
 #   define A_DECL_IMPORT __declspec(dllimport)
+#elif defined(SWIG) // swig 封装时，将其定义为空宏
+#   define A_DECL_EXPORT
+#   define A_DECL_IMPORT
 #else
 #   define A_DECL_EXPORT __attribute__((visibility("default")))
 #   define A_DECL_IMPORT __attribute__((visibility("default")))
