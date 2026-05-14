@@ -10,11 +10,13 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-2022, windows-2025, ubuntu-latest]
+        os: [windows, ubuntu-20.04, ubuntu-24.04]
         arch: [x64, arm64]
 
     runs-on: ${{ matrix.os }}
-
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-${{ matrix.os }}-${{ matrix.arch }}-build
+        cancel-in-progress: true
     steps:
       - uses: actions/checkout@v2
         with:

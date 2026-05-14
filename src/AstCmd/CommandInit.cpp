@@ -224,9 +224,9 @@ void aCommandInitAstrogatorComp(CommandDispatcher& dispatcher)
     )
     ([](Object* obj, StringView attribute) {
         if(!obj)
-            throw "failed to find object";
+            throw std::runtime_error("failed to find object");
         if(!attribute.empty())
-            throw "failed to find attribute";
+            throw std::runtime_error("failed to find attribute");
         return 0;
     }
     );
