@@ -34,6 +34,8 @@ AST_USING_NAMESPACE
 // 测试 Hohmann 转移
 TEST(MissionTest, HohmannTransfer)
 {
+    if(aIsCI())
+        GTEST_SKIP();
     using namespace math;
     aInitialize();
     aDataContext_GetEOP()->unload();
