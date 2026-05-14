@@ -15,9 +15,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-${{ matrix.os }}-${{ matrix.arch }}-Windows
-        cancel-in-progress: true
     steps:
       - uses: actions/checkout@v2
         with:
@@ -64,14 +61,18 @@ jobs:
         run: |
           xmake f -cy --with_test=y -m release
           xmake pack -f zip -o artifacts/ --basename=SpaceAST
-          
+      
+      - name: 获取上一个tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@master
+
       - name: 上传产物
         uses: actions/upload-artifact@v4
         with:
           name: SpaceAST-${{ matrix.os }}-${{ matrix.arch }}.zip
           path: artifacts/SpaceAST.zip
            
-      - name: Publish
+      - name: 发布产物
         if: github.event.action == 'published'
         uses: actions/upload-release-asset@v1.0.1
         env:
@@ -79,5 +80,15 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: artifacts/SpaceAST.zip
-          asset_name: SpaceAST-${{ matrix.os }}-${{ matrix.arch }}.zip
+          asset_name: SpaceAST-${{ steps.previoustag.outputs.tag }}-${{ matrix.os }}-${{ matrix.arch }}.zip
           asset_content_type: application/zip
+
+      - name: 更新dev版本的发布产物
+        if: github.ref == 'refs/heads/master'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: artifacts/SpaceAST.zip
+          asset_name: SpaceAST-dev-${{ matrix.os }}-${{ matrix.arch }}.zip
+          tag: ${{ steps.previoustag.outputs.tag }}
+          overwrite: true
