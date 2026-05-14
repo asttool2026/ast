@@ -274,6 +274,14 @@
 #define AST_CMD_CAPI A_DECL_EXTERN_C AST_CMD_API
 
 
+// ast项目分析模块导出声明
+#ifdef AST_BUILD_LIB_ANALYZER
+#    define AST_ANALYZER_API A_DECL_EXPORT
+#else
+#    define AST_ANALYZER_API A_DECL_IMPORT
+#endif
+#define AST_ANALYZER_CAPI A_DECL_EXTERN_C AST_ANALYZER_API
+
 #ifndef AST_PROJECT_NAME
 #   define AST_PROJECT_NAME "ast"
 #endif
