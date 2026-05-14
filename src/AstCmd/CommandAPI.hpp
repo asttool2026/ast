@@ -1,9 +1,9 @@
 ///
-/// @file      DetectorFrameRelated.hpp
+/// @file      CommandAPI.hpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-05-03
+/// @date      2026-05-11
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -21,8 +21,8 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "EventDetector.hpp"
-#include "AstCore/Frame.hpp"
+#include <vector>
+#include <string>
 
 AST_NAMESPACE_BEGIN
 
@@ -32,17 +32,28 @@ AST_NAMESPACE_BEGIN
 */
 
 
-class AST_CORE_API DetectorFrameRelated : public EventDetector
+// class CommandResult: public std::vector<std::string>{};
+class CommandResult: public std::vector<std::string>
 {
 public:
-    AST_OBJECT(DetectorFrameRelated)
-    AST_PROPERT(frame)
-PROPERTIES:
-    Frame* frame() const {return frame_.get();}
-    void setFrame(Frame* frame) {frame_ = frame;}
-private:
-    WeakPtr<Frame> frame_;
+    using Parent = std::vector<std::string>;
+    using Parent::Parent;
+    using Parent::operator=;
+
+    AST_CMD_API void debugPrint() const;
 };
+
+/// @brief 执行命令
+/// @param cmd 命令字符串
+/// @return 错误码
+AST_CMD_API errc_t aExecuteCommand(StringView cmd);
+
+/// @brief 执行命令并返回结果
+/// @param cmd 命令字符串
+/// @param result 命令执行结果
+/// @return 错误码
+AST_CMD_API errc_t aExecuteCommand(StringView cmd, CommandResult& result);
+
 
 /*! @} */
 

@@ -1,9 +1,9 @@
 ///
-/// @file      DetectorFrameRelated.hpp
+/// @file      CommandUtil.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-05-03
+/// @date      2026-05-11
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,33 +18,11 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#pragma once
-
-#include "AstGlobal.h"
-#include "EventDetector.hpp"
-#include "AstCore/Frame.hpp"
+#include "CommandUtil.hpp"
 
 AST_NAMESPACE_BEGIN
 
-/*!
-    @addtogroup 
-    @{
-*/
 
-
-class AST_CORE_API DetectorFrameRelated : public EventDetector
-{
-public:
-    AST_OBJECT(DetectorFrameRelated)
-    AST_PROPERT(frame)
-PROPERTIES:
-    Frame* frame() const {return frame_.get();}
-    void setFrame(Frame* frame) {frame_ = frame;}
-private:
-    WeakPtr<Frame> frame_;
-};
-
-/*! @} */
 
 AST_NAMESPACE_END
 

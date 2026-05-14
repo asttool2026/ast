@@ -27,8 +27,10 @@
  
 AST_NAMESPACE_BEGIN
 
+using namespace math;
 
-namespace details
+
+namespace detail
 {
     void c2c3(double psi, double& c2, double& c3)
     {
@@ -87,7 +89,7 @@ errc_t aTwoBodyProp(double t, double mu, Vector3d& r0, Vector3d& v0)
         auto X02 = X0 * X0;
         auto X03 = X02 * X0;
         psi = X02 * alpha;
-        details::c2c3(psi, c2, c3);
+        detail::c2c3(psi, c2, c3);
         auto X0tOmPsiC3 = X0 * (1 - psi * c3);
         auto X02tC2 = X02 * c2;
         r = X02tC2 + dr0v0Smu * X0tOmPsiC3 + r0mag * (1 - psi * c2);

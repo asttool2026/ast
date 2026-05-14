@@ -273,7 +273,7 @@ void SpiceApi::bodc2n(int code, int namlen, char *name, bool *found)
     spiceproto::SpiceBoolean f;
     bodc2n_c(code, namlen, name, &f);
     if(found)
-        *found = static_cast<bool>(f);
+        *found = (f != 0);
     checkerror();
 }
 
@@ -295,7 +295,7 @@ bool SpiceApi::failed()
     functype failed_c = reinterpret_cast<functype>(functions_[ifailed]);
     if(!failed_c)
         return true;
-    return failed_c();
+    return failed_c() != 0;
 }
 
 void SpiceApi::reset()

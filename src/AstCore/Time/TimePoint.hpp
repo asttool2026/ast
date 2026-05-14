@@ -251,11 +251,21 @@ public:
     }
 
     /// @brief 时间点等于运算符
-    /// @param other 另一个时间点
-    /// @return 是否相等
     bool operator == (const TimePoint& other) const
     {
         return this->durationFrom(other) == 0.0;
+    }
+
+    /// @brief 时间点大于运算符
+    bool operator > (const TimePoint& other) const
+    {
+        return this->durationFrom(other) > 0.0;
+    }
+    
+    /// @brief 时间点小于运算符
+    bool operator < (const TimePoint& other) const
+    {
+        return this->durationFrom(other) < 0.0;
     }
 
     /// @brief 将时间点格式化为字符串

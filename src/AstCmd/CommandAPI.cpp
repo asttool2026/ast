@@ -1,9 +1,9 @@
 ///
-/// @file      DetectorFrameRelated.hpp
+/// @file      CommandAPI.cpp
 /// @brief     
 /// @details   
 /// @author    axel
-/// @date      2026-05-03
+/// @date      2026-05-11
 /// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
 ///
 /// SpaceAST项目（https://github.com/space-ast/ast）
@@ -18,33 +18,36 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#pragma once
-
-#include "AstGlobal.h"
-#include "EventDetector.hpp"
-#include "AstCore/Frame.hpp"
+#include "CommandAPI.hpp"
+#include "CommandDispatcher.hpp"
+#include "AstUtil/IO.hpp"
 
 AST_NAMESPACE_BEGIN
 
-/*!
-    @addtogroup 
-    @{
-*/
 
-
-class AST_CORE_API DetectorFrameRelated : public EventDetector
+void CommandResult::debugPrint() const
 {
-public:
-    AST_OBJECT(DetectorFrameRelated)
-    AST_PROPERT(frame)
-PROPERTIES:
-    Frame* frame() const {return frame_.get();}
-    void setFrame(Frame* frame) {frame_ = frame;}
-private:
-    WeakPtr<Frame> frame_;
-};
+    for(auto& line : *this)
+        ast_printf("%s\n", line.c_str());
+}
 
-/*! @} */
+static CommandDispatcher& aCommandDispatcherGet()
+{
+    static CommandDispatcher dispatcher(true);
+    return dispatcher;
+}
+
+errc_t aExecuteCommand(StringView cmd)
+{
+    CommandResult result{};
+    return aCommandDispatcherGet().execute(cmd, result);
+}
+
+errc_t aExecuteCommand(StringView cmd, CommandResult& result)
+{
+    return aCommandDispatcherGet().execute(cmd, result);
+}
+
 
 AST_NAMESPACE_END
 

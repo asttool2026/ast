@@ -117,6 +117,17 @@ TEST(ParseFormat, aParseFortranDouble)
     EXPECT_DOUBLE_EQ(value, 1.657e-3);
 }
 
+
+TEST(ParseFormat, aParseDouble)
+{
+    double value = -1;
+    errc_t rc;
+    rc = aParseDouble("123.456   ", value);
+    EXPECT_EQ(rc, eNoError);
+    EXPECT_DOUBLE_EQ(value, 123.456);
+}
+
+
 // 测试 _aParseDouble_LibC_2 函数
 TEST(ParseFormat, _aParseDouble_LibC_2) {
     double value;

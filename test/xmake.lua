@@ -11,6 +11,7 @@ add_deps(
     "AstSim",
     "AstLoader",
     "AstAI",
+    "AstCmd",
     "AstTest"
 )
 

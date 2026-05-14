@@ -24,7 +24,6 @@
 #include "AstUtil/StringView.hpp"
 #include "AstCore/Point.hpp"
 #include "AstCore/FieldOfView.hpp"
-#include "AstSim/CentroidPosition.hpp"
 #include <memory>
 
 AST_NAMESPACE_BEGIN

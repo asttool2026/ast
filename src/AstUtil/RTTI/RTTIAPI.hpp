@@ -80,10 +80,10 @@ AST_UTIL_API Object* aGetClassDefaultObject(Class* cls);
 /// @brief 创建对象，返回裸指针
 /// @details 根据类名创建对象
 /// @warning 创建的对象需要手动管理生命周期（手动释放内存）
-/// @param name 类名
+/// @param typeName 类名
 /// @param parentScope 父作用域指针
 /// @return 对象指针
-AST_UTIL_CAPI Object* aNewObject(StringView name, Object* parentScope=nullptr);
+AST_UTIL_CAPI Object* aNewObject(StringView typeName, Object* parentScope=nullptr);
 
 
 /// @brief 创建对象，返回裸指针

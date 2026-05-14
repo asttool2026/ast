@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstCore/Burn.hpp"
+#include "AstCore/Axes.hpp"
 #include "AstMath/Vector.hpp"
 
 AST_NAMESPACE_BEGIN

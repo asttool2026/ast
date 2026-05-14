@@ -107,15 +107,38 @@ Object *aResolveObject(StringView value, Class* cls)
             }while(cls);
             return aFindObject(cls, value);
         }
+        else if(value == "*")
+        {
+            return aFindObject(aGetClass("Scenario"));
+        }
         else
             return aGetClass(value);
     }
     else
     {
-        StringView className = value.substr(0, pos);
-        auto pos2 = value.substr(pos + 1).find("/");
-        StringView objName = value.substr(pos + 1, pos2);
-        Object* obj = aFindObject(aGetClass(className), objName);
+        StringView className;
+        StringView objName;
+        Object* obj;
+        size_t pos2;
+        if(value[0] == '*' && pos == 1)
+        {
+            obj = aFindObject(aGetClass("Scenario"));
+            pos2 = 1;
+        }
+        else
+        {
+            className = value.substr(0, pos);
+            pos2 = value.substr(pos + 1).find("/");
+            objName = value.substr(pos + 1, pos2);
+            auto cls = aGetClass(className);
+            if(!cls)
+            {
+                aError("class '%.*s' not found", className.size(), className.data());
+                return nullptr;
+            }
+            obj = aFindObject(cls, objName);
+        }
+
         while(pos2 != StringView::npos)
         {
             value = value.substr(pos2 + 1);
@@ -128,8 +151,16 @@ Object *aResolveObject(StringView value, Class* cls)
             className = value.substr(0, pos);
             pos2 = value.substr(pos + 1).find("/");
             objName = value.substr(pos + 1, pos2);
+            auto cls = aGetClass(className);
+            if(!cls)
+            {
+                aError("class '%.*s' not found", className.size(), className.data());
+                return nullptr;
+            }
             obj = aFindChild(obj, cls, objName);
         }
+        if(cls)
+            return cls->cast(obj);
         return obj;
     }
     return nullptr;

@@ -23,6 +23,7 @@
 #include "AstCore/Resolve.hpp"
 #include "AstScript/Value.hpp"
 #include "AstUtil/RTTIAPI.hpp"
+#include "AstUtil/ObjectLinker.hpp"
 
 AST_NAMESPACE_BEGIN
 
