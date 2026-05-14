@@ -60,6 +60,14 @@ TEST(CmdSplitTest, Basic)
         auto result = split(R"(  "  "  b c )");
         EXPECT_EQ(result, StringViewVector({"  ", "b", "c"}));
     }
+    {
+        auto result = split(R"(  a"b c" )");
+        EXPECT_EQ(result, StringViewVector({"a", "b c"}));
+    }
+    {
+        auto result = split(R"(a"b c"d)");
+        EXPECT_EQ(result, StringViewVector({"a", "b c", "d"}));
+    }
 }
 
 
