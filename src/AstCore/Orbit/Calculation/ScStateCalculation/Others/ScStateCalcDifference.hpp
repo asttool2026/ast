@@ -21,7 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
-#include "ScStateCalculation.hpp"
+#include "AstCore/ScStateCalculation.hpp"
 #include "AstCore/Segment.hpp"
 
 AST_NAMESPACE_BEGIN
