@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcBMagCalc.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/MultiBody/ScStateCalcBMagCalc.hpp"

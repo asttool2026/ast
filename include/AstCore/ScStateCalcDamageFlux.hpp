@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcDamageFlux.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Others/ScStateCalcDamageFlux.hpp"

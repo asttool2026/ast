@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcCloseApproachBearing.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Formation/ScStateCalcCloseApproachBearing.hpp"

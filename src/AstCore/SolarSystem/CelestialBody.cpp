@@ -38,11 +38,16 @@
 #include "AstUtil/BKVParser.hpp"
 #include "AstUtil/Logger.hpp"
 #include "AstUtil/FileSystem.hpp"
-
+#include "AstCore/Resolve.hpp"
 
 
 AST_NAMESPACE_BEGIN
 
+
+CelestialBody* CelestialBody::Resolve(StringView value)
+{
+    return aResolveBody(value);
+}
 
 CelestialBody::CelestialBody()
     : CelestialBody(StringView{})

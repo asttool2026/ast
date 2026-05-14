@@ -1,0 +1,60 @@
+///
+/// @file      ScStateCalcScript.hpp
+/// @brief     
+/// @details   
+/// @author    axel
+/// @date      2026-05-12
+/// @copyright 版权所有 (C) 2026-present, SpaceAST项目.
+///
+/// SpaceAST项目（https://github.com/space-ast/ast）
+/// 本软件基于 Apache 2.0 开源许可证分发。
+/// 您可在遵守许可证条款的前提下使用、修改和分发本软件。
+/// 许可证全文请见：
+/// 
+///    http://www.apache.org/licenses/LICENSE-2.0
+/// 
+/// 重要须知：
+/// 软件按"现有状态"提供，无任何明示或暗示的担保条件。
+/// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
+/// 使用本软件所产生的风险，需由您自行承担。
+
+#pragma once
+
+#include "AstGlobal.h"
+#include "AstCore/ScStateCalculation.hpp"
+
+AST_NAMESPACE_BEGIN
+
+/*!
+    @addtogroup 
+    @{
+*/
+
+class ScriptExecutor;
+
+class AST_CORE_API ScStateCalcScript: public ScStateCalculation
+{
+public:
+    using VariableList = std::vector<HScStateCalculation>;
+
+    errc_t calculate(const SpacecraftState& scState, double& result) override;
+    
+    const std::string expression() const {return expression_;}
+    void setExpression(StringView expression);
+
+    const VariableList variables() const {return variables_;}
+    void setVariables(const VariableList& variableList);
+protected:
+
+    /// @brief 创建脚本执行器
+    virtual ScriptExecutor* newScriptExecutor() const = 0;
+private:
+    std::string expression_;     ///< 脚本表达式
+    VariableList variables_;     ///< 脚本变量列表
+};
+
+
+/*! @} */
+
+AST_NAMESPACE_END
+

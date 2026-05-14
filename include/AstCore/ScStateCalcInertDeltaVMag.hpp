@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcInertDeltaVMag.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Others/ScStateCalcInertDeltaVMag.hpp"

@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcLongPeriapsis.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Geodetic/ScStateCalcLongPeriapsis.hpp"

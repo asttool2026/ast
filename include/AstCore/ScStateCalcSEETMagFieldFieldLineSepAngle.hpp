@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcSEETMagFieldFieldLineSepAngle.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Others/ScStateCalcSEETMagFieldFieldLineSepAngle.hpp"

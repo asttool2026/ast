@@ -415,6 +415,20 @@ TEST(ActiveScriptExecutorTest, OutputMessage)
 }
 
 
+TEST(ActiveScriptExecutorTest, EvalExpression)
+{
+    ScopedPtr<ScriptExecutor> executor = aNewScriptExecutor(EScriptLanguage::eVBScript);
+    ASSERT_TRUE(executor);
+    errc_t rc = executor->initialize();
+    ASSERT_EQ(rc, eNoError);
+
+    ScriptResult result;
+    rc = executor->evaluate(R"(8.0/2.0)", &result);
+    ASSERT_EQ(rc, eNoError);
+    ASSERT_TRUE(result.value());
+    EXPECT_EQ(result.value()->toDouble(), 4);
+}
+
 #endif
 
 

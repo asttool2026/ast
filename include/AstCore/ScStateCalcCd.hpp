@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcCd.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/SpacecraftProperties/ScStateCalcCd.hpp"

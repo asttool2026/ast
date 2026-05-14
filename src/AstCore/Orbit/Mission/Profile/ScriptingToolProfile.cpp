@@ -68,11 +68,11 @@ errc_t ScriptingToolProfile::execute()
     setVariableList(*executor, calcObjects_);
 
     // 执行脚本
-    std::string errorMessage;
-    rc = executor->execute(scriptStatements_, &errorMessage);
+    ScriptResult result;
+    rc = executor->execute(scriptStatements_, &result);
     if(rc)
     {
-        aError("failed to execute script: %s", errorMessage.c_str());
+        aError("failed to execute script: %s", result.error().c_str());
         return rc;
     }
     // 获取全局变量值

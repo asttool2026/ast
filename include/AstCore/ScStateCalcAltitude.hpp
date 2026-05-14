@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcAltitude.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Geodetic/ScStateCalcAltitude.hpp"

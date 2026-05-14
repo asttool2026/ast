@@ -31,8 +31,10 @@ AST_NAMESPACE_BEGIN
     @{
 */
 
+
+
 /// @brief 微软Active系列脚本执行器
-/// @details 用于执行微软Active系列脚本: JScriptScript、JScript 等
+/// @details 用于执行微软Active系列脚本: JScriptScript、JScript 等 
 ///          通过COM接口 IActiveScript 等执行脚本
 class AST_SCRIPT_API ActiveScriptExecutor: public ScriptExecutor
 {
@@ -40,6 +42,8 @@ class AST_SCRIPT_API ActiveScriptExecutor: public ScriptExecutor
     class Impl;
 
 public:
+    using ScriptExecutor::execute;
+    
     ActiveScriptExecutor();
     /// @brief 构造函数
     /// @details 允许指定脚本引擎 (如 L"JScript" / L"VBScript")
@@ -49,7 +53,8 @@ public:
 
     errc_t initialize() override;
     void finalize() override;
-    errc_t execute(StringView script, std::string* errorOut=nullptr) override;
+    errc_t execute(StringView script, ScriptResult* resultOut=nullptr) override;
+    errc_t evaluate(StringView expression, ScriptResult* resultOut=nullptr) override;
     std::string getLastError() const override;
 
     errc_t setVariable(StringView name, StringView value) override;
@@ -63,7 +68,7 @@ public:
     errc_t getVariable(StringView name, bool& value) const override;
 
 protected:
-    /// 设置脚本引擎 ProgID（通常由子类如 JScriptExecutor 在构造时调用）
+    /// 设置脚本引擎 ProgID（由子类如 JScriptExecutor 在构造时调用）
     void setProgID(const wchar_t* progId);
 
 protected:

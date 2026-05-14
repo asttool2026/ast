@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcNegative.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Others/ScStateCalcNegative.hpp"

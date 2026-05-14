@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcGravCoeff.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Others/ScStateCalcGravCoeff.hpp"

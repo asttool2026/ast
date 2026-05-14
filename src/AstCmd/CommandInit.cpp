@@ -216,11 +216,28 @@ void aCommandInitBasic(CommandDispatcher& dispatcher)
     });
 }
 
+/// 兼容Astrogator命令
+void aCommandInitAstrogatorComp(CommandDispatcher& dispatcher)
+{
+    COMMAND_RULE(dispatcher,
+        "Astrogator <object> ApplyScript <string:Attribute>"
+    )
+    ([](Object* obj, StringView attribute) {
+        if(!obj)
+            throw std::runtime_error("failed to find object");
+        if(!attribute.empty())
+            throw std::runtime_error("failed to find attribute");
+        return 0;
+    }
+    );
+}
+
 
 void aCommandDispatcherInit(CommandDispatcher& dispatcher)
 {
     aCommandInitBasic(dispatcher);
     aCommandInitMover(dispatcher);
+    aCommandInitAstrogatorComp(dispatcher); // 兼容Astrogator命令
 }
 
 AST_NAMESPACE_END

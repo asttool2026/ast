@@ -1,1 +1,1 @@
-#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/ScStateCalcVGTAngle.hpp"
+#include "../../src/AstCore/Orbit/Calculation/ScStateCalculation/Vector/ScStateCalcVGTAngle.hpp"

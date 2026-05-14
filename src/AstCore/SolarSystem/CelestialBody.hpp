@@ -52,6 +52,8 @@ class AST_CORE_API CelestialBody : public Point
 {
 public:
     AST_OBJECT(CelestialBody)
+    static CelestialBody* Resolve(StringView value);
+    
     CelestialBody();
     CelestialBody(SolarSystem* solarSystem);
     CelestialBody(StringView name, SolarSystem* solarSystem = nullptr);

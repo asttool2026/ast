@@ -204,6 +204,12 @@ errc_t aLoadResult(const Value& value, SharedPtr<ObjectCalculation>& result, Obj
         result = calculation;
         // aLoadCalculation(value, *calculation);
     }
+    else if(type == "CAgAsStateCalcVBScript")
+    {
+        auto calculation = aNewObject<ScStateCalcVBScript>(scope);
+        result = calculation;
+        // aLoadCalculation(value, *calculation);
+    }
     else
     {
         result.reset();

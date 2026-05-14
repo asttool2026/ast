@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AstGlobal.h"
+#include "AstScript/Value.hpp"
 #include <string>
 
 AST_NAMESPACE_BEGIN
@@ -57,14 +58,24 @@ class Variable;
 AST_SCRIPT_CAPI ScriptExecutor* aNewScriptExecutor(EScriptLanguage type);
 
 
+/// @brief 脚本执行结果
+/// @details 用于存储脚本执行结果，包括错误信息、变量值等
+class ScriptResult
+{
+public:
+    const std::string& error() const { return error_; }
+    Value* value() const { return value_.get(); }
 
+    std::string error_;         ///< 错误信息
+    SharedPtr<Value> value_;    ///< 返回值
+};
 
 /// @brief 脚本执行器，用于执行外部脚本
 /// @note 该类是一个抽象类，需要通过继承来实现具体的脚本执行器
 /// @details 用于执行外部脚本，如Python、MATLAB、JavaScript、JScript、VBScript、Julia、Lua 等
 /// 每个脚本执行器实例的生命周期由调用方负责管理，调用方需要在使用完成后调用析构函数释放资源
-/// 在脚本执行器实例的生命周期内，调用方可以调用execute函数执行执行外部脚本，
-/// 并调用setVariable函数设置脚本执行器的变量值，调用getVariable函数获取脚本执行器的变量值
+/// 在脚本执行器实例的生命周期内，调用方可以调用execute函数执行执行脚本语句，或者调用evaluate函数对脚本表达式进行求值
+/// 并且可以调用setVariable函数设置脚本执行器的全局变量值，调用getVariable函数获取脚本执行器的全局变量值
 class AST_SCRIPT_API ScriptExecutor
 {
 public:
@@ -81,11 +92,26 @@ public:
     /// @details 结束脚本执行器，释放所有资源
     virtual void finalize() = 0;
 
-    /// @brief 执行脚本
-    /// @param script 要执行的脚本内容
-    /// @param errorOut 错误信息指针，用于存储执行脚本时的错误信息
+    /// @brief 执行脚本语句
+    /// @param script 要执行的脚本语句
+    /// @param resultOut 执行结果指针，用于存储执行脚本语句的返回结果
+    /// @note 执行语句是否有返回值取决于脚本语言的设计，例如python执行语句没有返回值，而JavaScript、C、Ruby执行语句有返回值
     /// @return 执行结果
-    virtual errc_t execute(StringView script, std::string* errorOut=nullptr) = 0;
+    virtual errc_t execute(StringView script, ScriptResult* resultOut=nullptr) = 0;
+
+    /// @brief 对脚本表达式进行求值
+    /// @param expression 脚本表达式
+    /// @param resultOut 执行结果指针，用于存储求值表达式时的结果
+    /// @return 求值结果
+    virtual errc_t evaluate(StringView expression, ScriptResult* resultOut=nullptr);
+
+
+    /// @brief 执行脚本(兼容旧版接口)
+    /// @param script 要执行的脚本内容
+    /// @param error 错误信息指针，用于存储执行脚本时的错误信息
+    /// @return 执行结果
+    errc_t execute(StringView script, std::string* error);
+
 
     /// @brief 获取最近一次执行脚本时的错误信息
     /// @warning 注意只能在execute函数执行失败后调用
