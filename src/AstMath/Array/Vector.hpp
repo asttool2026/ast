@@ -76,6 +76,8 @@ public:
     typedef _Scalar Scalar;
     enum {Dimension = 3};
     #if defined(SWIG)
+    VectorN()
+        :x_(0), y_(0), z_(0){}
     VectorN(double x, double y, double z)
         :x_(x), y_(y), z_(z){}
     #endif

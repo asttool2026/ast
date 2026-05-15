@@ -18,3 +18,4 @@ target("AstPy")
         set_suffixname("_d")
     end
     add_defines("SWIG", "AST_BUILD_LIB_PY")
+    add_cxxflags("/bigobj")

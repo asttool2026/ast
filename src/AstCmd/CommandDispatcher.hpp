@@ -50,7 +50,7 @@ private:
 };
 
 
-
+#ifndef SWIG
 
 template <typename F, typename Tuple>
 class TaggedRule : public CommandHandler 
@@ -118,7 +118,7 @@ private:
     CommandTrie::Node& node_;
 };
 
-
+#endif
 
 #define _AST_REGISTER_COMMAND(dispatcher, cmd_template, handler) \
     { \

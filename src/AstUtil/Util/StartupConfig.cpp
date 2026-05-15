@@ -59,7 +59,7 @@ StringView StartupConfig::dirpath() const
     auto pos = filepath_.find_last_of('/');
     #endif
     if(pos == std::string::npos) return ".";
-    return filepath_.substr(0, pos);
+    return StringView(filepath_).substr(0, pos);
 }
 
 ValueView StartupConfig::getConfig(StringView key) const

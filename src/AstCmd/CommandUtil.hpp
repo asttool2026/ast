@@ -41,7 +41,7 @@ AST_NAMESPACE_BEGIN
 */
 
 
-
+#ifndef SWIG
 
 namespace detail{
 
@@ -281,6 +281,7 @@ fill_result(CommandResult& /*result*/, T ret) {
 
 } // namespace detail
 
+#endif
 
 /*! @} */
 

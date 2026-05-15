@@ -102,9 +102,11 @@ public:
     /// @return 错误码
     errc_t setExpr(bool value);
 
+    #ifndef SWIG
     // 通过模板捕获所有其他类型并删除，防止隐式转换为 `bool` 类型
     template<typename T>
     errc_t setExpr(T value) = delete;
+    #endif
     
     /// @brief 绑定变量到表达式
     /// @param expr 要绑定的表达式

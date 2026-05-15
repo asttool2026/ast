@@ -49,7 +49,7 @@ public:
     errc_t execute() override;
     void setCommands(const std::vector<HMissionCommand>& commands);
     void setCommands(std::vector<HMissionCommand>&& commands);
-    const std::vector<HMissionCommand>& getCommands() const;
+    const std::vector<HMissionCommand>& getCommands() const{return commands_;}
 
     ScriptingToolProfile* scriptingTool() const{return scriptingTool_.get();}
     void setScriptingTool(ScriptingToolProfile* tool){scriptingTool_ = tool;}

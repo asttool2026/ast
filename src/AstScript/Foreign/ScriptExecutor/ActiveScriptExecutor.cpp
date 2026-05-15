@@ -60,7 +60,7 @@ AST_NAMESPACE_END
 #include "AstUtil/Encode.hpp"
 #include "AstUtil/LibraryLoader.hpp"
 #include "AstCOM/COMAPI.hpp"
-#include "ActiveScriptGlobalFunctions.hpp"
+#include "ActiveScriptGlobalFunctions.inl"
 #include <comdef.h>
 #include <unordered_map>
 #include <Windows.h>

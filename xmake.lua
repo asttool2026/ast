@@ -259,6 +259,8 @@ task("genheader")
     }
     on_run(function ()
         os.exec("python " .. path.join(os.scriptdir(), "scripts/gen_redirect_header.py"))
+        os.exec("python " .. path.join(os.scriptdir(), "scripts/generate_aggregate_headers.py"))
+        os.exec("python " .. path.join(os.scriptdir(), "scripts/gen_swig_interface.py"))
     end)
 task_end()
 
