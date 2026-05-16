@@ -1,14 +1,18 @@
-add_requires("python 3.x")
-add_requires("swig >4.2")
 
 
 target("AstPy")
+    if has_package("python") and has_package("swig") then
+        add_packages("swig")
+        add_packages("python")
+    else
+        set_enabled(false)
+    end
     add_files("AstPy.i")
     add_rules("swig.cpp", {moduletype = "python"})
-    add_packages("swig")
-    add_packages("python")
-    add_defines("SWIG_PYTHON_INTERPRETER_NO_DEBUG")
     add_deps("AstUtil", "AstCore", "AstSim")
+    add_defines("SWIG_PYTHON_INTERPRETER_NO_DEBUG")
+    add_defines("SWIG", "AST_BUILD_LIB_PY")
+    add_cxxflags("/bigobj")
     after_build(function(target)
         local autogendir = vformat(path.join("$(projectdir)", target:autogendir(), "rules", "swig"))
         local dest = target:targetdir()
@@ -17,5 +21,3 @@ target("AstPy")
     if is_plat("windows") and is_mode("debug") then
         set_suffixname("_d")
     end
-    add_defines("SWIG", "AST_BUILD_LIB_PY")
-    add_cxxflags("/bigobj")
