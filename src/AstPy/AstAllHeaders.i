@@ -511,7 +511,7 @@
 %include "../AstScript/Expression/ExprIf.hpp"
 %include "../AstScript/Expression/ExprLoop.hpp"
 %include "../AstScript/Foreign/ScriptExecutor/ActiveScriptExecutor.hpp"
-%include "../AstScript/Foreign/ScriptExecutor/PythonScriptExecutor.hpp"
+%include "../AstScript/Foreign/ScriptExecutor/PythonExecutor.hpp"
 %include "../AstScript/Function/Function.hpp"
 %include "../AstScript/Value/ValVector.hpp"
 %include "../AstScript/Value/ValBool.hpp"
