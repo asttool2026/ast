@@ -27,7 +27,10 @@ add_includedirs("include")
 
 -- 添加编译规则
 -- 内置规则
-add_rules("mode.debug", "mode.release", "mode.coverage")    -- 调试模式、发布模式、代码覆盖率模式
+add_rules(
+    "mode.debug", "mode.release", -- "mode.releasedbg", 
+    "mode.coverage"
+)                                                           -- 调试模式、发布模式、代码覆盖率模式
 -- add_rules("plugin.vsxmake.autoupdate")                      -- 自动更新vsxmake工程
 add_rules("c++.unity_build", {batchsize=20})                -- 开启unity build，提高编译效率
 add_rules("c.unity_build", {batchsize=0})                   -- 不启用C语言的unity build
