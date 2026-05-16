@@ -294,6 +294,7 @@ AST_NAMESPACE_BEGIN
 /// @brief 错误码
 typedef enum EError
 {
+    eError = -1,            ///< 通用错误
 	eNoError = 0,           ///< 没有错误
     eErrorNullPtr = 1,      ///< 空指针错误
     eErrorNullInput,        ///< 输入参数是空指针
