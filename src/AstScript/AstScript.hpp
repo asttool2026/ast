@@ -47,6 +47,7 @@
 #include "AstScript/OpUnaryRegister.hpp"
 #include "AstScript/Parser.hpp"
 #include "AstScript/Python.hpp"
+#include "AstScript/PythonAPI.hpp"
 #include "AstScript/PythonScriptExecutor.hpp"
 #include "AstScript/Scanner.hpp"
 #include "AstScript/ScriptAPI.hpp"

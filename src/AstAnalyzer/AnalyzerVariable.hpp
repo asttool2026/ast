@@ -22,6 +22,7 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/ObjectNamed.hpp"
+#include "AstScript/Expr.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -35,11 +36,22 @@ class AST_ANALYZER_API AnalyzerVariable : public ObjectNamed
 public:
     AST_OBJECT(AnalyzerVariable)
 
+    double startValue() const { return startValue_; }
+    void setStartValue(double value) { startValue_ = value; }
 
+    double endValue() const { return endValue_; }
+    void setEndValue(double value) { endValue_ = value; }
+    
+    double stepSize() const { return stepSize_; }
+    void setStepSize(double value) { stepSize_ = value; }
+
+    Expr* expr() const { return expr_.get(); }
+    void setExpr(Expr* expr) { expr_ = expr; }
 private:
     double startValue_{0.0};    ///< 变量的起始值
     double endValue_{0.0};      ///< 变量的结束值
     double stepSize_{0.0};      ///< 分析步长
+    SharedPtr<Expr> expr_;      ///< 遍历表达式
 };
 
 

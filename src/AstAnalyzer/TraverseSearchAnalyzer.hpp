@@ -22,6 +22,8 @@
 
 #include "AstGlobal.h"
 #include "AstUtil/ObjectNamed.hpp"
+#include "AnalyzerVariable.hpp"
+#include "AnalyzerConstraint.hpp"
 
 AST_NAMESPACE_BEGIN
 
@@ -35,6 +37,9 @@ class AST_ANALYZER_API TraverseSearchAnalyzer : public ObjectNamed
 {
 public:
     AST_OBJECT(TraverseSearchAnalyzer)
+private:
+    std::vector<SharedPtr<AnalyzerVariable>> variables_;        ///< 变量列表
+    std::vector<SharedPtr<AnalyzerConstraint>> constraints_;    ///< 约束列表
 };
 
 /*! @} */
