@@ -25,7 +25,7 @@
 #include "AstCore/CelestialBody.hpp"
 #include "AstCore/TimePoint.hpp"
 #include "AstMath/Vector.hpp"
-#include "AstCore/SpiceApi.hpp"
+#include "AstCore/SpiceAPI.hpp"
 #include <benchmark/benchmark.h>
 
 
@@ -67,7 +67,7 @@ BENCHMARK(bmEphemerisSPKParser);
 void bmEphemerisSpice(benchmark::State& state)
 {
     if(aIsCI()) return;
-    SpiceApi api(true);
+    SpiceAPI api(true);
     api.furnsh("data/Test/kernels/spk/de430.bsp");
     double et = 0;
     double lt;

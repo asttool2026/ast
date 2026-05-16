@@ -1,5 +1,5 @@
 ///
-/// @file      SpiceApi.cpp
+/// @file      SpiceAPI.cpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -18,7 +18,7 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "SpiceApi.hpp"
+#include "SpiceAPI.hpp"
 #include "AstUtil/StringView.hpp"
 #include "AstUtil/LibraryLoader.hpp"
 #include "AstCore/RunTimeConfig.hpp"
@@ -94,7 +94,7 @@ namespace spiceproto{
     static_assert(2 * sizeof(SpiceInt) == sizeof(SpiceDouble), "SpiceInt and SpiceDouble size must be 2:1");
 }
 
-int funcarray_loadedfunc(const SpiceApi::funcarray& funcs)
+int funcarray_loadedfunc(const SpiceAPI::funcarray& funcs)
 {
     int count = 0;
     for(auto& func : funcs)
@@ -103,7 +103,7 @@ int funcarray_loadedfunc(const SpiceApi::funcarray& funcs)
     return count;
 }
 
-bool funcarray_isfull(const SpiceApi::funcarray& funcs)
+bool funcarray_isfull(const SpiceAPI::funcarray& funcs)
 {
     for(auto& func : funcs)
         if(!func)
@@ -111,13 +111,13 @@ bool funcarray_isfull(const SpiceApi::funcarray& funcs)
     return true;
 }
 
-SpiceApi* SpiceApi::Instance()
+SpiceAPI* SpiceAPI::Instance()
 {
-    static SpiceApi instance_{true};
+    static SpiceAPI instance_{true};
     return &instance_;
 }
 
-SpiceApi::SpiceApi(bool shouldLoadDynamicLib)
+SpiceAPI::SpiceAPI(bool shouldLoadDynamicLib)
 {
     if(shouldLoadDynamicLib)
     {
@@ -132,13 +132,13 @@ SpiceApi::SpiceApi(bool shouldLoadDynamicLib)
     }
 }
 
-SpiceApi::~SpiceApi()
+SpiceAPI::~SpiceAPI()
 {
     kclear();   // 清除所有已加载的内核
     unload();   // 卸载库
 }
 
-errc_t SpiceApi::load(StringView dirpath)
+errc_t SpiceAPI::load(StringView dirpath)
 {
     void* lib = aLoadLibrary(std::string(dirpath).c_str());
     if(!lib)
@@ -171,7 +171,7 @@ errc_t SpiceApi::load(StringView dirpath)
     return eNoError;
 }
 
-errc_t SpiceApi::tryload(const std::vector<std::string>& libpaths)
+errc_t SpiceAPI::tryload(const std::vector<std::string>& libpaths)
 {
     for(auto& libpath : libpaths)
         if(load(libpath) == eNoError)
@@ -179,7 +179,7 @@ errc_t SpiceApi::tryload(const std::vector<std::string>& libpaths)
     return eErrorInvalidFile;
 }
 
-errc_t SpiceApi::unload()
+errc_t SpiceAPI::unload()
 {
     if(library_)
         return aFreeLibrary(library_);
@@ -187,9 +187,9 @@ errc_t SpiceApi::unload()
     return eNoError;
 }
 
-const char* kSpiceUnloadError = "spice library not loaded, call SpiceApi::load first";
+const char* kSpiceUnloadError = "spice library not loaded, call SpiceAPI::load first";
 
-errc_t SpiceApi::furnsh(const char* file)
+errc_t SpiceAPI::furnsh(const char* file)
 {
     using functype = decltype(&spiceproto::furnsh_c);
     functype furnsh_c = reinterpret_cast<functype>(functions_[ifurnsh]);
@@ -205,7 +205,7 @@ errc_t SpiceApi::furnsh(const char* file)
     return checkerror();
 }
 
-errc_t SpiceApi::spkgeo(int targ, double et, const char * ref, int obs, double state[6], double * lt)
+errc_t SpiceAPI::spkgeo(int targ, double et, const char * ref, int obs, double state[6], double * lt)
 {
     using functype = decltype(&spiceproto::spkgeo_c);
     functype spkgeo_c = reinterpret_cast<functype>(functions_[ispkgeo]);
@@ -219,7 +219,7 @@ errc_t SpiceApi::spkgeo(int targ, double et, const char * ref, int obs, double s
     return checkerror();
 }
 
-errc_t SpiceApi::spklef(const char *filename, int *handle)
+errc_t SpiceAPI::spklef(const char *filename, int *handle)
 {
     using functype = decltype(&spiceproto::spklef_c);
     functype spklef_c = reinterpret_cast<functype>(functions_[ispklef]);
@@ -245,7 +245,7 @@ errc_t SpiceApi::spklef(const char *filename, int *handle)
     return checkerror();
 }
 
-errc_t SpiceApi::spkuef(int handle)
+errc_t SpiceAPI::spkuef(int handle)
 {
     using functype = decltype(&spiceproto::spkuef_c);
     functype spkuef_c = reinterpret_cast<functype>(functions_[ispkuef]);
@@ -264,7 +264,7 @@ errc_t SpiceApi::spkuef(int handle)
     return checkerror();
 }
 
-void SpiceApi::bodc2n(int code, int namlen, char *name, bool *found)
+void SpiceAPI::bodc2n(int code, int namlen, char *name, bool *found)
 {
     using functype = decltype(&spiceproto::bodc2n_c);
     functype bodc2n_c = reinterpret_cast<functype>(functions_[ibodc2n]);
@@ -277,7 +277,7 @@ void SpiceApi::bodc2n(int code, int namlen, char *name, bool *found)
     checkerror();
 }
 
-errc_t SpiceApi::bodc2n(int code, std::string &name)
+errc_t SpiceAPI::bodc2n(int code, std::string &name)
 {
     char n[128];
     bool found = false;
@@ -289,7 +289,7 @@ errc_t SpiceApi::bodc2n(int code, std::string &name)
     return eErrorNotFound;
 }
 
-bool SpiceApi::failed()
+bool SpiceAPI::failed()
 {
     using functype = decltype(&spiceproto::failed_c);
     functype failed_c = reinterpret_cast<functype>(functions_[ifailed]);
@@ -298,7 +298,7 @@ bool SpiceApi::failed()
     return failed_c() != 0;
 }
 
-void SpiceApi::reset()
+void SpiceAPI::reset()
 {
     using functype = decltype(&spiceproto::reset_c);
     functype reset_c = reinterpret_cast<functype>(functions_[ireset]);
@@ -307,7 +307,7 @@ void SpiceApi::reset()
     reset_c();
 }
 
-void SpiceApi::erract(const char * operation, int lenout, char * action)
+void SpiceAPI::erract(const char * operation, int lenout, char * action)
 {
     using functype = decltype(&spiceproto::erract_c);
     functype erract_c = reinterpret_cast<functype>(functions_[ierract]);
@@ -316,7 +316,7 @@ void SpiceApi::erract(const char * operation, int lenout, char * action)
     erract_c(operation, lenout, action);
 }
 
-void SpiceApi::kclear()
+void SpiceAPI::kclear()
 {
     using functype = decltype(&spiceproto::kclear_c);
     functype kclear_c = reinterpret_cast<functype>(functions_[ikclear]);
@@ -326,7 +326,7 @@ void SpiceApi::kclear()
 }
 
 
-errc_t SpiceApi::ktotal(const char *kind, int *count)
+errc_t SpiceAPI::ktotal(const char *kind, int *count)
 {
     using functype = decltype(&spiceproto::ktotal_c);
     functype ktotal_c = reinterpret_cast<functype>(functions_[iktotal]);
@@ -343,7 +343,7 @@ errc_t SpiceApi::ktotal(const char *kind, int *count)
     return checkerror();
 }
 
-errc_t SpiceApi::checkerror()
+errc_t SpiceAPI::checkerror()
 {
     if(failed())
     {

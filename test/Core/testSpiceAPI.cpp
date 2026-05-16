@@ -18,20 +18,20 @@
 /// 除非法律要求或书面同意，作者与贡献者不承担任何责任。
 /// 使用本软件所产生的风险，需由您自行承担。
 
-#include "AstCore/SpiceApi.hpp"
+#include "AstCore/SpiceAPI.hpp"
 #include "AstTest/Test.h"
 
 AST_USING_NAMESPACE
 
-TEST(SpiceApi, LoadUnload)
+TEST(SpiceAPI, LoadUnload)
 {
-    SpiceApi api;
+    SpiceAPI api;
     const auto libpaths = aTestGetConfigStringVector("CSPICE_LIBS");
     errc_t rc = api.tryload(libpaths);
     EXPECT_FALSE(api.failed());
     EXPECT_EQ(rc, eNoError);
     {
-        SpiceApi api2;
+        SpiceAPI api2;
         rc = api2.tryload(libpaths);
         EXPECT_EQ(rc, eNoError);
         EXPECT_FALSE(api2.failed());
@@ -40,10 +40,10 @@ TEST(SpiceApi, LoadUnload)
 }
 
 
-TEST(SpiceApi, Instance)
+TEST(SpiceAPI, Instance)
 {
-    EXPECT_TRUE(SpiceApi::Instance()->isLoaded());
-    bool failed = SpiceApi::Instance()->failed();
+    EXPECT_TRUE(SpiceAPI::Instance()->isLoaded());
+    bool failed = SpiceAPI::Instance()->failed();
     EXPECT_FALSE(failed);
 }
 

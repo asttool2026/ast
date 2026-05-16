@@ -1,5 +1,5 @@
 ///
-/// @file      SpiceApi.hpp
+/// @file      SpiceAPI.hpp
 /// @brief     
 /// @details   
 /// @author    axel
@@ -41,7 +41,7 @@ AST_NAMESPACE_BEGIN
 /// - 针对文件加载增加了引用计数机制
 /// - 处理了文件路径的编码问题
 /// @warning 注意CSPICE库的默认长度单位是**千米**
-class AST_CORE_API SpiceApi
+class AST_CORE_API SpiceAPI
 {
 public:
     // 函数索引
@@ -62,15 +62,15 @@ public:
 
     /// @brief 获取单例实例
     /// @return 单例实例指针
-    static SpiceApi* Instance();
+    static SpiceAPI* Instance();
 
     /// @brief 默认构造函数
-    SpiceApi() = default;
+    SpiceAPI() = default;
 
     /// @param shouldLoadDynamicLib 是否自动加载动态库
-    explicit SpiceApi(bool shouldLoadDynamicLib);
+    explicit SpiceAPI(bool shouldLoadDynamicLib);
     
-    ~SpiceApi();
+    ~SpiceAPI();
 
     /// @brief 
     /// @param libpath 库路径
@@ -160,7 +160,7 @@ public: // 包装函数
     void kclear();
 protected:
     errc_t checkerror();
-    A_DISABLE_COPY(SpiceApi);
+    A_DISABLE_COPY(SpiceAPI);
 protected:
     void*  library_{nullptr};           ///< 库句柄
     std::vector<uint32_t> spk_handles_; ///< 已加载的SPK内核句柄列表

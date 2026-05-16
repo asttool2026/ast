@@ -463,7 +463,7 @@
 #include "AstCore/SpacecraftState.hpp"
 #include "AstCore/SphereShape.hpp"
 #include "AstCore/SpheroidShape.hpp"
-#include "AstCore/SpiceApi.hpp"
+#include "AstCore/SpiceAPI.hpp"
 #include "AstCore/State.hpp"
 #include "AstCore/StateCalculation.hpp"
 #include "AstCore/StateCartesian.hpp"

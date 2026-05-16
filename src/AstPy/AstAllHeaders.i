@@ -67,7 +67,7 @@
 %include "../AstCore/Data/Context/RunTimeXYS.hpp"
 %include "../AstCore/Data/EOP.hpp"
 %include "../AstCore/Data/LeapSecond.hpp"
-%include "../AstCore/Data/SpiceApi.hpp"
+%include "../AstCore/Data/SpiceAPI.hpp"
 %include "../AstCore/Geometry/FieldOfView/FieldOfViewVisitor.hpp"
 %include "../AstCore/Geometry/Geometry.hpp"
 %include "../AstCore/Geometry/Surface/Coordinate/LatLonAlt.hpp"
