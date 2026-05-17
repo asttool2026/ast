@@ -283,4 +283,127 @@ TEST(PythonAPI, Instance)
 }
 
 
+TEST(PythonAPI, NewFunctions)
+{
+    PythonAPI api(false);
+    if(!canLoadPython(api))
+    {
+        GTEST_SKIP() << "Python shared library not found";
+        return;
+    }
+
+    api.Py_Initialize();
+
+    // ---- PyRun_String (eval input) ----
+    auto* mainMod = api.PyImport_ImportModule("__main__");
+    ASSERT_TRUE(mainMod != nullptr);
+    auto* globals = api.PyObject_GetAttrString(mainMod, "__dict__");
+    ASSERT_TRUE(globals != nullptr);
+
+    auto* result = api.PyRun_String("2 + 3", PythonAPI::Py_eval_input, globals, globals);
+    EXPECT_TRUE(result != nullptr);
+    EXPECT_EQ(api.PyLong_AsLong(result), 5);
+    api.Py_DecRef(result);
+
+    // ---- PyRun_String (file input) ----
+    result = api.PyRun_String("x = 42", PythonAPI::Py_file_input, globals, globals);
+    EXPECT_TRUE(result != nullptr);
+    api.Py_DecRef(result);
+
+    // ---- 类型创建 ----
+    auto* intObj = api.PyLong_FromLong(100);
+    EXPECT_TRUE(intObj != nullptr);
+    EXPECT_EQ(api.PyLong_AsLong(intObj), 100);
+
+    auto* floatObj = api.PyFloat_FromDouble(3.14);
+    EXPECT_TRUE(floatObj != nullptr);
+    EXPECT_NEAR(api.PyFloat_AsDouble(floatObj), 3.14, 1e-9);
+
+    auto* strObj = api.PyUnicode_FromString("test");
+    EXPECT_TRUE(strObj != nullptr);
+    const char* s = api.PyUnicode_AsUTF8(strObj);
+    EXPECT_TRUE(s != nullptr);
+    EXPECT_STREQ(s, "test");
+
+    auto* boolObj = api.PyBool_FromLong(1);
+    EXPECT_TRUE(boolObj != nullptr);
+
+    // ---- PyObject_SetAttrString ----
+    int rc = api.PyObject_SetAttrString(mainMod, "_test_int", intObj);
+    EXPECT_EQ(rc, 0);
+
+    // ---- 类型对象访问器 + PyObject_IsInstance ----
+    auto* boolType = api.PyBool_Type();
+    EXPECT_TRUE(boolType != nullptr);
+    EXPECT_NE(api.PyObject_IsInstance(boolObj, boolType), 0);
+    EXPECT_EQ(api.PyObject_IsInstance(intObj, boolType), 0);
+
+    auto* longType = api.PyLong_Type();
+    EXPECT_TRUE(longType != nullptr);
+    EXPECT_NE(api.PyObject_IsInstance(intObj, longType), 0);
+
+    auto* floatType = api.PyFloat_Type();
+    EXPECT_TRUE(floatType != nullptr);
+    EXPECT_NE(api.PyObject_IsInstance(floatObj, floatType), 0);
+
+    auto* unicodeType = api.PyUnicode_Type();
+    EXPECT_TRUE(unicodeType != nullptr);
+    EXPECT_NE(api.PyObject_IsInstance(strObj, unicodeType), 0);
+
+    // ---- PyObject_Str ----
+    auto* intStr = api.PyObject_Str(intObj);
+    EXPECT_TRUE(intStr != nullptr);
+    EXPECT_STREQ(api.PyUnicode_AsUTF8(intStr), "100");
+    api.Py_DecRef(intStr);
+
+    // ---- PyErr_Fetch (无错误时返回 null) ----
+    PyObject *type = nullptr, *value = nullptr, *traceback = nullptr;
+    api.PyErr_Fetch(&type, &value, &traceback);
+    EXPECT_EQ(type, nullptr);
+    EXPECT_EQ(value, nullptr);
+    EXPECT_EQ(traceback, nullptr);
+
+    // ---- 故意触发错误，验证 PyErr_Fetch 捕获 ----
+    result = api.PyRun_String("1/0", PythonAPI::Py_eval_input, globals, globals);
+    EXPECT_EQ(result, nullptr);
+
+    api.PyErr_Fetch(&type, &value, &traceback);
+    EXPECT_TRUE(type != nullptr);
+    EXPECT_TRUE(value != nullptr);
+
+    if(type)  api.Py_DecRef(type);
+    if(value) api.Py_DecRef(value);
+    if(traceback) api.Py_DecRef(traceback);
+
+    // ---- Dict 操作 ----
+    auto* dict = api.PyDict_New();
+    EXPECT_TRUE(dict != nullptr);
+
+    auto* dictVal = api.PyLong_FromLong(999);
+    rc = api.PyDict_SetItemString(dict, "key", dictVal);
+    EXPECT_EQ(rc, 0);
+    api.Py_DecRef(dictVal);
+
+    auto* got = api.PyDict_GetItemString(dict, "key");
+    EXPECT_TRUE(got != nullptr);
+    EXPECT_EQ(api.PyLong_AsLong(got), 999);
+    // PyDict_GetItemString 返回借用引用，不需 DecRef
+
+    auto* missing = api.PyDict_GetItemString(dict, "nonexistent");
+    EXPECT_EQ(missing, nullptr);
+
+    api.Py_DecRef(dict);
+
+    // ---- 清理 ----
+    api.Py_DecRef(intObj);
+    api.Py_DecRef(floatObj);
+    api.Py_DecRef(strObj);
+    api.Py_DecRef(boolObj);
+    api.Py_DecRef(globals);
+    api.Py_DecRef(mainMod);
+
+    api.Py_FinalizeEx();
+}
+
+
 GTEST_MAIN();
