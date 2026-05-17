@@ -51,6 +51,20 @@ xpack("ast")
             package:add("installfiles", release_dir .. "Ast*.lib", {prefixdir = "lib"})
             package:add("installfiles", release_dir .. "Ast*.dll", {prefixdir = "bin"})
         end
+
+        -- 添加python库
+        if package:with_binary() then
+            if package:plat() == "windows" then
+                package:add("installfiles", "build/$(plat)/$(arch)/debug/*.pyd",   {prefixdir = "bin"})
+                package:add("installfiles", "build/$(plat)/$(arch)/release/*.pyd", {prefixdir = "bin"})
+            end
+            release_pyfiles = os.files("build/$(plat)/$(arch)/release/*.py")
+            debug_pyfiles = os.files("build/$(plat)/$(arch)/debug/*.py")
+            print("release_pyfiles: ", release_pyfiles)
+            print("debug_pyfiles: ", debug_pyfiles)
+            package:add("installfiles", "build/$(plat)/$(arch)/release/*.py",   {prefixdir = "bin"})
+            package:add("installfiles", "build/$(plat)/$(arch)/debug/*.py",   {prefixdir = "bin"})
+        end
     end)
    
     

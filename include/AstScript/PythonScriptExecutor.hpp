@@ -1,1 +1,1 @@
-#include "../../src/AstScript/Foreign/ScriptExecutor/PythonScriptExecutor.hpp"
+#include "../../src/AstScript/Foreign/ScriptExecutor/PythonExecutor.hpp"

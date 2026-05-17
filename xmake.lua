@@ -27,7 +27,10 @@ add_includedirs("include")
 
 -- 添加编译规则
 -- 内置规则
-add_rules("mode.debug", "mode.release", "mode.coverage")    -- 调试模式、发布模式、代码覆盖率模式
+add_rules(
+    "mode.debug", "mode.release", -- "mode.releasedbg", 
+    "mode.coverage"
+)                                                           -- 调试模式、发布模式、代码覆盖率模式
 -- add_rules("plugin.vsxmake.autoupdate")                      -- 自动更新vsxmake工程
 add_rules("c++.unity_build", {batchsize=20})                -- 开启unity build，提高编译效率
 add_rules("c.unity_build", {batchsize=0})                   -- 不启用C语言的unity build
@@ -96,10 +99,15 @@ end
 add_repositories("ast-repo repo", {rootdir = os.scriptdir()})
 
 -- 下载并安装第三方库（可选）
-add_requires("openscenegraph", {optional = true, configs = {shared = true}})    -- 可选的OpenSceneGraph库，共享库版本，用于图形渲染
+add_requires("python 3.x", {optional = true})                                   -- 可选的Python库，用于编译python库
+add_requires("swig >4.2", {optional = true})                                    -- 可选的SWIG库，用于生成Python绑定代码
+add_requires("gtest <=1.12.1", {optional = true, configs = {cmake = false}})    -- 可选的gtest库，用于单元测试，gtest v1.12.1 for c++11
+add_requires("benchmark", {optional = true})                                    -- 可选的benchmark库，用于性能测试
+add_requires("replxx", {optional = true})                                       -- 可选的replxx库，用于命令行交互
 add_requires("qt5base", "qt5widgets", "qt5gui", {optional = true})              -- 可选的Qt5库，包含基础、窗口部件和GUI模块
-add_requires("eigen", {optional = true, configs = {headeronly = true}})         -- 可选的Eigen库，头文件版本，用于线性代数计算
+add_requires("openscenegraph", {optional = true, configs = {shared = true}})    -- 可选的OpenSceneGraph库，共享库版本，用于图形渲染
 add_requires("opengl", {optional = true})                                       -- 可选的OpenGL库，用于图形渲染
+add_requires("eigen", {optional = true, configs = {headeronly = true}})         -- 可选的Eigen库，头文件版本，用于线性代数计算
 add_requires("fmt", {optional = true})                                          -- 可选的fmt库，用于格式化输出
 add_requires("sofa", {optional = true})                                         -- 可选的iau-sofa库，用于天文计算
 add_requires("matplotplusplus", {optional = true})                              -- 可选的matplot++库，用于绘图
@@ -208,8 +216,6 @@ includes("examples")
 
 -- 导入测试配置
 if has_config("with_test") then
-    add_requires("gtest <=1.12.1", {optional = true, configs = {cmake = false}})  -- gtest v1.12.1 for c++11
-    add_requires("benchmark", {optional = true})
     includes("test")
 end
 
@@ -259,6 +265,8 @@ task("genheader")
     }
     on_run(function ()
         os.exec("python " .. path.join(os.scriptdir(), "scripts/gen_redirect_header.py"))
+        os.exec("python " .. path.join(os.scriptdir(), "scripts/generate_aggregate_headers.py"))
+        os.exec("python " .. path.join(os.scriptdir(), "scripts/gen_swig_interface.py"))
     end)
 task_end()
 

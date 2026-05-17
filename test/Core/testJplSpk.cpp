@@ -19,7 +19,7 @@
 /// 使用本软件所产生的风险，需由您自行承担。
 
 #include "AstCore/JplSpk.hpp"
-#include "AstCore/SpiceApi.hpp"
+#include "AstCore/SpiceAPI.hpp"
 #include "AstCore/TimeInterval.hpp"
 #include "AstCore/CelestialBody.hpp"
 #include "AstMath/Vector.hpp"
@@ -61,7 +61,7 @@ TEST(JplSpkTest, open)
     TimeInterval interval;
     std::string spkfile = aTestGetConfigValue("SPK_FILE").toString();
 
-    int count = SpiceApi::Instance()->ktotal("ALL");
+    int count = SpiceAPI::Instance()->ktotal("ALL");
     EXPECT_EQ(count, 0);
     JplSpk spk(spkfile);
     errc_t rc = spk.getInterval(ESpiceId::eJupiter, interval);

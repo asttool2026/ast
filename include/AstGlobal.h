@@ -274,6 +274,14 @@
 #define AST_CMD_CAPI A_DECL_EXTERN_C AST_CMD_API
 
 
+// ast项目分析模块导出声明
+#ifdef AST_BUILD_LIB_ANALYZER
+#    define AST_ANALYZER_API A_DECL_EXPORT
+#else
+#    define AST_ANALYZER_API A_DECL_IMPORT
+#endif
+#define AST_ANALYZER_CAPI A_DECL_EXTERN_C AST_ANALYZER_API
+
 #ifndef AST_PROJECT_NAME
 #   define AST_PROJECT_NAME "ast"
 #endif
@@ -286,6 +294,7 @@ AST_NAMESPACE_BEGIN
 /// @brief 错误码
 typedef enum EError
 {
+    eError = -1,            ///< 通用错误
 	eNoError = 0,           ///< 没有错误
     eErrorNullPtr = 1,      ///< 空指针错误
     eErrorNullInput,        ///< 输入参数是空指针

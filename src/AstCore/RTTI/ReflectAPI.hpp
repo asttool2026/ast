@@ -38,6 +38,8 @@ AST_NAMESPACE_BEGIN
 AST_CORE_CAPI Property* _aNewPropertyTimePoint(FPropertyGet getter, FPropertySet setter);
 
 
+#ifndef SWIG
+
 /// @brief 创建一个时间点属性
 /// @warning 本函数为内部函数，不建议直接调用。
 /// @param getter 获取属性值的函数指针
@@ -221,6 +223,7 @@ A_ALWAYS_INLINE Property* aNewPropertyTimePoint()
     );
 }
 
+#endif
 
 /*! @} */
 

@@ -94,15 +94,50 @@ TEST(SmartPointer, ScopedPtr)
     }
 }
 
+// 测试栈上的对象
+TEST(SmartPointer, StackObject_SharedPtr)
+{
+    {
+        SharedPtr<Class> ptr;
+        {
+            Class obj;
+            ptr = &obj;
+        }
+        if(auto p = ptr.get())
+            printf("refCount: %d\n", p->refCount());
+    }
+    {
+        SharedPtr<Class> ptr;
+        {
+            Class obj;
+            ptr = &obj;
+            ptr.reset();
+        }
+        if(auto p = ptr.get())
+            printf("refCount: %d\n", p->refCount());
+    }
+}
+
+
 
 // 测试栈上的对象
-TEST(SmartPointer, StackObject)
+TEST(SmartPointer, StackObject_WeakPtr)
 {
     {
         WeakPtr<StateCartesian> ptrweak;
         {
             StateCartesian obj;
             ptrweak = &obj;
+        }
+        auto ptr = ptrweak.get();
+        EXPECT_TRUE(ptr == nullptr);
+    }
+    {
+        WeakPtr<StateCartesian> ptrweak;
+        {
+            StateCartesian obj;
+            ptrweak = &obj;
+            ptrweak.reset();
         }
         auto ptr = ptrweak.get();
         EXPECT_TRUE(ptr == nullptr);
